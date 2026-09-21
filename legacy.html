@@ -1,0 +1,473 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Protótipo de hero interativo para a Augeo Creative."
+    />
+    <title>Augeo Creative — protótipo original</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --paper: #f7f7f5;
+        --ink: #111111;
+        --muted: #61615d;
+        --accent: #ff482c;
+        --line: #d9d9d4;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        min-height: 100%;
+        margin: 0;
+        background: var(--paper);
+        color: var(--ink);
+        font-family: "Helvetica Neue", "Arial Nova", Arial, sans-serif;
+      }
+
+      body {
+        overflow-x: hidden;
+      }
+
+      button,
+      a {
+        font: inherit;
+      }
+
+      .page {
+        min-height: 100dvh;
+        background: var(--paper);
+      }
+
+      .nav {
+        position: relative;
+        z-index: 3;
+        display: flex;
+        align-items: center;
+        height: 76px;
+        max-width: 1440px;
+        margin: 0 auto;
+        padding: 0 38px;
+      }
+
+      .brand {
+        display: block;
+        width: 66px;
+        height: 66px;
+        overflow: hidden;
+      }
+
+      .brand img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        mix-blend-mode: multiply;
+      }
+
+      .hero {
+        position: relative;
+        min-height: calc(100dvh - 76px);
+        overflow: hidden;
+        isolation: isolate;
+      }
+
+      .hero-inner {
+        position: relative;
+        z-index: 2;
+        display: grid;
+        grid-template-columns: minmax(0, 0.95fr) minmax(420px, 1.05fr);
+        align-items: center;
+        min-height: calc(100dvh - 76px);
+        max-width: 1440px;
+        margin: 0 auto;
+        padding: 18px 38px 70px;
+        pointer-events: none;
+      }
+
+      .hero-copy {
+        max-width: 650px;
+        padding-bottom: 3vh;
+        pointer-events: auto;
+      }
+
+      h1 {
+        max-width: 11ch;
+        margin: 0;
+        font-size: clamp(3.75rem, 6.1vw, 6.75rem);
+        font-weight: 520;
+        letter-spacing: -0.065em;
+        line-height: 0.92;
+        text-wrap: balance;
+      }
+
+      .intro {
+        max-width: 440px;
+        margin: 30px 0 0;
+        color: var(--muted);
+        font-size: clamp(1rem, 1.35vw, 1.16rem);
+        line-height: 1.48;
+        letter-spacing: -0.015em;
+      }
+
+      .cta {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 50px;
+        margin-top: 34px;
+        padding: 0 23px;
+        overflow: hidden;
+        border: 1px solid var(--ink);
+        border-radius: 0;
+        background: var(--ink);
+        color: var(--paper);
+        font-size: 0.91rem;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+        text-decoration: none;
+        transition:
+          color 220ms cubic-bezier(0.16, 1, 0.3, 1),
+          transform 220ms cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      .cta::before {
+        position: absolute;
+        inset: 0;
+        background: var(--accent);
+        content: "";
+        transform: translateY(102%);
+        transition: transform 300ms cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      .cta span {
+        position: relative;
+        z-index: 1;
+      }
+
+      .cta:hover,
+      .cta:focus-visible {
+        color: #111111;
+        outline: none;
+      }
+
+      .cta:hover::before,
+      .cta:focus-visible::before {
+        transform: translateY(0);
+      }
+
+      .cta:focus-visible {
+        box-shadow: 0 0 0 3px var(--paper), 0 0 0 5px var(--ink);
+      }
+
+      .cta:active {
+        transform: translateY(1px) scale(0.99);
+      }
+
+      .field {
+        position: absolute;
+        z-index: 1;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+      }
+
+      .visual-label {
+        position: absolute;
+        right: 38px;
+        bottom: 24px;
+        z-index: 2;
+        color: #7a7a76;
+        font-size: 0.73rem;
+        letter-spacing: 0.02em;
+      }
+
+      @media (max-width: 900px) {
+        .hero-inner {
+          grid-template-columns: minmax(0, 1fr) minmax(300px, 0.72fr);
+        }
+
+        h1 {
+          font-size: clamp(3.25rem, 7.8vw, 5.2rem);
+        }
+      }
+
+      @media (max-width: 767px) {
+        .nav {
+          height: 70px;
+          padding: 0 20px;
+        }
+
+        .brand {
+          width: 58px;
+          height: 58px;
+        }
+
+        .hero {
+          min-height: calc(100dvh - 70px);
+        }
+
+        .hero-inner {
+          display: block;
+          min-height: calc(100dvh - 70px);
+          padding: 44px 20px 310px;
+        }
+
+        .hero-copy {
+          max-width: 560px;
+          padding: 0;
+        }
+
+        h1 {
+          max-width: 10ch;
+          font-size: clamp(3.4rem, 15.2vw, 5.4rem);
+          line-height: 0.9;
+        }
+
+        .intro {
+          max-width: 360px;
+          margin-top: 24px;
+          font-size: 1rem;
+        }
+
+        .cta {
+          margin-top: 28px;
+        }
+
+        .visual-label {
+          display: none;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          scroll-behavior: auto !important;
+          transition-duration: 0.01ms !important;
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <header class="nav" aria-label="Cabeçalho Augeo Creative">
+        <a class="brand" href="#inicio" aria-label="Augeo Creative">
+          <img src="./augeo-logo.png" alt="Augeo Creative" />
+        </a>
+      </header>
+
+      <section class="hero" id="inicio" aria-labelledby="hero-title">
+        <canvas class="field" aria-hidden="true"></canvas>
+
+        <div class="hero-inner">
+          <div class="hero-copy">
+            <h1 id="hero-title">Ideias fortes, forma precisa.</h1>
+            <p class="intro">
+              Criamos marcas, sites e experiências digitais que transformam
+              atenção em movimento.
+            </p>
+            <a class="cta" href="#contato"><span>Falar com a Augeo</span></a>
+          </div>
+        </div>
+
+        <div class="visual-label" aria-hidden="true">mova o cursor</div>
+      </section>
+
+      <div id="contato" hidden></div>
+    </main>
+
+    <script src="./augeo-field.js"></script>
+    <script>
+      (() => {
+        if (window.__augeoFieldLoaded) return;
+        window.__augeoFieldLoaded = true;
+        const canvas = document.querySelector(".field");
+        const hero = document.querySelector(".hero");
+        const context = canvas.getContext("2d", { alpha: true });
+        const reduceMotion = window.matchMedia(
+          "(prefers-reduced-motion: reduce)",
+        );
+        const coarsePointer = window.matchMedia("(pointer: coarse)");
+
+        let width = 0;
+        let height = 0;
+        let pixelRatio = 1;
+        let modules = [];
+        let animationFrame = 0;
+        let isVisible = true;
+
+        const pointer = {
+          x: -1000,
+          y: -1000,
+          targetX: -1000,
+          targetY: -1000,
+          active: false,
+        };
+
+        function buildField() {
+          const mobile = width < 768;
+          const left = mobile ? 18 : Math.max(width * 0.49, width - 760);
+          const right = width - (mobile ? 18 : 34);
+          const top = mobile ? Math.max(510, height * 0.63) : 62;
+          const bottom = height - (mobile ? 44 : 68);
+          const gapX = mobile ? 34 : 43;
+          const gapY = mobile ? 31 : 37;
+          const availableWidth = Math.max(0, right - left);
+          const availableHeight = Math.max(0, bottom - top);
+          const columns = Math.max(1, Math.floor(availableWidth / gapX));
+          const rows = Math.max(1, Math.floor(availableHeight / gapY));
+          const fieldWidth = (columns - 1) * gapX;
+          const fieldHeight = (rows - 1) * gapY;
+          const originX = left + (availableWidth - fieldWidth) * 0.5;
+          const originY = top + (availableHeight - fieldHeight) * 0.5;
+
+          modules = [];
+
+          for (let row = 0; row < rows; row += 1) {
+            for (let column = 0; column < columns; column += 1) {
+              const edgeX = columns > 1 ? column / (columns - 1) : 0.5;
+              const edgeY = rows > 1 ? row / (rows - 1) : 0.5;
+              const edgeFade = Math.min(
+                1,
+                Math.min(edgeX, 1 - edgeX, edgeY, 1 - edgeY) * 5 + 0.16,
+              );
+
+              modules.push({
+                x: originX + column * gapX,
+                y: originY + row * gapY,
+                row,
+                column,
+                edgeFade,
+              });
+            }
+          }
+        }
+
+        function resize() {
+          const bounds = hero.getBoundingClientRect();
+          width = bounds.width;
+          height = bounds.height;
+          pixelRatio = Math.min(window.devicePixelRatio || 1, 1.5);
+          canvas.width = Math.round(width * pixelRatio);
+          canvas.height = Math.round(height * pixelRatio);
+          canvas.style.width = `${width}px`;
+          canvas.style.height = `${height}px`;
+          context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+          buildField();
+          draw(performance.now());
+        }
+
+        function draw(time) {
+          context.clearRect(0, 0, width, height);
+
+          const mobile = width < 768;
+          const interactive =
+            pointer.active && !mobile && !coarsePointer.matches && !reduceMotion.matches;
+          const radius = Math.min(178, Math.max(138, width * 0.13));
+          const moduleWidth = mobile ? 20 : 26;
+          const moduleHeight = mobile ? 3.5 : 4.5;
+          let nearestIndex = -1;
+          let nearestDistance = Number.POSITIVE_INFINITY;
+
+          if (interactive) {
+            pointer.x += (pointer.targetX - pointer.x) * 0.16;
+            pointer.y += (pointer.targetY - pointer.y) * 0.16;
+          }
+
+          modules.forEach((module, index) => {
+            const distance = Math.hypot(pointer.x - module.x, pointer.y - module.y);
+            if (interactive && distance < nearestDistance) {
+              nearestDistance = distance;
+              nearestIndex = index;
+            }
+          });
+
+          modules.forEach((module, index) => {
+            const deltaX = module.x - pointer.x;
+            const deltaY = module.y - pointer.y;
+            const distance = Math.max(1, Math.hypot(deltaX, deltaY));
+            const influence = interactive
+              ? Math.max(0, 1 - distance / radius) ** 2
+              : 0;
+            const ambient = reduceMotion.matches
+              ? 0
+              : Math.sin(time * 0.00028 + module.row * 0.36 + module.column * 0.21) *
+                (mobile ? 0.018 : 0.035);
+            const push = influence * 34;
+            const x = module.x + (deltaX / distance) * push;
+            const y = module.y + (deltaY / distance) * push;
+            const angle = ambient + Math.atan2(deltaY, deltaX) * influence * 0.62;
+            const isAccent = index === nearestIndex && nearestDistance < radius * 0.76;
+
+            context.save();
+            context.translate(x, y);
+            context.rotate(angle);
+            context.globalAlpha = mobile
+              ? 0.3 * module.edgeFade
+              : (0.64 + influence * 0.36) * module.edgeFade;
+            context.fillStyle = isAccent ? "#ff482c" : "#111111";
+            context.fillRect(
+              -moduleWidth * 0.5,
+              -moduleHeight * 0.5,
+              moduleWidth,
+              moduleHeight,
+            );
+            context.restore();
+          });
+
+          if (!reduceMotion.matches && isVisible) {
+            animationFrame = requestAnimationFrame(draw);
+          }
+        }
+
+        function setPointer(event) {
+          const bounds = hero.getBoundingClientRect();
+          pointer.targetX = event.clientX - bounds.left;
+          pointer.targetY = event.clientY - bounds.top;
+          if (!pointer.active) {
+            pointer.x = pointer.targetX;
+            pointer.y = pointer.targetY;
+          }
+          pointer.active = true;
+        }
+
+        function clearPointer() {
+          pointer.active = false;
+          pointer.x = -1000;
+          pointer.y = -1000;
+          pointer.targetX = -1000;
+          pointer.targetY = -1000;
+        }
+
+        function restart() {
+          cancelAnimationFrame(animationFrame);
+          draw(performance.now());
+        }
+
+        function handleVisibility() {
+          isVisible = !document.hidden;
+          if (isVisible) restart();
+        }
+
+        hero.addEventListener("pointermove", setPointer, { passive: true });
+        hero.addEventListener("pointerleave", clearPointer, { passive: true });
+        window.addEventListener("resize", resize, { passive: true });
+        document.addEventListener("visibilitychange", handleVisibility);
+        reduceMotion.addEventListener("change", restart);
+
+        resize();
+      })();
+    </script>
+  </body>
+</html>
