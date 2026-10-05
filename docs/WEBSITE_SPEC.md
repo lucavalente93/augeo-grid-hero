@@ -38,6 +38,7 @@ O site precisa provar qualidade por direção de arte, protótipos, objetos 3D, 
 
 - Direção e identidade visual
 - Website estratégico
+- Social Media
 - Aquisição via Meta Ads
 - CRM, automações e integrações
 
@@ -45,13 +46,13 @@ O site precisa provar qualidade por direção de arte, protótipos, objetos 3D, 
 
 **Etapas públicas sugeridas:**
 
-1. Apresente seu negócio.
-2. Diagnóstico e entendimento do cenário.
+1. Apresente seu negócio via pré-formulário;
+2. Diagnóstico e entendimento do cenário numa conversa;
 3. Direcionamento e proposta.
 
 **Sobre:** [preencher]
 
-**CTA final:** [preencher]
+**CTA final:** Conte-nos sobre seu projeto!
 
 **Contato:** [preencher]
 
