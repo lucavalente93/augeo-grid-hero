@@ -41,7 +41,13 @@ O site precisa provar qualidade por direção de arte, protótipos, objetos 3D, 
 - Aquisição via Meta Ads
 - CRM, automações e integrações
 
-**Processo:** [preencher]
+**Processo público:** O processo deve ser curto e orientado ao comprador. O cliente apresenta o negócio, a AUGEO entende o cenário e devolve um direcionamento com proposta para decidir se faz sentido seguir. Não expor a estruturação interna do briefing como etapa independente.
+
+**Etapas públicas sugeridas:**
+
+1. Apresente seu negócio.
+2. Diagnóstico e entendimento do cenário.
+3. Direcionamento e proposta.
 
 **Sobre:** [preencher]
 
@@ -54,6 +60,8 @@ O site precisa provar qualidade por direção de arte, protótipos, objetos 3D, 
 O site vende uma capacidade integrada de estruturar presença digital. Os módulos de serviço devem reforçar o processo, sem criar a leitura de que a AUGEO é uma lista de serviços desconexos.
 
 **Mensagem-base:** Estruturamos a presença digital de negócios que já têm algo real para mostrar, conectando direção, website, aquisição e operação.
+
+**Regra comercial para a copy:** Não vender módulos avulsos como porta de entrada. Apresentar as frentes de serviço como soluções possíveis após diagnóstico.
 
 ## Assets
 
