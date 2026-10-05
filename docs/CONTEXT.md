@@ -6,7 +6,7 @@
 
 **Descrição curta:** Agência de direção, presença e operação digital.
 
-**Objetivo do website:** Validar socialmente a AUGEO, criar um canal de vendas de serviços e demonstrar a qualidade da agência pelo próprio website, enquanto ainda não há portfólio publicado.
+**Objetivo do website:** Criar o canal comercial inicial da AUGEO, explicar seu modelo de trabalho e demonstrar a qualidade da agência pelo próprio website enquanto ainda não há portfólio publicado.
 
 **Prioridade atual:** Estruturar digitalmente a empresa e preparar a futura captação de leads. O website é a prioridade imediata.
 
@@ -18,6 +18,8 @@
 
 **Princípio de design:** Toda escolha visual deve ser intencional. Uma peça pode existir apenas por razão estética, mas não por acidente. Propósito comercial e intenção visual são critérios diferentes.
 
+**Princípio visual:** Estrutura precisa, comportamento instável. Sistemas controlados — grades, vetores, módulos, notações e tipografia — podem receber interferência e deformação sem perder legibilidade ou intenção.
+
 ## Oferta
 
 A AUGEO entrega websites estratégicos, identidade visual, tráfego pago em Meta Ads, mídias gráficas, CRM, automações e integrações por webhook.
@@ -27,6 +29,8 @@ O site deve apresentar essas capacidades como partes de uma mesma atuação: est
 **Oferta de entrada:** A contratação começa por diagnóstico, não pela compra avulsa de módulos. A AUGEO entende o cenário do negócio e define se identidade visual, website, tráfego, CRM, automações ou uma combinação dessas frentes faz sentido.
 
 **Curadoria:** A agência é seletiva desde o início. A curadoria faz parte do processo comercial e deve aparecer como critério de trabalho no website.
+
+**Prova no estágio atual:** Enquanto não houver trabalhos publicados, a AUGEO não deve fabricar prova social por projetos fictícios, métricas, clientes ou depoimentos. A prova disponível é a qualidade da execução, a clareza do processo e a precisão da entrada comercial.
 
 ## Público
 
@@ -71,3 +75,8 @@ A AUGEO deve ser percebida como uma parceira de direção e implementação digi
 - Usar vocabulário técnico com naturalidade quando ele melhora a precisão; ajustar o nível de explicação ao repertório e à necessidade concreta do cliente.
 - Não inventar cases, resultados, clientes ou métricas.
 - Não assumir atendimento presencial ou produção local como padrão.
+- Não transformar as frentes de atuação em catálogo de serviços desconexos. Elas compõem uma mesma atuação e servem para orientar a qualificação e o escopo de cada projeto.
+
+## Escopo Digital Inicial
+
+A primeira presença institucional da AUGEO é uma SPA comercial. O foco é orientar o visitante até uma apresentação inicial do negócio; portfólio, prova social e conteúdo institucional expansivo entram quando houver material e necessidade reais.
