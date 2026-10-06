@@ -21,7 +21,7 @@ export default function App() {
             </button>
           </div>
           <div className="matrix-deck">
-            <KineticMatrix title="AUGEO" titleArtwork={augeoLettering} animateArtwork className="augeo-matrix" />
+            <KineticMatrix title="AUGEO" titleArtwork={augeoLettering} reactiveArtwork className="augeo-matrix" />
           </div>
         </section>
       </main>

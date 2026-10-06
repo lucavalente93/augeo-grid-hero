@@ -87,20 +87,14 @@ button:disabled:not(.cta) { cursor: default; opacity: .45; }
 .matrix-title .matrix-artwork-title { width: min(92%, 620px); }
 .matrix-artwork-stack { position: relative; display: block; width: 100%; }
 .matrix-artwork { display: block; width: 100%; height: auto; max-height: 70cqh; object-fit: contain; }
-.matrix-artwork-echo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; pointer-events: none; opacity: 0; animation: artwork-signal 7.2s steps(1, end) infinite; }
-.matrix-artwork-echo--top { clip-path: inset(25% 0 70%); }
-.matrix-artwork-echo--middle { clip-path: inset(52% 0 43%); animation-delay: -2.4s; }
-.matrix-artwork-echo--bottom { clip-path: inset(77% 0 18%); animation-delay: -4.8s; }
-@keyframes artwork-signal {
-  0%, 28%, 41%, 100% { transform: translateX(0); opacity: 0; }
-  30%, 33% { transform: translateX(2px); opacity: .72; }
-  36%, 38% { transform: translateX(-1px); opacity: .48; }
-}
+.matrix-artwork-reactive { position: absolute; inset: 0; width: 100%; height: 100%; visibility: hidden; pointer-events: none; }
+.matrix-artwork-stack.is-reactive .matrix-artwork { visibility: hidden; }
+.matrix-artwork-stack.is-reactive .matrix-artwork-reactive { visibility: visible; }
 @media (prefers-color-scheme: dark) {
-  :root:not(.light) .matrix-artwork, :root:not(.light) .matrix-artwork-echo { filter: invert(1); }
+  :root:not(.light) .matrix-artwork, :root:not(.light) .matrix-artwork-reactive { filter: invert(1); }
 }
-.dark .matrix-artwork, .dark .matrix-artwork-echo { filter: invert(1); }
-.light .matrix-artwork, .light .matrix-artwork-echo { filter: none; }
+.dark .matrix-artwork, .dark .matrix-artwork-reactive { filter: invert(1); }
+.light .matrix-artwork, .light .matrix-artwork-reactive { filter: none; }
 @media (max-width: 767px) {
   .nav { position: relative; height: 70px; padding: 0 20px; }
   .brand { width: 58px; height: 58px; }
@@ -112,5 +106,5 @@ button:disabled:not(.cta) { cursor: default; opacity: .45; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition: none !important; scroll-behavior: auto !important; }
-  .matrix-artwork-echo { display: none; animation: none; }
+  .matrix-artwork-reactive { display: none; }
 }

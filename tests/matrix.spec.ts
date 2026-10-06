@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { approach, MOTION, pulseStops, steppedProgress } from '../lib/matrix-motion';
+import { ARTWORK_WARP, approach, artworkShiftTargets, constrainArtworkShifts, MOTION, pulseStops, steppedProgress } from '../lib/matrix-motion';
 
 test('landing: canvas draws, reduced motion freezes it, pointer works, CTA is a placeholder', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
@@ -7,7 +7,7 @@ test('landing: canvas draws, reduced motion freezes it, pointer works, CTA is a 
   page.on('pageerror', (error) => errors.push(error.message));
   await page.goto('/');
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Ideias fortes, forma precisa.');
-  const canvas = page.locator('canvas');
+  const canvas = page.locator('.kinetic-matrix > canvas');
   await expect.poll(() => canvas.evaluate((node) => node.width)).toBeGreaterThan(0);
   const snapshot = () => canvas.evaluate((node) => node.toDataURL());
   const initial = await snapshot();
@@ -40,7 +40,7 @@ test('reduced motion stays static, survives resize, and follows explicit/system 
   await page.emulateMedia({ reducedMotion: 'reduce', colorScheme: 'light' });
   await page.goto('/?demo=matrix');
   await expect(page.locator('.kinetic-matrix button')).toHaveCount(0);
-  const canvas = page.locator('canvas');
+  const canvas = page.locator('.kinetic-matrix > canvas');
   const background = () => canvas.evaluate((node) => Array.from(node.getContext('2d')!.getImageData(5, 5, 1, 1).data));
   await expect.poll(background).toEqual([247, 247, 245, 255]);
   const lightTitleColor = await page.getByRole('heading', { name: 'TOPOLOGY' }).evaluate((node) => getComputedStyle(node).color);
@@ -76,6 +76,28 @@ test('return is monotonic without rebound; stepped pulses hold position', () => 
   expect(steppedProgress(1.001, stops)).toBe(1);
 });
 
+test('lettering warp remains bounded and maps source x in increasing order', () => {
+  const artwork = { x: 0, y: 0, width: 620, height: 134 };
+  const check = (shifts: Float32Array) => {
+    for (let col = 0; col < shifts.length; col++) {
+      expect(Math.abs(shifts[col])).toBeLessThanOrEqual(ARTWORK_WARP.maxShift);
+      if (col === 0) continue;
+      expect(Math.abs(shifts[col] - shifts[col - 1])).toBeLessThanOrEqual(ARTWORK_WARP.maxNeighborDelta + 0.00001);
+      const previousSourceX = (col - 1) * ARTWORK_WARP.step - shifts[col - 1];
+      const sourceX = col * ARTWORK_WARP.step - shifts[col];
+      expect(sourceX).toBeGreaterThan(previousSourceX);
+    }
+  };
+  const center = artworkShiftTargets(artwork, { x: 60, y: 67 }, [], MOTION.pointerRadius);
+  const lower = artworkShiftTargets(artwork, { x: 60, y: 190 }, [], MOTION.pointerRadius);
+  expect(Math.max(...center.map(Math.abs))).toBeGreaterThan(Math.max(...lower.map(Math.abs)));
+  check(center);
+  check(lower);
+  check(artworkShiftTargets(artwork, { x: -2000, y: -2000 },
+    [{ x: 60, y: 67, age: 0.4, radius: MOTION.impulseRadius }], MOTION.pointerRadius));
+  check(constrainArtworkShifts(new Float32Array([20, -20, 20, -20])));
+});
+
 test('matrix fits wide, square, tall and short containers', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto('/?demo=matrix');
@@ -90,7 +112,7 @@ test('matrix fits wide, square, tall and short containers', async ({ page }) => 
       parent.style.flexShrink = '0';
     }, [width, height]);
     await expect.poll(() => matrix.evaluate((element) => {
-      const canvas = element.querySelector('canvas')!;
+      const canvas = element.querySelector(':scope > canvas')!;
       return Math.abs(canvas.width - Math.round(element.getBoundingClientRect().width * Math.min(devicePixelRatio || 1, 2)));
     })).toBe(0);
     const bounds = await matrix.boundingBox();
@@ -114,8 +136,30 @@ test('small screens: both pages fit and touch interaction works', async ({ brows
     await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
     await expect(page.locator('.kinetic-matrix button')).toHaveCount(0);
     if (path === '/') await page.screenshot({ path: 'test-results/landing-mobile.png', fullPage: true });
-    const bounds = await page.locator('canvas').boundingBox();
-    await page.touchscreen.tap(bounds!.x + bounds!.width / 2, bounds!.y + bounds!.height / 2);
+    const bounds = await page.locator('.kinetic-matrix > canvas').boundingBox();
+    const artwork = path === '/' ? page.locator('.matrix-artwork-reactive') : null;
+    if (artwork) await expect(page.locator('.matrix-artwork-stack')).toHaveClass(/is-reactive/);
+    const resting = artwork ? await artwork.evaluate((canvas) => canvas.toDataURL()) : null;
+    let tapX = bounds!.x + bounds!.width / 2;
+    let tapY = bounds!.y + bounds!.height / 2;
+    if (artwork) {
+      const artBounds = await page.locator('.matrix-artwork-stack').boundingBox();
+      tapX = artBounds!.x + artBounds!.width * 62 / 584;
+      tapY = artBounds!.y + artBounds!.height * (116 - 11) / 126;
+      await page.mouse.move(tapX, tapY);
+      await expect.poll(async () => (await artwork.evaluate((canvas) => canvas.toDataURL())) === resting).toBe(false);
+      await page.locator('.matrix-artwork-stack').screenshot({ path: 'test-results/lettering-a-mobile-hover.png' });
+      await page.mouse.move(0, 0);
+      await expect.poll(async () => (await artwork.evaluate((canvas) => canvas.toDataURL())) === resting,
+        { timeout: 3000 }).toBe(true);
+    }
+    await page.touchscreen.tap(tapX, tapY);
+    if (artwork) {
+      await expect.poll(async () => (await artwork.evaluate((canvas) => canvas.toDataURL())) === resting).toBe(false);
+      await page.locator('.matrix-artwork-stack').screenshot({ path: 'test-results/lettering-a-mobile-tap.png' });
+      await expect.poll(async () => (await artwork.evaluate((canvas) => canvas.toDataURL())) === resting,
+        { timeout: 4000 }).toBe(true);
+    }
   }
   await context.close();
 });
@@ -156,30 +200,118 @@ test('AUGEO artwork stays centered and follows light and dark themes', async ({ 
   }
 });
 
-test('AUGEO CRT interference moves subtly and stops for reduced motion', async ({ page }) => {
+test('AUGEO lettering shares pointer and click motion, then returns to rest', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto('/');
-  await page.addStyleTag({ content: '.kinetic-matrix canvas, .kinetic-matrix::after { visibility: hidden !important; }' });
-  const echo = page.locator('.matrix-artwork-echo--top');
-  await expect(echo).toHaveCSS('animation-name', 'artwork-signal');
-  const transforms = await echo.evaluate((element) => {
-    const animation = element.getAnimations()[0];
-    animation.pause();
-    animation.currentTime = 0;
-    const resting = getComputedStyle(element).transform;
-    animation.currentTime = 2300;
-    const shifted = getComputedStyle(element).transform;
-    animation.play();
-    return { resting, shifted };
+  await page.addStyleTag({ content: '.kinetic-matrix > canvas, .kinetic-matrix::after { visibility: hidden !important; }' });
+  const stack = page.locator('.matrix-artwork-stack');
+  const overlay = page.locator('.matrix-artwork-reactive');
+  await expect(stack).toHaveClass(/is-reactive/);
+  await expect(overlay).toBeVisible();
+  await expect(page.locator('.matrix-artwork')).toBeHidden();
+  const rowInk = () => overlay.evaluate((canvas) => {
+    const { width, height } = canvas;
+    const data = canvas.getContext('2d')!.getImageData(0, 0, width, height).data;
+    const rows: number[] = [];
+    for (let y = 0; y < height; y++) {
+      let count = 0;
+      for (let x = 0; x < width; x++) {
+        if (data[(y * width + x) * 4 + 3] > 128) count++;
+      }
+      rows.push(count);
+    }
+    return rows;
   });
-  expect(transforms.shifted).not.toBe(transforms.resting);
-  const frame = () => page.locator('.matrix-artwork-stack').screenshot();
-  const initial = await frame();
-  await expect.poll(async () => !(await frame()).equals(initial), { timeout: 6000 }).toBe(true);
+  const restingRows = await rowInk();
+  expect(restingRows.filter((count) => count > 0).length).toBeGreaterThan(restingRows.length / 2);
+  await page.screenshot({ path: 'test-results/lettering-reactive-rest.png', fullPage: true });
+  const frame = () => overlay.evaluate((canvas) => canvas.toDataURL());
+  const resting = await frame();
+  await page.waitForTimeout(350);
+  expect(await frame()).toBe(resting);
+
+  const bounds = await stack.boundingBox();
+  const x = bounds!.x + bounds!.width / 2;
+  const y = bounds!.y + bounds!.height / 2;
+  await page.mouse.move(x, y);
+  await expect.poll(async () => (await frame()) === resting).toBe(false);
+  expect((await rowInk()).map((count) => count > 0)).toEqual(restingRows.map((count) => count > 0));
+  await page.screenshot({ path: 'test-results/lettering-reactive-hover.png', fullPage: true });
+  await page.mouse.move(10, 110);
+  await expect.poll(async () => (await frame()) === resting, { timeout: 3000 }).toBe(true);
+
+  await page.mouse.move(x, y);
+  await page.mouse.down();
+  await page.mouse.up();
+  await page.mouse.move(10, 110);
+  await expect.poll(async () => (await frame()) === resting).toBe(false);
+  expect((await rowInk()).map((count) => count > 0)).toEqual(restingRows.map((count) => count > 0));
+  await expect.poll(async () => (await frame()) === resting, { timeout: 4000 }).toBe(true);
+
+  await page.emulateMedia({ colorScheme: 'dark' });
+  await expect(overlay).toHaveCSS('filter', 'invert(1)');
   await page.emulateMedia({ reducedMotion: 'reduce' });
-  await expect(echo).toBeHidden();
-  await page.waitForTimeout(100);
-  const frozen = await frame();
-  await page.waitForTimeout(2600);
-  expect((await frame()).equals(frozen)).toBe(true);
+  await expect(overlay).toBeHidden();
+  await expect(page.locator('.matrix-artwork')).toBeVisible();
+  const staticFrame = await stack.screenshot();
+  await page.mouse.move(x, y);
+  await page.mouse.click(x, y);
+  await page.waitForTimeout(300);
+  expect((await stack.screenshot()).equals(staticFrame)).toBe(true);
+});
+
+test('A opening stays clear while its stem and counter react in the dark hero', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference', colorScheme: 'dark' });
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/');
+  const stack = page.locator('.matrix-artwork-stack');
+  const overlay = page.locator('.matrix-artwork-reactive');
+  await expect(stack).toHaveClass(/is-reactive/);
+
+  const opening = () => overlay.evaluate((canvas) => {
+    const { width, height } = canvas;
+    const data = canvas.getContext('2d')!.getImageData(0, 0, width, height).data;
+    let rows = 0, openRows = 0;
+    for (let y = Math.ceil((104 - 11) / 126 * height); y < Math.floor((126 - 11) / 126 * height); y++) {
+      let runs = 0, inInk = false;
+      for (let x = Math.floor(10 / 584 * width); x < Math.ceil(115 / 584 * width); x++) {
+        const ink = data[(y * width + x) * 4 + 3] > 128;
+        if (ink && !inInk) runs++;
+        inInk = ink;
+      }
+      if (runs) {
+        rows++;
+        if (runs === 2) openRows++;
+      }
+    }
+    return { rows, openRows };
+  });
+
+  const rest = await overlay.evaluate((canvas) => canvas.toDataURL());
+  const isolationCSS = '.kinetic-matrix { background: #06070a !important; } .kinetic-matrix > canvas, .kinetic-matrix::after { visibility: hidden !important; }';
+  let isolation = await page.addStyleTag({ content: isolationCSS });
+  await stack.screenshot({ path: 'test-results/lettering-a-rest-dark.png' });
+  await isolation.evaluate((style) => style.remove());
+  const restOpening = await opening();
+  expect(restOpening.rows).toBeGreaterThan(8);
+  expect(restOpening.openRows).toBe(restOpening.rows);
+  const bounds = await stack.boundingBox();
+  for (const [name, svgX, svgY] of [
+    ['stem', 27, 116],
+    ['counter', 62, 116],
+  ] as const) {
+    await page.mouse.move(bounds!.x + bounds!.width * svgX / 584,
+      bounds!.y + bounds!.height * (svgY - 11) / 126);
+    await expect.poll(async () => (await overlay.evaluate((canvas) => canvas.toDataURL())) === rest).toBe(false);
+    await page.waitForTimeout(350);
+    expect(await opening()).toEqual(restOpening);
+    isolation = await page.addStyleTag({ content: isolationCSS });
+    await stack.screenshot({ path: `test-results/lettering-a-${name}-dark.png` });
+    await isolation.evaluate((style) => style.remove());
+    await page.screenshot({ path: `test-results/hero-a-${name}-dark.png`, fullPage: true });
+  }
+  await page.mouse.move(10, 110);
+  await expect.poll(async () => (await overlay.evaluate((canvas) => canvas.toDataURL())) === rest,
+    { timeout: 3000 }).toBe(true);
 });

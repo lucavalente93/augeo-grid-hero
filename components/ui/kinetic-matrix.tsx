@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, type PointerEvent } from 'react';
 import { cn } from '@/lib/utils';
-import { MOTION, approach, randomBetween, pulseStops, steppedProgress } from '@/lib/matrix-motion';
+import { ARTWORK_WARP, MOTION, approach, artworkShiftTargets, constrainArtworkShifts, displacementAt, randomBetween, pulseStops, steppedProgress, type MotionWave } from '@/lib/matrix-motion';
 
 interface MatrixNode {
   x: number; y: number; baseX: number; baseY: number;
@@ -11,17 +11,19 @@ interface MatrixNode {
 interface Pulse {
   from: number; to: number; age: number; duration: number; stops: number[];
 }
-interface Wave { x: number; y: number; age: number; radius: number }
 export interface KineticMatrixProps {
   title?: string;
   titleArtwork?: string;
-  animateArtwork?: boolean;
+  reactiveArtwork?: boolean;
   className?: string;
 }
 
-export function KineticMatrix({ title = 'TOPOLOGY', titleArtwork, animateArtwork = false, className = '' }: KineticMatrixProps) {
+export function KineticMatrix({ title = 'TOPOLOGY', titleArtwork, reactiveArtwork = false, className = '' }: KineticMatrixProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const artworkRef = useRef<HTMLImageElement>(null);
+  const artworkCanvasRef = useRef<HTMLCanvasElement>(null);
+  const [artworkReady, setArtworkReady] = useState(false);
   const [isRunning, setIsRunning] = useState(() =>
     typeof window === 'undefined' || !window.matchMedia('(prefers-reduced-motion: reduce)').matches);
   const runningRef = useRef(isRunning);
@@ -45,17 +47,121 @@ export function KineticMatrix({ title = 'TOPOLOGY', titleArtwork, animateArtwork
     if (!container || !canvas) return;
     const ctx = canvas.getContext('2d', { alpha: false });
     if (!ctx) return;
+    const artworkImage = reactiveArtwork ? artworkRef.current : null;
+    const artworkCanvas = reactiveArtwork ? artworkCanvasRef.current : null;
+    const artworkCtx = artworkCanvas?.getContext('2d') ?? null;
+    const artworkSource = artworkCtx ? document.createElement('canvas') : null;
+    const artworkSourceCtx = artworkSource?.getContext('2d') ?? null;
 
     let nodes: MatrixNode[] = [];
     let pulses: Pulse[] = [];
-    let waves: Wave[] = [];
+    let waves: MotionWave[] = [];
     let width = 0, height = 0, rows = 0, cols = 0, spacing = MOTION.spacing;
+    let artworkWidth = 0, artworkHeight = 0, artworkX = 0, artworkY = 0;
+    let artworkSourcePixels: ImageData | null = null;
+    let artworkFrame: ImageData | null = null;
+    let warpShifts = new Float32Array(0);
+    let artworkIdle = true, artworkElapsed = 0;
     let clock = 0, nextPulse = randomBetween(MOTION.pulseInterval), quietUntil = 0;
     let lastImpulse = -Infinity;
     let inspected = -1, inspectedSince = 0;
     let dark = false, visible = true;
     let frame = 0, accumulator = 0, lastTime = 0;
     const theme = window.matchMedia('(prefers-color-scheme: dark)');
+
+    function drawArtwork(dt: number, force = false) {
+      if (!artworkCtx || !artworkSourcePixels || !artworkFrame || !artworkWidth || !artworkHeight) return;
+      const pointer = pointerRef.current;
+      const radius = Math.min(MOTION.pointerRadius, Math.min(width, height) * 0.3);
+      const nearArtwork = pointer.x >= artworkX - radius && pointer.x <= artworkX + artworkWidth + radius &&
+        pointer.y >= artworkY - radius && pointer.y <= artworkY + artworkHeight + radius;
+      if (artworkIdle && !nearArtwork && !waves.length && !force) return;
+      if (artworkIdle && !nearArtwork && !waves.length) {
+        artworkCtx.putImageData(artworkSourcePixels, 0, 0);
+        return;
+      }
+
+      // One horizontal map serves every scanline. The pointer's vertical
+      // distance still changes its strength through the shared motion field.
+      const targets = artworkShiftTargets(
+        { x: artworkX, y: artworkY, width: artworkWidth, height: artworkHeight },
+        pointer, waves, radius,
+      );
+      for (let col = 0; col < warpShifts.length; col++) {
+        warpShifts[col] = approach(warpShifts[col], targets[col],
+          targets[col] || waves.length ? MOTION.response : MOTION.recovery, dt);
+      }
+      constrainArtworkShifts(warpShifts);
+      const moving = warpShifts.some((shift) => shift !== 0);
+
+      artworkIdle = !moving && !waves.length;
+      if (artworkIdle) {
+        artworkCtx.putImageData(artworkSourcePixels, 0, 0);
+        return;
+      }
+
+      const source = artworkSourcePixels.data;
+      const output = artworkFrame.data;
+      const bitmapWidth = artworkSourcePixels.width;
+      const bitmapHeight = artworkSourcePixels.height;
+      const scaleX = bitmapWidth / artworkWidth;
+      for (let y = 0; y < bitmapHeight; y++) {
+        const pixelRowStart = y * bitmapWidth;
+        for (let x = 0; x < bitmapWidth; x++) {
+          const cssX = (x + 0.5) / scaleX;
+          const col = Math.min(warpShifts.length - 2, Math.floor(cssX / ARTWORK_WARP.step));
+          const colMix = Math.min(1, (cssX - col * ARTWORK_WARP.step) / ARTWORK_WARP.step);
+          const shift = warpShifts[col] * (1 - colMix) + warpShifts[col + 1] * colMix;
+          const sourceX = x - shift * scaleX;
+          const left = Math.floor(sourceX);
+          const mix = sourceX - left;
+          const leftIndex = left >= 0 && left < bitmapWidth ? (pixelRowStart + left) * 4 : -1;
+          const rightIndex = left + 1 >= 0 && left + 1 < bitmapWidth ? (pixelRowStart + left + 1) * 4 : -1;
+          const leftAlpha = leftIndex < 0 ? 0 : source[leftIndex + 3] * (1 - mix);
+          const rightAlpha = rightIndex < 0 ? 0 : source[rightIndex + 3] * mix;
+          const alpha = leftAlpha + rightAlpha;
+          const target = (pixelRowStart + x) * 4;
+          output[target + 3] = alpha;
+          if (alpha) {
+            // Interpolate premultiplied color to avoid light or dark fringes at
+            // the transparent edge of a scanline.
+            for (let channel = 0; channel < 3; channel++) {
+              output[target + channel] = ((leftIndex < 0 ? 0 : source[leftIndex + channel] * leftAlpha) +
+                (rightIndex < 0 ? 0 : source[rightIndex + channel] * rightAlpha)) / alpha;
+            }
+          } else {
+            output[target] = output[target + 1] = output[target + 2] = 0;
+          }
+        }
+      }
+      artworkCtx.putImageData(artworkFrame, 0, 0);
+    }
+
+    function sizeArtwork() {
+      if (!artworkCtx || !artworkCanvas || !artworkSource || !artworkSourceCtx || !artworkImage || !container ||
+        !artworkImage.complete || !artworkImage.naturalWidth) return;
+      const rect = artworkImage.getBoundingClientRect();
+      const containerRect = container.getBoundingClientRect();
+      artworkWidth = rect.width;
+      artworkHeight = rect.height;
+      artworkX = rect.x - containerRect.x;
+      artworkY = rect.y - containerRect.y;
+      if (!artworkWidth || !artworkHeight) return;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      artworkCanvas.width = Math.round(artworkWidth * dpr);
+      artworkCanvas.height = Math.round(artworkHeight * dpr);
+      artworkCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      artworkSource.width = artworkCanvas.width;
+      artworkSource.height = artworkCanvas.height;
+      artworkSourceCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      artworkSourceCtx.drawImage(artworkImage, 0, 0, artworkWidth, artworkHeight);
+      artworkSourcePixels = artworkSourceCtx.getImageData(0, 0, artworkSource.width, artworkSource.height);
+      artworkFrame = artworkCtx.createImageData(artworkSource.width, artworkSource.height);
+      warpShifts = new Float32Array(Math.ceil(artworkWidth / ARTWORK_WARP.step) + 1);
+      artworkIdle = true;
+      drawArtwork(0, true);
+      setArtworkReady(true);
+    }
 
     function draw() {
       if (!ctx) return;
@@ -132,27 +238,11 @@ export function KineticMatrix({ title = 'TOPOLOGY', titleArtwork, animateArtwork
       for (let i = 0; i < nodes.length; i++) {
         const node = nodes[i];
         // Rest positions avoid feedback between the cursor and displaced points.
-        const dx = node.baseX - pointer.x, dy = node.baseY - pointer.y;
-        const distance = Math.hypot(dx, dy);
-        const influence = Math.max(0, 1 - distance / Math.min(MOTION.pointerRadius, Math.min(width, height) * 0.3));
-        const displacement = MOTION.displacement * influence * influence;
-        let tx = node.baseX + (distance ? dx / distance : 0) * displacement;
-        let ty = node.baseY + (distance ? dy / distance : 0) * displacement;
-        let waveTension = 0;
-        for (const wave of waves) {
-          const wx = node.baseX - wave.x, wy = node.baseY - wave.y;
-          const wd = Math.hypot(wx, wy);
-          const age = wave.age / MOTION.impulseDuration;
-          const band = Math.max(0, 1 - Math.abs(wd - wave.radius * age) / 80);
-          const strength = Math.sin(band * Math.PI / 2) ** 2 *
-            Math.min(1, wave.age / 0.16) * (1 - age * 0.65);
-          tx += (wd ? wx / wd : 0) * MOTION.impulseDisplacement * strength;
-          ty += (wd ? wy / wd : 0) * MOTION.impulseDisplacement * strength;
-          waveTension = Math.max(waveTension, strength);
-        }
-        node.x = approach(node.x, tx, influence || waveTension ? MOTION.response : MOTION.recovery, dt);
-        node.y = approach(node.y, ty, influence || waveTension ? MOTION.response : MOTION.recovery, dt);
-        node.tension = Math.min(1, Math.max(influence * 0.9, waveTension, node.tension - dt * 1.2));
+        const field = displacementAt({ x: node.baseX, y: node.baseY }, pointer, waves,
+          Math.min(MOTION.pointerRadius, Math.min(width, height) * 0.3));
+        node.x = approach(node.x, node.baseX + field.x, field.influence || field.waveTension ? MOTION.response : MOTION.recovery, dt);
+        node.y = approach(node.y, node.baseY + field.y, field.influence || field.waveTension ? MOTION.response : MOTION.recovery, dt);
+        node.tension = Math.min(1, Math.max(field.influence * 0.9, field.waveTension, node.tension - dt * 1.2));
         const visualDistance = Math.hypot(node.x - pointer.x, node.y - pointer.y);
         if (visualDistance < nearestDistance) { nearest = i; nearestDistance = visualDistance; }
       }
@@ -182,7 +272,9 @@ export function KineticMatrix({ title = 'TOPOLOGY', titleArtwork, animateArtwork
     function animate(now: number) {
       frame = 0;
       if (!runningRef.current || !visible || document.hidden) return;
-      accumulator += Math.min((now - lastTime) / 1000, 0.1);
+      const elapsed = Math.min((now - lastTime) / 1000, 0.1);
+      accumulator += elapsed;
+      artworkElapsed += elapsed;
       lastTime = now;
       let changed = false;
       while (accumulator >= MOTION.step) {
@@ -190,7 +282,13 @@ export function KineticMatrix({ title = 'TOPOLOGY', titleArtwork, animateArtwork
         accumulator -= MOTION.step;
         changed = true;
       }
-      if (changed) draw();
+      if (changed) {
+        draw();
+        if (artworkElapsed >= 1 / 30) {
+          drawArtwork(artworkElapsed);
+          artworkElapsed = 0;
+        }
+      }
       frame = requestAnimationFrame(animate);
     }
 
@@ -199,12 +297,13 @@ export function KineticMatrix({ title = 'TOPOLOGY', titleArtwork, animateArtwork
       frame = 0;
       lastTime = performance.now();
       accumulator = 0;
+      artworkElapsed = 0;
       if (runningRef.current && visible && !document.hidden) frame = requestAnimationFrame(animate);
     }
 
-    const resize = new ResizeObserver(([entry]) => {
-      width = entry.contentRect.width;
-      height = entry.contentRect.height;
+    const resize = new ResizeObserver(() => {
+      width = container.clientWidth;
+      height = container.clientHeight;
       if (!width || !height) return;
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
       canvas.width = Math.round(width * dpr);
@@ -223,9 +322,15 @@ export function KineticMatrix({ title = 'TOPOLOGY', titleArtwork, animateArtwork
       inspected = -1;
       nextPulse = clock + randomBetween(MOTION.pulseInterval);
       draw();
+      sizeArtwork();
       syncLoop();
     });
     resize.observe(container);
+    if (artworkImage) {
+      resize.observe(artworkImage);
+      artworkImage.addEventListener('load', sizeArtwork);
+      if (artworkImage.complete) sizeArtwork();
+    }
 
     function updateTheme() {
       const classes = document.documentElement.classList;
@@ -258,6 +363,7 @@ export function KineticMatrix({ title = 'TOPOLOGY', titleArtwork, animateArtwork
     return () => {
       cancelAnimationFrame(frame);
       resize.disconnect();
+      artworkImage?.removeEventListener('load', sizeArtwork);
       visibility.disconnect();
       themeObserver.disconnect();
       theme.removeEventListener('change', updateTheme);
@@ -265,7 +371,7 @@ export function KineticMatrix({ title = 'TOPOLOGY', titleArtwork, animateArtwork
       container.removeEventListener('matrix-running-change', syncLoop);
       impulseRef.current = () => {};
     };
-  }, []);
+  }, [reactiveArtwork]);
 
   useEffect(() => {
     containerRef.current?.dispatchEvent(new Event('matrix-running-change'));
@@ -292,15 +398,9 @@ export function KineticMatrix({ title = 'TOPOLOGY', titleArtwork, animateArtwork
         <h2 className={cn('font-mono font-black tracking-tighter uppercase text-neutral-900 dark:text-white', titleArtwork && 'matrix-artwork-title')}
           aria-label={titleArtwork ? title : undefined}>
           {titleArtwork ? (
-            <span className="matrix-artwork-stack">
-              <img className="matrix-artwork" src={titleArtwork} alt="" aria-hidden="true" />
-              {animateArtwork && (
-                <>
-                  <img className="matrix-artwork-echo matrix-artwork-echo--top" src={titleArtwork} alt="" aria-hidden="true" />
-                  <img className="matrix-artwork-echo matrix-artwork-echo--middle" src={titleArtwork} alt="" aria-hidden="true" />
-                  <img className="matrix-artwork-echo matrix-artwork-echo--bottom" src={titleArtwork} alt="" aria-hidden="true" />
-                </>
-              )}
+            <span className={cn('matrix-artwork-stack', reactiveArtwork && isRunning && artworkReady && 'is-reactive')}>
+              <img ref={artworkRef} className="matrix-artwork" src={titleArtwork} alt="" aria-hidden="true" />
+              {reactiveArtwork && <canvas ref={artworkCanvasRef} className="matrix-artwork-reactive" aria-hidden="true" />}
             </span>
           ) : title}
         </h2>
