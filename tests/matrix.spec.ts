@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { ARTWORK_WARP, approach, artworkShiftTargets, constrainArtworkShifts, MOTION, pulseStops, steppedProgress } from '../lib/matrix-motion';
 
-test('landing: canvas draws, reduced motion freezes it, pointer works, CTA is a placeholder', async ({ page }) => {
+test('landing: canvas draws, reduced motion freezes it, pointer works, explore cue is present', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
@@ -32,8 +32,45 @@ test('landing: canvas draws, reduced motion freezes it, pointer works, CTA is a 
   expect(await snapshot()).not.toBe(settled);
   await expect(page.getByRole('heading', { level: 1 })).toBeInViewport();
   await page.screenshot({ path: 'test-results/landing-desktop.png', fullPage: true });
-  await expect(page.getByRole('button', { name: 'Falar com a Augeo' })).toBeDisabled();
+  await expect(page.getByRole('button', { name: 'Explore aqui' })).toBeVisible();
+  await expect(page.locator('.explore svg')).toHaveCount(0);
+  await expect(page.locator('.explore-label .explore-word')).toHaveText(['EXPLORE', 'AQUI']);
+  expect(await page.evaluate(() => document.fonts.check('16px "Share Tech Mono"'))).toBe(true);
+  await expect(page.getByRole('button', { name: 'Falar com a Augeo' })).toHaveCount(0);
   expect(errors).toEqual([]);
+});
+
+test('hero typography fits a short viewport and enlarged text', async ({ page }) => {
+  await page.setViewportSize({ width: 900, height: 600 });
+  await page.goto('/');
+  await page.evaluate(() => document.fonts.ready);
+  const intro = await page.locator('.intro').boundingBox();
+  const explore = await page.locator('.explore').boundingBox();
+  expect(explore!.y).toBeGreaterThan(intro!.y + intro!.height);
+
+  await page.setViewportSize({ width: 320, height: 740 });
+  await page.addStyleTag({ content: 'html { font-size: 200%; }' });
+  await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(320);
+  const heading = page.getByRole('heading', { level: 1 });
+  await expect(heading).toBeVisible();
+  expect((await heading.boundingBox())!.height).toBeLessThan(350);
+});
+
+test('explore cue reaches the next section by keyboard and respects reduced motion', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/');
+  const explore = page.getByRole('button', { name: 'Explore aqui' });
+  await expect(explore.locator('.explore-scan')).toBeHidden();
+  await page.evaluate(() => {
+    const section = document.createElement('section');
+    section.id = 'next-content';
+    section.style.height = '500px';
+    document.querySelector('main')!.append(section);
+  });
+  await explore.focus();
+  await page.keyboard.press('Enter');
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(0);
+  await expect(page.locator('#next-content')).toBeInViewport();
 });
 
 test('reduced motion stays static, survives resize, and follows explicit/system themes', async ({ page }) => {
@@ -136,6 +173,7 @@ test('small screens: both pages fit and touch interaction works', async ({ brows
     await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
     await expect(page.locator('.kinetic-matrix button')).toHaveCount(0);
     if (path === '/') await page.screenshot({ path: 'test-results/landing-mobile.png', fullPage: true });
+    await page.locator('.kinetic-matrix').scrollIntoViewIfNeeded();
     const bounds = await page.locator('.kinetic-matrix > canvas').boundingBox();
     const artwork = path === '/' ? page.locator('.matrix-artwork-reactive') : null;
     if (artwork) await expect(page.locator('.matrix-artwork-stack')).toHaveClass(/is-reactive/);

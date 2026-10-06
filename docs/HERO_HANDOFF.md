@@ -8,7 +8,16 @@
 
 ## PENDENTE NO HERO
 
-- Retirar o botão CTA “Falar com a Augeo”, atualmente desabilitado.
-- Criar **“CLICK TO EXPLORE”** no canto inferior esquerdo da parte clara do hero. O texto deve ser pequeno, semitransparente e verticalizado com uma letra por linha e espaço entre as palavras. A tipografia deve seguir a construção modular por linhas do anexo de referência.
-- Uma listra estreita de opacidade deve percorrer as letras de cima para baixo para indicar que o texto é interativo, sem glow difuso.
-- Ao clicar, tocar ou acionar pelo teclado, a peça deve rolar até a próxima seção de conteúdo. Como o protótipo ainda contém apenas o hero, essa ação permanece pendente até existir um destino real.
+- Conectar **“EXPLORE AQUI”** à próxima seção de conteúdo quando ela existir. O botão já procura a seção seguinte e rola até ela por clique, toque ou teclado.
+
+## IMPLEMENTADO NESTA ETAPA
+
+- Removido o CTA desabilitado “Falar com a Augeo”.
+- Adicionado **“EXPLORE AQUI”** no canto inferior esquerdo da parte clara do hero, com uma letra por linha e espaço entre as palavras.
+- Letras renderizadas como texto em Share Tech Mono, com uma por linha, e faixa estreita de opacidade que percorre a coluna sem glow. A faixa para em `prefers-reduced-motion`.
+- Título e texto de apoio usam Hanken Grotesk local. O título é sólido, em peso 700, para contrastar com o lettering AUGEO listrado/CRT; Archivo está incorporada como alternativa para o título caso a composição mude.
+- As fontes são hospedadas localmente, com suas licenças em `src/assets/fonts/`.
+
+## REFERÊNCIA VISUAL
+
+- Pôster BRUTALISMUS: `/home/luca/augeo/modular-bw-landing/src/moodboard-modular/11_240492466_1645658692307797_1961337462483073695_....jpg`.
