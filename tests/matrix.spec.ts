@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { approach, MOTION, pulseStops, steppedProgress } from '../lib/matrix-motion';
 
-test('landing: canvas draws, pause freezes, run resumes, pointer works, CTA is a placeholder', async ({ page }) => {
+test('landing: canvas draws, reduced motion freezes it, pointer works, CTA is a placeholder', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
@@ -12,17 +12,15 @@ test('landing: canvas draws, pause freezes, run resumes, pointer works, CTA is a
   const snapshot = () => canvas.evaluate((node) => node.toDataURL());
   const initial = await snapshot();
   await expect.poll(snapshot).not.toBe(initial);
-  await page.getByRole('button', { name: 'Pausar animação' }).click();
-  await expect(page.getByRole('button', { name: 'Iniciar animação' })).toBeVisible();
+  await expect(page.locator('.kinetic-matrix button')).toHaveCount(0);
+  await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.waitForTimeout(100);
   const frozen = await snapshot();
   await page.screenshot({ path: 'test-results/landing-desktop.png', fullPage: true });
   await page.waitForTimeout(200);
   expect(await snapshot()).toBe(frozen);
-  await expect(page.getByRole('button', { name: 'Disparar onda' })).toBeDisabled();
-  await page.getByRole('button', { name: 'Iniciar animação' }).click();
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
   await expect.poll(snapshot).not.toBe(frozen);
-  await page.getByRole('button', { name: 'Disparar onda' }).click();
   const bounds = await canvas.boundingBox();
   await page.mouse.move(bounds!.x + bounds!.width / 2, bounds!.y + bounds!.height / 2);
   await page.mouse.down();
@@ -41,7 +39,7 @@ test('landing: canvas draws, pause freezes, run resumes, pointer works, CTA is a
 test('reduced motion stays static, survives resize, and follows explicit/system themes', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce', colorScheme: 'light' });
   await page.goto('/?demo=matrix');
-  await expect(page.getByRole('button', { name: 'Iniciar animação' })).toBeVisible();
+  await expect(page.locator('.kinetic-matrix button')).toHaveCount(0);
   const canvas = page.locator('canvas');
   const background = () => canvas.evaluate((node) => Array.from(node.getContext('2d')!.getImageData(5, 5, 1, 1).data));
   await expect.poll(background).toEqual([247, 247, 245, 255]);
@@ -78,7 +76,7 @@ test('return is monotonic without rebound; stepped pulses hold position', () => 
   expect(steppedProgress(1.001, stops)).toBe(1);
 });
 
-test('matrix fits wide, square, tall and short containers while running and paused', async ({ page }) => {
+test('matrix fits wide, square, tall and short containers', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto('/?demo=matrix');
   const matrix = page.locator('.kinetic-matrix');
@@ -89,16 +87,17 @@ test('matrix fits wide, square, tall and short containers while running and paus
       parent.style.height = size[1] + 'px';
       parent.style.maxWidth = 'none';
       parent.style.border = '0';
+      parent.style.flexShrink = '0';
     }, [width, height]);
-    await expect.poll(() => matrix.locator('canvas').evaluate((node) => node.width)).toBe(width);
+    await expect.poll(() => matrix.evaluate((element) => {
+      const canvas = element.querySelector('canvas')!;
+      return Math.abs(canvas.width - Math.round(element.getBoundingClientRect().width * Math.min(devicePixelRatio || 1, 2)));
+    })).toBe(0);
     const bounds = await matrix.boundingBox();
     const title = await matrix.getByRole('heading').boundingBox();
     expect(title!.width).toBeLessThan(bounds!.width);
     expect(title!.height).toBeLessThan(bounds!.height);
-    await matrix.hover();
-    await page.getByRole('button', { name: 'Pausar animação' }).click();
     await page.screenshot({ path: 'test-results/proportion-' + width + 'x' + height + '.png' });
-    await page.getByRole('button', { name: 'Iniciar animação' }).click();
   }
   await page.goto('/');
   const bounds = await page.locator('.matrix-deck').boundingBox();
@@ -107,18 +106,80 @@ test('matrix fits wide, square, tall and short containers while running and paus
   expect(bounds!.width / 1440).toBeCloseTo(0.6);
 });
 
-test('small screens: both pages fit and touch controls work', async ({ browser }) => {
+test('small screens: both pages fit and touch interaction works', async ({ browser }) => {
   const context = await browser.newContext({ viewport: { width: 320, height: 740 }, isMobile: true, hasTouch: true });
   const page = await context.newPage();
   for (const path of ['/', '/?demo=matrix']) {
     await page.goto('http://127.0.0.1:5173' + path);
     await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
-    await page.getByRole('button', { name: 'Pausar animação' }).tap();
-    await expect(page.getByRole('button', { name: 'Iniciar animação' })).toBeVisible();
+    await expect(page.locator('.kinetic-matrix button')).toHaveCount(0);
     if (path === '/') await page.screenshot({ path: 'test-results/landing-mobile.png', fullPage: true });
-    await page.getByRole('button', { name: 'Iniciar animação' }).tap();
     const bounds = await page.locator('canvas').boundingBox();
     await page.touchscreen.tap(bounds!.x + bounds!.width / 2, bounds!.y + bounds!.height / 2);
   }
   await context.close();
+});
+
+test('AUGEO artwork stays centered and follows light and dark themes', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce', colorScheme: 'light' });
+  for (const [width, height] of [[1440, 900], [320, 740]]) {
+    await page.setViewportSize({ width, height });
+    await page.goto('/');
+    const deck = page.locator('.matrix-deck');
+    const artwork = page.locator('.matrix-artwork');
+    await expect(page.getByRole('heading', { name: 'AUGEO' })).toBeVisible();
+    await expect(artwork).toHaveJSProperty('complete', true);
+    const { deckBounds, artBounds, naturalWidth } = await artwork.evaluate((image) => ({
+      deckBounds: image.closest('.matrix-deck')!.getBoundingClientRect().toJSON(),
+      artBounds: image.getBoundingClientRect().toJSON(),
+      naturalWidth: image.naturalWidth,
+    }));
+    expect(naturalWidth).toBeGreaterThan(0);
+    expect(artBounds.width).toBeGreaterThan(width === 320 ? 250 : 600);
+    expect(Math.abs((artBounds.x + artBounds.width / 2) - (deckBounds.x + deckBounds.width / 2))).toBeLessThan(1);
+    expect(Math.abs((artBounds.y + artBounds.height / 2) - (deckBounds.y + deckBounds.height / 2))).toBeLessThan(1);
+    await expect(artwork).toHaveCSS('filter', 'none');
+    const lightCrt = await deck.locator('.kinetic-matrix').evaluate((element) => {
+      const style = getComputedStyle(element, '::after');
+      return { background: style.backgroundImage, pointerEvents: style.pointerEvents };
+    });
+    expect(lightCrt.background).toContain('repeating-linear-gradient');
+    expect(lightCrt.pointerEvents).toBe('none');
+    await page.screenshot({ path: `test-results/lettering-light-${width}.png`, fullPage: true });
+    await page.emulateMedia({ colorScheme: 'dark' });
+    await expect(artwork).toHaveCSS('filter', 'invert(1)');
+    const darkCrt = await deck.locator('.kinetic-matrix').evaluate((element) => getComputedStyle(element, '::after').backgroundImage);
+    expect(darkCrt).not.toBe(lightCrt.background);
+    await page.screenshot({ path: `test-results/lettering-dark-${width}.png`, fullPage: true });
+    await page.emulateMedia({ colorScheme: 'light' });
+    await expect(deck).toBeVisible();
+  }
+});
+
+test('AUGEO CRT interference moves subtly and stops for reduced motion', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await page.goto('/');
+  await page.addStyleTag({ content: '.kinetic-matrix canvas, .kinetic-matrix::after { visibility: hidden !important; }' });
+  const echo = page.locator('.matrix-artwork-echo--top');
+  await expect(echo).toHaveCSS('animation-name', 'artwork-signal');
+  const transforms = await echo.evaluate((element) => {
+    const animation = element.getAnimations()[0];
+    animation.pause();
+    animation.currentTime = 0;
+    const resting = getComputedStyle(element).transform;
+    animation.currentTime = 2300;
+    const shifted = getComputedStyle(element).transform;
+    animation.play();
+    return { resting, shifted };
+  });
+  expect(transforms.shifted).not.toBe(transforms.resting);
+  const frame = () => page.locator('.matrix-artwork-stack').screenshot();
+  const initial = await frame();
+  await expect.poll(async () => !(await frame()).equals(initial), { timeout: 6000 }).toBe(true);
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await expect(echo).toBeHidden();
+  await page.waitForTimeout(100);
+  const frozen = await frame();
+  await page.waitForTimeout(2600);
+  expect((await frame()).equals(frozen)).toBe(true);
 });

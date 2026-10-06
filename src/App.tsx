@@ -1,6 +1,7 @@
 import { ArrowUpRight } from 'lucide-react';
 import KineticMatrix from '@/components/ui/kinetic-matrix';
 import logo from '@/logo/logo.png';
+import augeoLettering from '@/src/assets/augeo-lettering.svg';
 
 export default function App() {
   return (
@@ -20,7 +21,7 @@ export default function App() {
             </button>
           </div>
           <div className="matrix-deck">
-            <KineticMatrix title="AUGEO" className="augeo-matrix" />
+            <KineticMatrix title="AUGEO" titleArtwork={augeoLettering} animateArtwork className="augeo-matrix" />
           </div>
         </section>
       </main>

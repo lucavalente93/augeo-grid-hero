@@ -74,21 +74,33 @@ a:focus-visible, button:focus-visible { outline: 2px solid #ff482c; outline-offs
 button:disabled:not(.cta) { cursor: default; opacity: .45; }
 .matrix-deck { position: relative; min-width: 0; min-height: 100dvh; }
 .matrix-deck > .kinetic-matrix { position: absolute; inset: 0; }
-.kinetic-matrix { container-type: size; position: relative; width: 100%; height: 100%; overflow: hidden; user-select: none; background: #f7f7f5; }
+.kinetic-matrix { container-type: size; position: relative; isolation: isolate; width: 100%; height: 100%; overflow: hidden; user-select: none; background: #f7f7f5; --crt-line: rgba(17, 17, 17, .045); --crt-center: transparent; --crt-edge: rgba(17, 17, 17, .055); }
+.kinetic-matrix::after { content: ""; position: absolute; z-index: 1; inset: 0; pointer-events: none; background: radial-gradient(ellipse at center, var(--crt-center) 0%, transparent 55%, var(--crt-edge) 100%), repeating-linear-gradient(to bottom, transparent 0 3px, var(--crt-line) 3px 4px); }
+@media (prefers-color-scheme: dark) {
+  :root:not(.light) .kinetic-matrix { --crt-line: rgba(255, 255, 255, .085); --crt-center: rgba(255, 255, 255, .025); --crt-edge: rgba(0, 0, 0, .22); }
+}
+.dark .kinetic-matrix { --crt-line: rgba(255, 255, 255, .085); --crt-center: rgba(255, 255, 255, .025); --crt-edge: rgba(0, 0, 0, .22); }
+.light .kinetic-matrix { --crt-line: rgba(17, 17, 17, .045); --crt-center: transparent; --crt-edge: rgba(17, 17, 17, .055); }
 .matrix-title { position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; padding: 12%; }
 .matrix-title h2 { max-width: 100%; margin: 0; font-size: min(14cqw, 24cqh, 8rem); line-height: 1; overflow-wrap: anywhere; text-align: center; }
-.matrix-controls { position: absolute; top: clamp(8px, 3cqh, 24px); right: clamp(8px, 3cqw, 24px); display: flex; gap: 2px; opacity: 0; transition: opacity 120ms linear; }
-.matrix-controls button { display: grid; place-items: center; width: 36px; height: 36px; border: 0; color: #61615d; background: #f7f7f5e8; }
-.matrix-controls button:hover { color: #111; }
-.kinetic-matrix:hover .matrix-controls, .kinetic-matrix:focus-within .matrix-controls, .kinetic-matrix[data-running="false"] .matrix-controls { opacity: 1; }
-@media (hover: none), (pointer: coarse) {
-  .matrix-controls { opacity: 1; }
-  .matrix-controls button { width: 44px; height: 44px; }
+.augeo-matrix .matrix-title { padding: clamp(16px, 5cqw, 68px); }
+.matrix-title .matrix-artwork-title { width: min(92%, 620px); }
+.matrix-artwork-stack { position: relative; display: block; width: 100%; }
+.matrix-artwork { display: block; width: 100%; height: auto; max-height: 70cqh; object-fit: contain; }
+.matrix-artwork-echo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; pointer-events: none; opacity: 0; animation: artwork-signal 7.2s steps(1, end) infinite; }
+.matrix-artwork-echo--top { clip-path: inset(25% 0 70%); }
+.matrix-artwork-echo--middle { clip-path: inset(52% 0 43%); animation-delay: -2.4s; }
+.matrix-artwork-echo--bottom { clip-path: inset(77% 0 18%); animation-delay: -4.8s; }
+@keyframes artwork-signal {
+  0%, 28%, 41%, 100% { transform: translateX(0); opacity: 0; }
+  30%, 33% { transform: translateX(2px); opacity: .72; }
+  36%, 38% { transform: translateX(-1px); opacity: .48; }
 }
 @media (prefers-color-scheme: dark) {
-  :root:not(.light) .matrix-controls button { color: #bbb; background: #06070ae8; }
+  :root:not(.light) .matrix-artwork, :root:not(.light) .matrix-artwork-echo { filter: invert(1); }
 }
-.dark .matrix-controls button { color: #bbb; background: #06070ae8; }
+.dark .matrix-artwork, .dark .matrix-artwork-echo { filter: invert(1); }
+.light .matrix-artwork, .light .matrix-artwork-echo { filter: none; }
 @media (max-width: 767px) {
   .nav { position: relative; height: 70px; padding: 0 20px; }
   .brand { width: 58px; height: 58px; }
@@ -100,4 +112,5 @@ button:disabled:not(.cta) { cursor: default; opacity: .45; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition: none !important; scroll-behavior: auto !important; }
+  .matrix-artwork-echo { display: none; animation: none; }
 }

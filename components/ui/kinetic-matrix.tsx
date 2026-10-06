@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useRef, useState, type PointerEvent } from 'react';
-import { Sparkles, Play, Pause } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { MOTION, approach, randomBetween, pulseStops, steppedProgress } from '@/lib/matrix-motion';
 
@@ -15,10 +14,12 @@ interface Pulse {
 interface Wave { x: number; y: number; age: number; radius: number }
 export interface KineticMatrixProps {
   title?: string;
+  titleArtwork?: string;
+  animateArtwork?: boolean;
   className?: string;
 }
 
-export function KineticMatrix({ title = 'TOPOLOGY', className = '' }: KineticMatrixProps) {
+export function KineticMatrix({ title = 'TOPOLOGY', titleArtwork, animateArtwork = false, className = '' }: KineticMatrixProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isRunning, setIsRunning] = useState(() =>
@@ -26,7 +27,6 @@ export function KineticMatrix({ title = 'TOPOLOGY', className = '' }: KineticMat
   const runningRef = useRef(isRunning);
   const impulseRef = useRef<(x?: number, y?: number) => void>(() => {});
   const pointerRef = useRef({ x: -2000, y: -2000 });
-  const controlsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     runningRef.current = isRunning;
@@ -273,17 +273,15 @@ export function KineticMatrix({ title = 'TOPOLOGY', className = '' }: KineticMat
 
   function leave() { pointerRef.current = { x: -2000, y: -2000 }; }
   function move(event: PointerEvent<HTMLDivElement>) {
-    if (controlsRef.current?.contains(event.target as Node)) { leave(); return; }
     const rect = event.currentTarget.getBoundingClientRect();
     pointerRef.current = { x: event.clientX - rect.left, y: event.clientY - rect.top };
   }
 
   return (
     <div ref={containerRef} className={cn('kinetic-matrix', className)}
-      data-running={isRunning}
       onPointerMove={move}
       onPointerDown={(event) => {
-        if (event.button !== 0 || controlsRef.current?.contains(event.target as Node)) return;
+        if (event.button !== 0) return;
         move(event);
         impulseRef.current(pointerRef.current.x, pointerRef.current.y);
       }}
@@ -291,18 +289,21 @@ export function KineticMatrix({ title = 'TOPOLOGY', className = '' }: KineticMat
       onPointerLeave={leave} onPointerCancel={leave}>
       <canvas ref={canvasRef} aria-hidden="true" className="absolute inset-0 block h-full w-full cursor-crosshair" />
       <div className="matrix-title">
-        <h2 className="font-mono font-black tracking-tighter uppercase text-neutral-900 dark:text-white">{title}</h2>
-      </div>
-      <div ref={controlsRef} className="matrix-controls" onPointerEnter={leave}>
-        <button type="button" disabled={!isRunning} aria-label="Disparar onda" title="Disparar onda"
-          onClick={() => impulseRef.current()}>
-          <Sparkles size={13} aria-hidden="true" />
-        </button>
-        <button type="button" aria-label={isRunning ? 'Pausar animação' : 'Iniciar animação'}
-          title={isRunning ? 'Pausar animação' : 'Iniciar animação'} aria-pressed={!isRunning}
-          onClick={() => setIsRunning((previous) => !previous)}>
-          {isRunning ? <Pause size={13} aria-hidden="true" /> : <Play size={13} aria-hidden="true" />}
-        </button>
+        <h2 className={cn('font-mono font-black tracking-tighter uppercase text-neutral-900 dark:text-white', titleArtwork && 'matrix-artwork-title')}
+          aria-label={titleArtwork ? title : undefined}>
+          {titleArtwork ? (
+            <span className="matrix-artwork-stack">
+              <img className="matrix-artwork" src={titleArtwork} alt="" aria-hidden="true" />
+              {animateArtwork && (
+                <>
+                  <img className="matrix-artwork-echo matrix-artwork-echo--top" src={titleArtwork} alt="" aria-hidden="true" />
+                  <img className="matrix-artwork-echo matrix-artwork-echo--middle" src={titleArtwork} alt="" aria-hidden="true" />
+                  <img className="matrix-artwork-echo matrix-artwork-echo--bottom" src={titleArtwork} alt="" aria-hidden="true" />
+                </>
+              )}
+            </span>
+          ) : title}
+        </h2>
       </div>
     </div>
   );
