@@ -1,5 +1,5 @@
 import KineticMatrix from '@/components/ui/kinetic-matrix';
-import logo from '@/logo/logo.png';
+import symbol from '@/logo/symbol.png';
 import augeoLettering from '@/src/assets/augeo-lettering.svg';
 
 const exploreWords = ['EXPLORE', 'AQUI'];
@@ -26,7 +26,7 @@ export default function App() {
     <div className="page" id="inicio">
       <header className="nav" aria-label="Cabeçalho Augeo Creative">
         <a className="brand" href="#inicio" aria-label="Augeo Creative — início">
-          <img src={logo} alt="Augeo Creative" />
+          <img src={symbol} alt="Augeo Creative" />
         </a>
       </header>
       <main>

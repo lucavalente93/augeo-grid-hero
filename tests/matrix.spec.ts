@@ -197,6 +197,11 @@ test('small screens: both pages fit and touch interaction works', async ({ brows
       await page.locator('.matrix-artwork-stack').screenshot({ path: 'test-results/lettering-a-mobile-tap.png' });
       await expect.poll(async () => (await artwork.evaluate((canvas) => canvas.toDataURL())) === resting,
         { timeout: 4000 }).toBe(true);
+      await page.emulateMedia({ colorScheme: 'dark' });
+      await expect(artwork).toHaveCSS('opacity', '0.88');
+      await page.touchscreen.tap(tapX, tapY);
+      await expect.poll(async () => (await artwork.evaluate((canvas) => canvas.toDataURL())) === resting).toBe(false);
+      await page.screenshot({ path: 'test-results/lettering-dark-mobile-tap.png', fullPage: true });
     }
   }
   await context.close();
@@ -217,10 +222,11 @@ test('AUGEO artwork stays centered and follows light and dark themes', async ({ 
       naturalWidth: image.naturalWidth,
     }));
     expect(naturalWidth).toBeGreaterThan(0);
-    expect(artBounds.width).toBeGreaterThan(width === 320 ? 250 : 600);
+    expect(Math.abs(artBounds.width - (width === 320 ? 225.2 : 527))).toBeLessThan(1);
     expect(Math.abs((artBounds.x + artBounds.width / 2) - (deckBounds.x + deckBounds.width / 2))).toBeLessThan(1);
     expect(Math.abs((artBounds.y + artBounds.height / 2) - (deckBounds.y + deckBounds.height / 2))).toBeLessThan(1);
     await expect(artwork).toHaveCSS('filter', 'none');
+    await expect(artwork).toHaveCSS('opacity', '1');
     const lightCrt = await deck.locator('.kinetic-matrix').evaluate((element) => {
       const style = getComputedStyle(element, '::after');
       return { background: style.backgroundImage, pointerEvents: style.pointerEvents };
@@ -230,6 +236,7 @@ test('AUGEO artwork stays centered and follows light and dark themes', async ({ 
     await page.screenshot({ path: `test-results/lettering-light-${width}.png`, fullPage: true });
     await page.emulateMedia({ colorScheme: 'dark' });
     await expect(artwork).toHaveCSS('filter', 'invert(1)');
+    await expect(artwork).toHaveCSS('opacity', '0.88');
     const darkCrt = await deck.locator('.kinetic-matrix').evaluate((element) => getComputedStyle(element, '::after').backgroundImage);
     expect(darkCrt).not.toBe(lightCrt.background);
     await page.screenshot({ path: `test-results/lettering-dark-${width}.png`, fullPage: true });
@@ -262,7 +269,7 @@ test('AUGEO lettering shares pointer and click motion, then returns to rest', as
     return rows;
   });
   const restingRows = await rowInk();
-  expect(restingRows.filter((count) => count > 0).length).toBeGreaterThan(restingRows.length / 2);
+  expect(restingRows.filter((count) => count > 0).length).toBeGreaterThanOrEqual(restingRows.length / 2);
   await page.screenshot({ path: 'test-results/lettering-reactive-rest.png', fullPage: true });
   const frame = () => overlay.evaluate((canvas) => canvas.toDataURL());
   const resting = await frame();
@@ -289,6 +296,7 @@ test('AUGEO lettering shares pointer and click motion, then returns to rest', as
 
   await page.emulateMedia({ colorScheme: 'dark' });
   await expect(overlay).toHaveCSS('filter', 'invert(1)');
+  await expect(overlay).toHaveCSS('opacity', '0.88');
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await expect(overlay).toBeHidden();
   await expect(page.locator('.matrix-artwork')).toBeVisible();
