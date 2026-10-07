@@ -85,21 +85,21 @@ body { margin: 0; min-width: 320px; }
 button, a { -webkit-tap-highlight-color: transparent; }
 button { cursor: pointer; }
 a:focus-visible, button:focus-visible { outline: 2px solid #ff482c; outline-offset: 5px; }
-.page { width: 100%; }
-.nav { position: absolute; top: 0; left: 0; z-index: 2; display: flex; align-items: center; height: 96px; padding: 0 clamp(24px, 3.2vw, 64px); }
+.page { width: 100%; --hero-content-inset: clamp(88px, 7vw, 112px); }
+.nav { position: absolute; top: 0; left: 0; z-index: 2; display: flex; align-items: center; height: 96px; padding: 0 var(--hero-content-inset); }
 .brand { display: block; width: 66px; height: 66px; }
 .brand img { width: 100%; height: 100%; object-fit: contain; }
-.hero { display: grid; grid-template-columns: minmax(0, 40fr) minmax(0, 60fr); min-height: 100dvh; }
-.hero-copy { position: relative; display: flex; flex-direction: column; justify-content: center; min-width: 0; padding: 140px clamp(24px, 3.2vw, 64px) 100px; }
+.hero { display: grid; grid-template-columns: minmax(0, 44fr) minmax(0, 56fr); min-height: 100dvh; }
+.hero-copy { position: relative; display: flex; flex-direction: column; justify-content: center; min-width: 0; padding: 140px clamp(24px, 3.2vw, 64px) 100px var(--hero-content-inset); }
 .hero-copy h1 { max-width: 11ch; margin: 0; font-size: clamp(3rem, 5.3vw, 6rem); font-weight: 700; letter-spacing: -.035em; line-height: .95; overflow-wrap: anywhere; text-wrap: balance; }
 .intro { max-width: 440px; margin: 30px 0 0; color: #61615d; font-size: clamp(1rem, 1.35vw, 1.16rem); line-height: 1.48; letter-spacing: -.015em; }
-.explore { position: absolute; bottom: 20px; left: clamp(8px, 1.2vw, 20px); display: block; width: 44px; padding: 6px; border: 0; background: transparent; text-align: center; }
-.explore-label, .explore-scan { display: flex; flex-direction: column; align-items: center; gap: 9px; }
-.explore-scan { position: absolute; inset: 6px; pointer-events: none; clip-path: inset(0 0 96% 0); animation: explore-scan 3.2s linear infinite; }
+.explore { position: absolute; top: 50dvh; left: 8px; transform: translateY(-50%); display: block; width: 56px; padding: 6px; border: 0; background: transparent; text-align: center; font-size: 24px; }
+.explore-label, .explore-scan { display: flex; flex-direction: column; align-items: center; gap: .6em; }
+.explore-scan { position: absolute; inset: 6px 6px 42px; pointer-events: none; clip-path: inset(0 0 96% 0); animation: explore-scan 3.2s linear infinite; }
 .explore-word { display: flex; flex-direction: column; align-items: center; }
-.explore-letter { display: block; height: 18px; flex: none; color: #424240; font-family: "Share Tech Mono", ui-monospace, monospace; font-size: 16px; font-weight: 400; line-height: 18px; }
+.explore-letter { display: block; height: 1.3em; flex: none; color: #424240; font-family: "Share Tech Mono", ui-monospace, monospace; font-size: inherit; font-weight: 400; line-height: 1.3; }
+.explore-direction { display: block; width: 24px; height: 24px; margin: 12px auto 0; color: #424240; }
 .explore-scan .explore-letter { color: #111; }
-.explore:hover .explore-letter, .explore:focus-visible .explore-letter { color: #111; }
 @keyframes explore-scan {
   0%, 5% { clip-path: inset(0 0 96% 0); }
   70%, 100% { clip-path: inset(96% 0 0 0); }
@@ -129,15 +129,18 @@ a:focus-visible, button:focus-visible { outline: 2px solid #ff482c; outline-offs
 .light .matrix-artwork, .light .matrix-artwork-reactive { filter: none; opacity: 1; }
 @media (min-width: 768px) and (max-height: 700px) {
   .hero-copy { padding-bottom: 263px; }
+  .explore { font-size: 20px; }
 }
 @media (max-width: 767px) {
   .nav { position: relative; height: 70px; padding: 0 20px; }
   .brand { width: 58px; height: 58px; }
   .hero { grid-template-columns: 1fr; min-height: 0; }
-  .hero-copy { padding: 44px 20px 261px; }
+  .hero-copy { padding: 44px 20px 283px; }
   .hero-copy h1 { font-size: min(clamp(3.4rem, 15.2vw, 5.4rem), calc(14vw + 1rem)); }
   .intro { margin-top: 24px; }
-  .explore { bottom: 20px; left: 10px; }
+  .explore { top: auto; bottom: 20px; left: 10px; width: 44px; transform: none; font-size: 18px; }
+  .explore-label, .explore-scan { gap: 9px; }
+  .explore-letter { height: 1em; line-height: 1; }
   .matrix-deck { height: clamp(280px, 48dvh, 440px); min-height: 0; }
 }
 @media (prefers-reduced-motion: reduce) {

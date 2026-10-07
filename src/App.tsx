@@ -1,6 +1,7 @@
 import KineticMatrix from '@/components/ui/kinetic-matrix';
 import symbol from '@/logo/symbol.png';
 import augeoLettering from '@/src/assets/augeo-lettering.svg';
+import { ArrowDown } from 'lucide-react';
 
 const exploreWords = ['EXPLORE', 'AQUI'];
 
@@ -15,13 +16,6 @@ function ExploreLettering() {
 }
 
 export default function App() {
-  const explore = () => {
-    document.querySelector('main > .hero + section')?.scrollIntoView({
-      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth',
-      block: 'start',
-    });
-  };
-
   return (
     <div className="page" id="inicio">
       <header className="nav" aria-label="Cabeçalho Augeo Creative">
@@ -32,12 +26,15 @@ export default function App() {
       <main>
         <section className="hero" aria-labelledby="hero-title">
           <div className="hero-copy">
-            <h1 id="hero-title">Ideias fortes, forma precisa.</h1>
-            <p className="intro">Criamos marcas, sites e experiências digitais que transformam atenção em movimento.</p>
-            <button className="explore" type="button" aria-label="Explore aqui" onClick={explore}>
+            <h1 id="hero-title">Presença digital com direção.</h1>
+            <p className="intro">O contexto do seu negócio define como conectamos marca, website, aquisição e operação digital.</p>
+            {/* Replace with a native link to #processo when the real section exists. */}
+            <div className="explore">
+              <span className="sr-only">Explore aqui</span>
               <span className="explore-label" aria-hidden="true"><ExploreLettering /></span>
               <span className="explore-scan" aria-hidden="true"><ExploreLettering /></span>
-            </button>
+              <ArrowDown className="explore-direction" aria-hidden="true" strokeWidth={1.5} />
+            </div>
           </div>
           <div className="matrix-deck">
             <KineticMatrix title="AUGEO" titleArtwork={augeoLettering} reactiveArtwork className="augeo-matrix" />

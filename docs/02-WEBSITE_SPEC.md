@@ -60,6 +60,10 @@ O lado direito da hero contém um componente visual próprio de interação por 
 - Preservar legibilidade, contraste e desempenho; a interação não pode bloquear o CTA nem depender de hardware gráfico excepcional.
 - O split claro/escuro da hero não é uma regra de layout para o restante da página.
 
+### Continuidade para Processo
+
+EXPLORE AQUI é o indicativo vertical do hero para a seção Processo, abaixo: uma coluna alongada na lateral com direção descendente. Na página completa, será um link nativo para `#processo`. Enquanto essa seção não existir no protótipo, mantém a indicação visual como texto acessível sem ação ou foco. O estado atual e o ponto de retomada estão em [HERO_HANDOFF.md](HERO_HANDOFF.md).
+
 ### CTA
 
 O CTA principal da hero conduz ao formulário de entrada. O texto final do CTA será definido na etapa de copy; sua função já está fixa: iniciar a apresentação do negócio, e não abrir um “contato genérico”.
@@ -76,7 +80,7 @@ O processo é a principal peça comercial da landing. Sua função é mostrar qu
 
 ### Limite de exposição
 
-O site comunica o modelo de trabalho, não o procedimento interno completo. Call inicial, estruturação de briefing, handoffs, validação e segunda call pertencem à operação e estão documentados em `INTERNAL.md`; só devem aparecer publicamente se contribuírem para a decisão do lead.
+O site comunica o modelo de trabalho, não o procedimento interno completo. Call inicial, estruturação de briefing, handoffs, validação e segunda call pertencem à operação e estão documentados em [03-INTERNAL.md](03-INTERNAL.md); só devem aparecer publicamente se contribuírem para a decisão do lead.
 
 ## 6. Entrada Comercial e Formulário
 

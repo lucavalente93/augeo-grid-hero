@@ -6,7 +6,7 @@ test('landing: canvas draws, reduced motion freezes it, pointer works, explore c
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
   await page.goto('/');
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Ideias fortes, forma precisa.');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Presença digital com direção.');
   const canvas = page.locator('.kinetic-matrix > canvas');
   await expect.poll(() => canvas.evaluate((node) => node.width)).toBeGreaterThan(0);
   const snapshot = () => canvas.evaluate((node) => node.toDataURL());
@@ -32,45 +32,65 @@ test('landing: canvas draws, reduced motion freezes it, pointer works, explore c
   expect(await snapshot()).not.toBe(settled);
   await expect(page.getByRole('heading', { level: 1 })).toBeInViewport();
   await page.screenshot({ path: 'test-results/landing-desktop.png', fullPage: true });
-  await expect(page.getByRole('button', { name: 'Explore aqui' })).toBeVisible();
-  await expect(page.locator('.explore svg')).toHaveCount(0);
+  await expect(page.locator('.explore')).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Explore aqui' })).toHaveCount(0);
+  await expect(page.locator('.explore-direction')).toBeVisible();
   await expect(page.locator('.explore-label .explore-word')).toHaveText(['EXPLORE', 'AQUI']);
-  expect(await page.evaluate(() => document.fonts.check('16px "Share Tech Mono"'))).toBe(true);
+  expect(await page.evaluate(() => document.fonts.check('22px "Share Tech Mono"'))).toBe(true);
   await expect(page.getByRole('button', { name: 'Falar com a Augeo' })).toHaveCount(0);
   expect(errors).toEqual([]);
 });
 
-test('hero typography fits a short viewport and enlarged text', async ({ page }) => {
-  await page.setViewportSize({ width: 900, height: 600 });
+test('hero side cue stays centered and clear of copy across desktop sizes', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto('/');
   await page.evaluate(() => document.fonts.ready);
-  const intro = await page.locator('.intro').boundingBox();
-  const explore = await page.locator('.explore').boundingBox();
-  expect(explore!.y).toBeGreaterThan(intro!.y + intro!.height);
+  for (const [width, height] of [[1440, 900], [900, 600], [768, 700]]) {
+    await page.setViewportSize({ width, height });
+    const explore = (await page.locator('.explore').boundingBox())!;
+    const heading = (await page.getByRole('heading', { level: 1 }).boundingBox())!;
+    const matrix = (await page.locator('.matrix-deck').boundingBox())!;
+    const brand = (await page.locator('.brand').boundingBox())!;
+    expect(Math.abs(explore.y + explore.height / 2 - height / 2)).toBeLessThan(2);
+    expect(explore.x + explore.width).toBeLessThan(heading.x);
+    expect(brand.x).toBeGreaterThanOrEqual(explore.x + explore.width);
+    expect(heading.x + heading.width).toBeLessThanOrEqual(matrix.x);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+  }
+});
 
+test('hero typography fits mobile with enlarged text and explore below copy', async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 740 });
+  await page.goto('/');
   await page.addStyleTag({ content: 'html { font-size: 200%; }' });
   await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(320);
   const heading = page.getByRole('heading', { level: 1 });
   await expect(heading).toBeVisible();
   expect((await heading.boundingBox())!.height).toBeLessThan(350);
+  const intro = (await page.locator('.intro').boundingBox())!;
+  const explore = (await page.locator('.explore').boundingBox())!;
+  expect(explore.y).toBeGreaterThan(intro.y + intro.height);
 });
 
-test('explore cue reaches the next section by keyboard and respects reduced motion', async ({ page }) => {
+test('explore is readable static text without a destination or keyboard action', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/');
-  const explore = page.getByRole('button', { name: 'Explore aqui' });
+  const explore = page.locator('.explore');
+  await expect(explore).toBeVisible();
+  await expect(explore).toMatchAriaSnapshot('- text: Explore aqui');
+  await expect(page.getByRole('button', { name: /explore/i })).toHaveCount(0);
+  await expect(page.getByRole('link', { name: /explore/i })).toHaveCount(0);
+  await expect(explore).toHaveCSS('cursor', 'auto');
   await expect(explore.locator('.explore-scan')).toBeHidden();
-  await page.evaluate(() => {
-    const section = document.createElement('section');
-    section.id = 'next-content';
-    section.style.height = '500px';
-    document.querySelector('main')!.append(section);
-  });
-  await explore.focus();
+  const scrollY = await page.evaluate(() => window.scrollY);
+  await explore.click();
   await page.keyboard.press('Enter');
-  await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(0);
-  await expect(page.locator('#next-content')).toBeInViewport();
+  expect(await page.evaluate(() => window.scrollY)).toBe(scrollY);
+  await page.locator('.brand').focus();
+  for (let step = 0; step < 3; step++) {
+    await page.keyboard.press('Tab');
+    expect(await explore.evaluate((node) => node.contains(document.activeElement))).toBe(false);
+  }
 });
 
 test('reduced motion stays static, survives resize, and follows explicit/system themes', async ({ page }) => {
@@ -162,7 +182,7 @@ test('matrix fits wide, square, tall and short containers', async ({ page }) => 
   const bounds = await page.locator('.matrix-deck').boundingBox();
   expect(Math.round(bounds!.x + bounds!.width)).toBe(1440);
   expect(bounds!.y).toBe(0);
-  expect(bounds!.width / 1440).toBeCloseTo(0.6);
+  expect(bounds!.width / 1440).toBeCloseTo(0.56);
 });
 
 test('small screens: both pages fit and touch interaction works', async ({ browser }) => {
