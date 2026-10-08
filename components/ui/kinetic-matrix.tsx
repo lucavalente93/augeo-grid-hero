@@ -15,10 +15,11 @@ export interface KineticMatrixProps {
   title?: string;
   titleArtwork?: string;
   reactiveArtwork?: boolean;
+  gridSpacing?: number;
   className?: string;
 }
 
-export function KineticMatrix({ title = 'TOPOLOGY', titleArtwork, reactiveArtwork = false, className = '' }: KineticMatrixProps) {
+export function KineticMatrix({ title = 'TOPOLOGY', titleArtwork, reactiveArtwork = false, gridSpacing = MOTION.spacing, className = '' }: KineticMatrixProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const artworkRef = useRef<HTMLImageElement>(null);
@@ -309,7 +310,7 @@ export function KineticMatrix({ title = 'TOPOLOGY', titleArtwork, reactiveArtwor
       canvas.width = Math.round(width * dpr);
       canvas.height = Math.round(height * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      spacing = Math.max(32, Math.min(MOTION.spacing, Math.min(width, height) / 4));
+      spacing = Math.max(32, Math.min(gridSpacing, Math.min(width, height) / 4));
       cols = Math.ceil(width / spacing) + 1;
       rows = Math.ceil(height / spacing) + 1;
       nodes = Array.from({ length: cols * rows }, (_, i) => {
@@ -328,6 +329,10 @@ export function KineticMatrix({ title = 'TOPOLOGY', titleArtwork, reactiveArtwor
     resize.observe(container);
     if (artworkImage) {
       resize.observe(artworkImage);
+      // The hero aligns the artwork to its heading; observe that positioning
+      // frame too so the shared pointer field uses the current artwork origin.
+      const artworkLayout = artworkImage.closest('.matrix-title');
+      if (artworkLayout) resize.observe(artworkLayout);
       artworkImage.addEventListener('load', sizeArtwork);
       if (artworkImage.complete) sizeArtwork();
     }
@@ -371,7 +376,7 @@ export function KineticMatrix({ title = 'TOPOLOGY', titleArtwork, reactiveArtwor
       container.removeEventListener('matrix-running-change', syncLoop);
       impulseRef.current = () => {};
     };
-  }, [reactiveArtwork]);
+  }, [reactiveArtwork, gridSpacing]);
 
   useEffect(() => {
     containerRef.current?.dispatchEvent(new Event('matrix-running-change'));
