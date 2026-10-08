@@ -45,7 +45,7 @@ test('hero side cue stays centered and clear of copy across desktop sizes', asyn
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto('/');
   await page.evaluate(() => document.fonts.ready);
-  for (const [width, height] of [[1440, 900], [900, 600], [768, 700]]) {
+  for (const [width, height] of [[1440, 900], [900, 600], [768, 600]]) {
     await page.setViewportSize({ width, height });
     const explore = (await page.locator('.explore').boundingBox())!;
     const heading = (await page.getByRole('heading', { level: 1 }).boundingBox())!;
@@ -55,6 +55,10 @@ test('hero side cue stays centered and clear of copy across desktop sizes', asyn
     expect(explore.x + explore.width).toBeLessThan(heading.x);
     expect(brand.x).toBeGreaterThanOrEqual(explore.x + explore.width);
     expect(heading.x + heading.width).toBeLessThanOrEqual(matrix.x);
+    const hero = (await page.locator('.hero').boundingBox())!;
+    const intro = (await page.locator('.intro').boundingBox())!;
+    expect(hero.height).toBeLessThanOrEqual(height);
+    expect(intro.y + intro.height).toBeLessThanOrEqual(height);
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
   }
 });
@@ -66,10 +70,40 @@ test('hero typography fits mobile with enlarged text and explore below copy', as
   await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(320);
   const heading = page.getByRole('heading', { level: 1 });
   await expect(heading).toBeVisible();
-  expect((await heading.boundingBox())!.height).toBeLessThan(350);
+  expect((await heading.boundingBox())!.width).toBeLessThanOrEqual(280);
   const intro = (await page.locator('.intro').boundingBox())!;
   const explore = (await page.locator('.explore').boundingBox())!;
   expect(explore.y).toBeGreaterThan(intro.y + intro.height);
+  const matrix = (await page.locator('.matrix-deck').boundingBox())!;
+  expect(matrix.y).toBeGreaterThan(intro.y + intro.height);
+  expect(explore.x + explore.width).toBeLessThanOrEqual(matrix.x);
+  expect(explore.y + explore.height).toBeLessThanOrEqual(matrix.y + matrix.height);
+});
+
+test('mobile pairs the side cue with the matrix and shows the whole signature above the fold', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  for (const colorScheme of ['light', 'dark'] as const) {
+    await page.emulateMedia({ colorScheme });
+    for (const [width, height] of [[390, 844], [320, 740], [320, 600]]) {
+      await page.setViewportSize({ width, height });
+      await page.goto('/');
+      await page.evaluate(() => document.fonts.ready);
+      await expect(page.locator('.matrix-artwork')).toHaveJSProperty('complete', true);
+      const explore = (await page.locator('.explore').boundingBox())!;
+      const deck = (await page.locator('.matrix-deck').boundingBox())!;
+      const artwork = (await page.locator('.matrix-artwork').boundingBox())!;
+      const intro = (await page.locator('.intro').boundingBox())!;
+      expect(deck.x).toBe(64);
+      expect(deck.y).toBeGreaterThan(intro.y + intro.height);
+      expect(explore.x + explore.width).toBeLessThanOrEqual(deck.x);
+      expect(explore.y).toBeGreaterThanOrEqual(deck.y);
+      expect(explore.y + explore.height).toBeLessThanOrEqual(deck.y + deck.height);
+      expect(artwork.y + artwork.height).toBeLessThanOrEqual(height);
+      expect(artwork.x).toBeGreaterThanOrEqual(deck.x);
+      expect(artwork.x + artwork.width).toBeLessThanOrEqual(width);
+      expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(width);
+    }
+  }
 });
 
 test('explore is readable static text without a destination or keyboard action', async ({ page }) => {
@@ -227,11 +261,12 @@ test('small screens: both pages fit and touch interaction works', async ({ brows
   await context.close();
 });
 
-test('AUGEO artwork stays centered and follows light and dark themes', async ({ page }) => {
+test('AUGEO artwork aligns with the desktop headline, centers on mobile, and follows themes', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce', colorScheme: 'light' });
   for (const [width, height] of [[1440, 900], [320, 740]]) {
     await page.setViewportSize({ width, height });
     await page.goto('/');
+    await page.evaluate(() => document.fonts.ready);
     const deck = page.locator('.matrix-deck');
     const artwork = page.locator('.matrix-artwork');
     await expect(page.getByRole('heading', { name: 'AUGEO' })).toBeVisible();
@@ -242,9 +277,13 @@ test('AUGEO artwork stays centered and follows light and dark themes', async ({ 
       naturalWidth: image.naturalWidth,
     }));
     expect(naturalWidth).toBeGreaterThan(0);
-    expect(Math.abs(artBounds.width - (width === 320 ? 225.2 : 527))).toBeLessThan(1);
+    expect(artBounds.width).toBeGreaterThan(width === 320 ? 190 : 630);
     expect(Math.abs((artBounds.x + artBounds.width / 2) - (deckBounds.x + deckBounds.width / 2))).toBeLessThan(1);
-    expect(Math.abs((artBounds.y + artBounds.height / 2) - (deckBounds.y + deckBounds.height / 2))).toBeLessThan(1);
+    await expect.poll(async () => {
+      const currentArt = (await artwork.boundingBox())!;
+      const axis = width === 320 ? (await deck.boundingBox())! : (await page.locator('#hero-title').boundingBox())!;
+      return Math.abs(currentArt.y + currentArt.height / 2 - axis.y - axis.height / 2);
+    }).toBeLessThan(1);
     await expect(artwork).toHaveCSS('filter', 'none');
     await expect(artwork).toHaveCSS('opacity', '1');
     const lightCrt = await deck.locator('.kinetic-matrix').evaluate((element) => {
