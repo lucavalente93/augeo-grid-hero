@@ -30,6 +30,12 @@ Correção antecipada preservada: coluna desktop ampliada para fonte de 24 px e 
 - Bloco 1: build aprovado, 12/12 testes Playwright em Chromium e detector CLI sem achados. O teste de EXPLORE verifica leitura acessível, ausência de ação/foco e ausência de navegação; substituiu o teste com seção injetada.
 - Correção antecipada de EXPLORE: build aprovado, 12/12 testes passando, detector sem achados e capturas inspecionadas com movimento reduzido em desktop, desktop curto e mobile. Em 1440×900, a coluna passou de aproximadamente 288 px para 405 px, incluindo a seta. Links locais da documentação verificados.
 
+### Organização do documento de produto — 2026-10-08
+
+- `PRODUCT.md` (singular) movido para `docs/PRODUCT.md`, sem alterar o conteúdo. Links de entrada no AGENTS e neste handoff atualizados; a orientação de retomada no plano agora explicita o caminho a partir da raiz. Para consultar o contexto de produto da skill, usar esse documento como fonte existente, sem criar uma cópia concorrente na raiz.
+- Links locais de todos os documentos Markdown do projeto e caminhos citados no documento de produto verificados após a movimentação; diff sem erros de whitespace. Nenhuma alteração de código nesta etapa; build e 13 testes da reorganização dos assets permanecem a validação técnica pertinente.
+- Commit de assets: `f862438` (`refactor(assets): centralize logo and moodboard assets`). A movimentação deste documento foi registrada separadamente em `docs(product): move product context into docs`; push solicitado pelo usuário, mas não concluído. `git push origin main` falhou por permissões inválidas em `/etc/ssh/ssh_config.d/20-systemd-ssh-proxy.conf`; a tentativa com `git -c core.sshCommand='ssh -F /dev/null' push origin main` contornou esse arquivo e falhou na resolução DNS de `github.com`. Próxima ação desta reorganização: publicar os dois commits quando SSH/rede estiverem disponíveis. Nenhuma configuração SSH ou remote foi alterado.
+
 ### Organização dos assets — 2026-10-08
 
 - Moodboard centralizado em `src/assets/moodboard-modular/` e marca/estudo tipográfico em `src/assets/logo/`. Import do símbolo, resumo do produto e referências do plano atualizados, inclusive os seis caminhos absolutos e o índice CSV. Lettering e fontes atuais preservados.
@@ -67,7 +73,7 @@ O trabalho atual consolida apenas o hero. Processo, formulário e footer pertenc
 - **Rotina de trabalho e continuidade:** [AGENTS.md](../AGENTS.md), criado em 2026-10-08 para orientar a retomada e a atualização por marcos sem pedidos explícitos de handoff. Links e diff verificados nesta entrega; carregamento e aplicação em uma nova sessão ainda não verificados. Nenhuma alteração de UI ou nova validação do hero foi realizada nesta entrega.
 - **Retomada e progresso:** este arquivo.
 - **Execução do próximo bloco:** Parte II (direção) e Parte III (implementação e aceitação) do [plano](HERO_AUDIT_AND_IMPROVEMENT_PLAN.md). Parte I e anexos são consulta histórica, técnica e visual.
-- **Resumo do produto para a skill:** [PRODUCT.md](../PRODUCT.md).
+- **Resumo do produto para a skill:** [PRODUCT.md](PRODUCT.md).
 - **Posicionamento aprofundado:** [CONTEXT.md](CONTEXT.md), quando a tarefa envolver estratégia ou copy além do briefing.
 - **Arquitetura da landing:** [02-WEBSITE_SPEC.md](02-WEBSITE_SPEC.md), quando a tarefa envolver outras seções ou entrada comercial.
 - **Operação interna:** [03-INTERNAL.md](03-INTERNAL.md); dispensável para refinar o hero.

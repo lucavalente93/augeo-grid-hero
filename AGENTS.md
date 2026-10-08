@@ -7,7 +7,7 @@ Este arquivo define a rotina de trabalho e encaminha a leitura dos documentos. O
 - [Hero — ponto de retomada](docs/HERO_HANDOFF.md): progresso, decisões, evidências, pendências e próxima ação do hero.
 - [Auditoria e plano do hero](docs/HERO_AUDIT_AND_IMPROVEMENT_PLAN.md): briefing, sequência de implementação, critérios de aceitação e referências; a auditoria é histórica.
 - [Especificação do website](docs/02-WEBSITE_SPEC.md): arquitetura, requisitos e limites da landing.
-- [Produto](PRODUCT.md): resumo para a skill. [Contexto estratégico](docs/CONTEXT.md) e [operação interna](docs/03-INTERNAL.md): aprofundamento conforme a tarefa.
+- [Produto](docs/PRODUCT.md): resumo para a skill. [Contexto estratégico](docs/CONTEXT.md) e [operação interna](docs/03-INTERNAL.md): aprofundamento conforme a tarefa.
 
 Até agora, a frente de refinamento do hero e os documentos existentes podem ser encaminhados diretamente por estas instruções. Um índice separado de orquestração acrescentaria manutenção e duplicação sem resolver uma necessidade presente. Se surgirem várias frentes simultâneas, reavaliar a necessidade de um índice próprio com função e nome explícitos.
 
