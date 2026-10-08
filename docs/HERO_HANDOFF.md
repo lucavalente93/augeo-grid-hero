@@ -1,6 +1,6 @@
 # Hero — ponto de retomada
 
-Atualizado em 2026-10-07. Leia este arquivo primeiro; ele concentra o estado atual. O [plano](HERO_AUDIT_AND_IMPROVEMENT_PLAN.md) guarda a especificação, as evidências da auditoria e as referências visuais, sem substituir este registro de progresso.
+Atualizado em 2026-10-08. Para tarefas do hero, leia este arquivo primeiro; ele concentra o estado atual. A rotina de leitura e atualização dos registros está no [AGENTS.md do projeto](../AGENTS.md). O [plano](HERO_AUDIT_AND_IMPROVEMENT_PLAN.md) guarda a especificação, as evidências da auditoria e as referências visuais, sem substituir este registro de progresso.
 
 ## Onde estamos
 
@@ -56,6 +56,7 @@ O trabalho atual consolida apenas o hero. Processo, formulário e footer pertenc
 
 ## Leitura por necessidade
 
+- **Rotina de trabalho e continuidade:** [AGENTS.md](../AGENTS.md), criado em 2026-10-08 para orientar a retomada e a atualização por marcos sem pedidos explícitos de handoff. Links e diff verificados nesta entrega; carregamento e aplicação em uma nova sessão ainda não verificados. Nenhuma alteração de UI ou nova validação do hero foi realizada nesta entrega.
 - **Retomada e progresso:** este arquivo.
 - **Execução do próximo bloco:** Parte II (direção) e Parte III (implementação e aceitação) do [plano](HERO_AUDIT_AND_IMPROVEMENT_PLAN.md). Parte I e anexos são consulta histórica, técnica e visual.
 - **Resumo do produto para a skill:** [PRODUCT.md](../PRODUCT.md).
