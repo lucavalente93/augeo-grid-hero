@@ -349,7 +349,7 @@ O protótipo contém apenas o hero. Processo e formulário de entrada estão pre
 - React, TypeScript e Vite; estilos globais em `src/styles.css`.
 - Composição do hero em `src/App.tsx`.
 - Matriz e lettering reativos em `components/ui/kinetic-matrix.tsx`, com cálculos compartilhados em `lib/matrix-motion.ts`.
-- Símbolo existente em `logo/symbol.png`; lettering em `src/assets/augeo-lettering.svg`.
+- Símbolo existente em `src/assets/logo/symbol.png`; lettering em `src/assets/augeo-lettering.svg`.
 - Hanken Grotesk no título e texto; Share Tech Mono no EXPLORE; fontes locais.
 - Desktop dividido em 44% para conteúdo e 56% para a matriz.
 - EXPLORE AQUI com uma letra por linha, maior e centralizado verticalmente na extrema esquerda do desktop.
@@ -381,11 +381,11 @@ As 30 imagens da pasta foram consultadas. Elas se agrupam em construção modula
 
 | Rótulo | Aplicação no plano | Caminho local exato |
 |---|---|---|
-| **R03 — Campo de vetores** | Resposta direcional coerente da matriz | `/home/luca/augeo/modular-bw-landing/src/moodboard-modular/3_85014b6c322d3421d1e5f22d42a7a4b1-jpg-288x286.jpg` |
-| **R05 — Letra construída A.1.2** | Letra dominante e geometria subordinada | `/home/luca/augeo/modular-bw-landing/src/moodboard-modular/5_275254008_4712068832256131_2977912509754557411_....jpg` |
-| **R11 — BRUTALISMUS** | Ritmo das listras e contraste tipográfico | `/home/luca/augeo/modular-bw-landing/src/moodboard-modular/11_240492466_1645658692307797_1961337462483073695_....jpg` |
-| **R14 — TOKYO / Pharmacy Books** | Coluna vertical como elemento editorial | `/home/luca/augeo/modular-bw-landing/src/moodboard-modular/14_pharmacy-books.png` |
-| **R21 — Air Force 1 / Utility** | Informação nas bordas e espaço central amplo | `/home/luca/augeo/modular-bw-landing/src/moodboard-modular/21_tumblr_pmunkies1s1slr2p9o1_500-jpg.jpg` |
-| **R23 — Forma de onda sobre grade** | Estrutura estável com transformação localizada | `/home/luca/augeo/modular-bw-landing/src/moodboard-modular/23_7d3da37efd339e4f043b0d73ac7bd67385fb26be-jpg.jpg` |
+| **R03 — Campo de vetores** | Resposta direcional coerente da matriz | `/home/luca/augeo/modular-bw-landing/src/assets/moodboard-modular/3_85014b6c322d3421d1e5f22d42a7a4b1-jpg-288x286.jpg` |
+| **R05 — Letra construída A.1.2** | Letra dominante e geometria subordinada | `/home/luca/augeo/modular-bw-landing/src/assets/moodboard-modular/5_275254008_4712068832256131_2977912509754557411_....jpg` |
+| **R11 — BRUTALISMUS** | Ritmo das listras e contraste tipográfico | `/home/luca/augeo/modular-bw-landing/src/assets/moodboard-modular/11_240492466_1645658692307797_1961337462483073695_....jpg` |
+| **R14 — TOKYO / Pharmacy Books** | Coluna vertical como elemento editorial | `/home/luca/augeo/modular-bw-landing/src/assets/moodboard-modular/14_pharmacy-books.png` |
+| **R21 — Air Force 1 / Utility** | Informação nas bordas e espaço central amplo | `/home/luca/augeo/modular-bw-landing/src/assets/moodboard-modular/21_tumblr_pmunkies1s1slr2p9o1_500-jpg.jpg` |
+| **R23 — Forma de onda sobre grade** | Estrutura estável com transformação localizada | `/home/luca/augeo/modular-bw-landing/src/assets/moodboard-modular/23_7d3da37efd339e4f043b0d73ac7bd67385fb26be-jpg.jpg` |
 
-O índice original com títulos e metadados está em `src/moodboard-modular/augeo.csv`. Atalhos examinados como metadados, sem evidência visual utilizável: `10_nike-adapt-bb-logo-exploration-and-pattern.webloc`, `17_nonymous-better-faster-cheaper.webloc` e `27_syn_phon-graphic-notation-by-candas-sisman.webloc`.
+O índice original com títulos e metadados está em `src/assets/moodboard-modular/augeo.csv`. Atalhos examinados como metadados, sem evidência visual utilizável: `10_nike-adapt-bb-logo-exploration-and-pattern.webloc`, `17_nonymous-better-faster-cheaper.webloc` e `27_syn_phon-graphic-notation-by-candas-sisman.webloc`.

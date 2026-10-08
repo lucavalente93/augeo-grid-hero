@@ -35,7 +35,7 @@ A contratação começa pelo entendimento do cenário do negócio. A AUGEO combi
 
 - Contexto estratégico: `docs/CONTEXT.md`.
 - Arquitetura e requisitos do site: `docs/02-WEBSITE_SPEC.md`.
-- Marca e exploração tipográfica existentes: `logo/`.
+- Marca e exploração tipográfica existentes: `src/assets/logo/`.
 - Ainda não há cases, clientes, métricas ou depoimentos publicados; não inventar prova social.
 
 ## Product Principles

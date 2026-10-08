@@ -1,5 +1,5 @@
 import KineticMatrix from '@/components/ui/kinetic-matrix';
-import symbol from '@/logo/symbol.png';
+import symbol from '@/src/assets/logo/symbol.png';
 import augeoLettering from '@/src/assets/augeo-lettering.svg';
 import { ArrowDown } from 'lucide-react';
 import { useLayoutEffect, useRef } from 'react';
