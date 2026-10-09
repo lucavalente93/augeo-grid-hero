@@ -8,7 +8,7 @@ Solicitado registrar os commits atrasados antes de migrar o tooling para Bun e l
 
 Validação atual antes do commit: `bun --bun run build` aprovado; `git diff --check` aprovado. A tentativa de iniciar Vite com `bun --bun run dev --port 5173` falhou por restrição de abertura de porta no sandbox desta sessão (`EPERM`), inclusive em `127.0.0.1`; o usuário confirmou que `bun run dev` abre normalmente essa porta no seu terminal. A suíte completa em Chromium ainda não foi revalidada nesta sessão; resultados anteriores abaixo são históricos. Os registros Impeccable foram preservados, sem novo comando/playbook ou declaração de fluxo concluído.
 
-Próxima ação de manutenção: registrar a implementação e a regra do guia pessoal, migrar os comandos para Bun e realizar limpeza conservadora. A próxima ação visual continua sendo avaliação do indicador pelo usuário.
+Implementação registrada em `7f5f33c` (`feat(hero): replace Explore with animated triangle cue`). A regra pendente do guia pessoal foi separada em commit próprio; guia mantido local e fora do versionamento. Próxima ação de manutenção: migrar os comandos para Bun e realizar limpeza conservadora. A próxima ação visual continua sendo avaliação do indicador pelo usuário.
 
 ## Ajuste atual — cores alternadas a cada passagem
 

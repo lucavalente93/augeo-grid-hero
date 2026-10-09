@@ -3,3 +3,6 @@ dist/
 *.local
 test-results/
 personal/
+
+# Guia pessoal: manter somente nesta máquina
+/docs/GUIA_PESSOAL_LOCAL.md
