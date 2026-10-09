@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { ARTWORK_WARP, approach, artworkShiftTargets, constrainArtworkShifts, MOTION, pulseStops, steppedProgress } from '../lib/matrix-motion';
 
-test('landing: canvas draws, reduced motion freezes it, pointer works, explore cue is present', async ({ page }) => {
+test('landing: canvas draws, reduced motion freezes it, pointer works, triangles are present without EXPLORE', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
@@ -32,38 +32,32 @@ test('landing: canvas draws, reduced motion freezes it, pointer works, explore c
   expect(await snapshot()).not.toBe(settled);
   await expect(page.getByRole('heading', { level: 1 })).toBeInViewport();
   await page.screenshot({ path: 'test-results/landing-desktop.png', fullPage: true });
-  await expect(page.locator('.explore')).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Explore aqui' })).toHaveCount(0);
-  await expect(page.locator('.explore-direction')).toBeVisible();
-  await expect(page.locator('.explore-label .explore-word')).toHaveText(['EXPLORE', 'AQUI']);
-  expect(await page.evaluate(() => document.fonts.check('22px "Share Tech Mono"'))).toBe(true);
+  await expect(page.locator('.explore')).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Explore' })).toHaveCount(0);
+  await expect(page.locator('.scroll-cue')).toBeVisible();
+  await expect(page.getByText('EXPLORE', { exact: true })).toHaveCount(0);
+  expect(await page.evaluate(() => document.fonts.check('620 20px "Hanken Grotesk"'))).toBe(true);
   await expect(page.getByRole('button', { name: 'Falar com a Augeo' })).toHaveCount(0);
   expect(errors).toEqual([]);
 });
 
-test('hero side cue stays centered and clear of copy across desktop sizes', async ({ page }) => {
-  await page.setViewportSize({ width: 1440, height: 900 });
+test('triangles keep their lateral position and remain clear of the copy', async ({ page }) => {
   await page.goto('/');
   await page.evaluate(() => document.fonts.ready);
-  for (const [width, height] of [[1440, 900], [900, 600], [768, 600]]) {
+  for (const [width, height] of [[1440, 900], [900, 600], [768, 600], [844, 390]]) {
     await page.setViewportSize({ width, height });
-    const explore = (await page.locator('.explore').boundingBox())!;
-    const heading = (await page.getByRole('heading', { level: 1 }).boundingBox())!;
-    const matrix = (await page.locator('.matrix-deck').boundingBox())!;
-    const brand = (await page.locator('.brand').boundingBox())!;
-    expect(Math.abs(explore.y + explore.height / 2 - height / 2)).toBeLessThan(2);
-    expect(explore.x + explore.width).toBeLessThan(heading.x);
-    expect(brand.x).toBeGreaterThanOrEqual(explore.x + explore.width);
-    expect(heading.x + heading.width).toBeLessThanOrEqual(matrix.x);
-    const hero = (await page.locator('.hero').boundingBox())!;
-    const intro = (await page.locator('.intro').boundingBox())!;
-    expect(hero.height).toBeLessThanOrEqual(height);
-    expect(intro.y + intro.height).toBeLessThanOrEqual(height);
-    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+    const cue = (await page.locator('.scroll-cue').boundingBox())!;
+    const heading = (await page.locator('#hero-title').boundingBox())!;
+    expect(cue.width).toBe(36);
+    expect(cue.height).toBe(63);
+    expect(cue.y + cue.height).toBeLessThanOrEqual(height);
+    expect(cue.x + cue.width).toBeLessThan(heading.x);
+    await expect(page.locator('.scroll-cue path')).toHaveCount(2);
+    await expect(page.locator('.explore')).toHaveCount(0);
   }
 });
 
-test('hero typography fits mobile with enlarged text and explore below copy', async ({ page }) => {
+test('hero typography fits mobile with enlarged text', async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 740 });
   await page.goto('/');
   await page.addStyleTag({ content: 'html { font-size: 200%; }' });
@@ -72,15 +66,11 @@ test('hero typography fits mobile with enlarged text and explore below copy', as
   await expect(heading).toBeVisible();
   expect((await heading.boundingBox())!.width).toBeLessThanOrEqual(280);
   const intro = (await page.locator('.intro').boundingBox())!;
-  const explore = (await page.locator('.explore').boundingBox())!;
-  expect(explore.y).toBeGreaterThan(intro.y + intro.height);
   const matrix = (await page.locator('.matrix-deck').boundingBox())!;
   expect(matrix.y).toBeGreaterThan(intro.y + intro.height);
-  expect(explore.x + explore.width).toBeLessThanOrEqual(matrix.x);
-  expect(explore.y + explore.height).toBeLessThanOrEqual(matrix.y + matrix.height);
 });
 
-test('mobile pairs the side cue with the matrix and shows the whole signature above the fold', async ({ page }) => {
+test('mobile preserves the matrix position and shows the whole signature above the fold', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   for (const colorScheme of ['light', 'dark'] as const) {
     await page.emulateMedia({ colorScheme });
@@ -89,41 +79,16 @@ test('mobile pairs the side cue with the matrix and shows the whole signature ab
       await page.goto('/');
       await page.evaluate(() => document.fonts.ready);
       await expect(page.locator('.matrix-artwork')).toHaveJSProperty('complete', true);
-      const explore = (await page.locator('.explore').boundingBox())!;
       const deck = (await page.locator('.matrix-deck').boundingBox())!;
       const artwork = (await page.locator('.matrix-artwork').boundingBox())!;
       const intro = (await page.locator('.intro').boundingBox())!;
       expect(deck.x).toBe(64);
       expect(deck.y).toBeGreaterThan(intro.y + intro.height);
-      expect(explore.x + explore.width).toBeLessThanOrEqual(deck.x);
-      expect(explore.y).toBeGreaterThanOrEqual(deck.y);
-      expect(explore.y + explore.height).toBeLessThanOrEqual(deck.y + deck.height);
       expect(artwork.y + artwork.height).toBeLessThanOrEqual(height);
       expect(artwork.x).toBeGreaterThanOrEqual(deck.x);
       expect(artwork.x + artwork.width).toBeLessThanOrEqual(width);
       expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(width);
     }
-  }
-});
-
-test('explore is readable static text without a destination or keyboard action', async ({ page }) => {
-  await page.emulateMedia({ reducedMotion: 'reduce' });
-  await page.goto('/');
-  const explore = page.locator('.explore');
-  await expect(explore).toBeVisible();
-  await expect(explore).toMatchAriaSnapshot('- text: Explore aqui');
-  await expect(page.getByRole('button', { name: /explore/i })).toHaveCount(0);
-  await expect(page.getByRole('link', { name: /explore/i })).toHaveCount(0);
-  await expect(explore).toHaveCSS('cursor', 'auto');
-  await expect(explore.locator('.explore-scan')).toBeHidden();
-  const scrollY = await page.evaluate(() => window.scrollY);
-  await explore.click();
-  await page.keyboard.press('Enter');
-  expect(await page.evaluate(() => window.scrollY)).toBe(scrollY);
-  await page.locator('.brand').focus();
-  for (let step = 0; step < 3; step++) {
-    await page.keyboard.press('Tab');
-    expect(await explore.evaluate((node) => node.contains(document.activeElement))).toBe(false);
   }
 });
 
