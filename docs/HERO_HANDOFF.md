@@ -19,7 +19,17 @@ Implementação registrada em `7f5f33c` (`feat(hero): replace Explore with anima
 - Tentativa isolada dos dois testes de lógica pelo runner Playwright, com configuração temporária sem servidor, excedeu o timeout do worker; reprodução mínima de IPC Bun também não recebeu a mensagem. Causa não determinada nesta sessão. Os mesmos dois testes existentes passaram via adaptador temporário para `bun:test`: **2 aprovados, 10 filtrados, 1.634 assertions**. Isso valida a lógica, não a suíte Playwright inteira.
 - Artefatos diagnósticos em `/tmp/augeo-bun-logic.config.ts`, `/tmp/augeo-bun-motion.test.ts` e `/tmp/augeo-bun-ipc*` são temporários e não versionados. Nenhum fluxo Impeccable reexecutado ou bloco visual encerrado nesta manutenção.
 
-Próxima ação de manutenção: limpeza conservadora e conferência final. Validação integrada no navegador e comunicação dos workers Bun/Playwright permanecem pendentes em um ambiente que permita executar a suíte.
+Migração registrada em `d856668` (`chore(runtime): standardize project tooling on Bun`). A verificação adicional `bun run node -e` confirmou `process.versions.bun = "1.4.0"` e `process.execPath = "/home/luca/.bun/bin/bun"`, inclusive ao chamar o nome compatível `node` pelo runner do projeto.
+
+### Limpeza conservadora e conferência final
+
+- Protótipo anterior `legacy.html` e `augeo-field.js` removidos: não são entradas da aplicação atual nem dependências dos módulos ativos. `lucide-react`, sem importações após a retirada de EXPLORE, removido do manifesto e lockfile; as demais resoluções do lockfile foram preservadas.
+- ZIP movido para `docs/references/segments.zip` e captura para `docs/references/bugs/2026-10-06-14:37:39-screenshot.png`. Ambos mantêm SHA-256 idêntico e renome de 100% no Git. Moodboard, estudos da marca, fontes/licenças, demonstração `?demo=matrix`, componentes e utilitários ativos preservados. README atualizado com a organização.
+- `.codex/` ignorado por conter configuração local e caminhos específicos desta máquina; arquivo local preservado. Guia pessoal segue ignorado. Nenhuma alteração visual adicional ou novo workflow Impeccable nesta limpeza.
+- Após a limpeza: `bun install --frozen-lockfile` e `bun run build` aprovados; os dois testes existentes de lógica passaram novamente pelo adaptador temporário `bun:test` (2 aprovados, 10 filtrados, 1.634 assertions). `bun run test --list` confirmou os mesmos 24 testes. Todos os 22 links Markdown relativos dos documentos compartilhados têm destinos existentes; diff sem erros.
+- Nova tentativa integrada `bun run test --global-timeout 15000` continuou bloqueada ao iniciar Vite (`EPERM` no sandbox). Diagnóstico IPC com serialização avançada também não recebeu mensagem em cinco segundos; nenhuma correção especulativa ou fallback Node.js foi introduzido. Suíte completa, preview no navegador e comunicação dos workers Bun/Playwright continuam sem validação nesta sessão.
+
+Manutenção implementada e separada em quatro commits locais; push não solicitado. Próxima ação técnica: executar `bun run test` e conferir `bun run preview` no terminal normal do usuário; se o worker também não iniciar ali, investigar Bun/Playwright com essa reprodução. Próxima ação visual: avaliação do indicador, sem avançar os outros blocos do hero.
 
 ## Ajuste atual — cores alternadas a cada passagem
 

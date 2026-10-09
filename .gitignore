@@ -6,3 +6,6 @@ personal/
 
 # Guia pessoal: manter somente nesta máquina
 /docs/GUIA_PESSOAL_LOCAL.md
+
+# Configuração local do agente com caminhos específicos desta máquina
+/.codex/

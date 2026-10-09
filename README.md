@@ -35,5 +35,8 @@ O `bunfig.toml` força o runtime Bun nos scripts e nos executáveis chamados por
 - `components/` e `lib/`: matriz compartilhada, demonstração e utilitários.
 - `tests/`: regressões da matriz e do indicador de triângulos.
 - `docs/`: produto, especificação e registros de implementação.
+- `docs/references/`: referências históricas em ZIP e captura de bug; moodboard e estudos da marca permanecem em `src/assets/`.
+
+O protótipo anterior em HTML/JavaScript foi retirado; a aplicação e a demonstração da matriz são os pontos de entrada atuais. O guia pessoal e a configuração `.codex/` permanecem locais, ignorados pelo Git.
 
 Consulte [AGENTS.md](AGENTS.md) para a rotina de trabalho e [o handoff do hero](docs/HERO_HANDOFF.md) para o estado atual.
