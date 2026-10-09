@@ -8,7 +8,18 @@ Solicitado registrar os commits atrasados antes de migrar o tooling para Bun e l
 
 Validação atual antes do commit: `bun --bun run build` aprovado; `git diff --check` aprovado. A tentativa de iniciar Vite com `bun --bun run dev --port 5173` falhou por restrição de abertura de porta no sandbox desta sessão (`EPERM`), inclusive em `127.0.0.1`; o usuário confirmou que `bun run dev` abre normalmente essa porta no seu terminal. A suíte completa em Chromium ainda não foi revalidada nesta sessão; resultados anteriores abaixo são históricos. Os registros Impeccable foram preservados, sem novo comando/playbook ou declaração de fluxo concluído.
 
-Implementação registrada em `7f5f33c` (`feat(hero): replace Explore with animated triangle cue`). A regra pendente do guia pessoal foi separada em commit próprio; guia mantido local e fora do versionamento. Próxima ação de manutenção: migrar os comandos para Bun e realizar limpeza conservadora. A próxima ação visual continua sendo avaliação do indicador pelo usuário.
+Implementação registrada em `7f5f33c` (`feat(hero): replace Explore with animated triangle cue`). A regra pendente do guia pessoal foi registrada em `30a2dec` (`chore(git): ignore local personal guide`); guia mantido local e fora do versionamento. A próxima ação visual continua sendo avaliação do indicador pelo usuário.
+
+### Tooling exclusivo com Bun
+
+- `packageManager` definido como `bun@1.4.0`; `bun.lock` versionado e lockfile npm retirado. `bunfig.toml` com `[run] bun = true` força o runtime nos scripts e executáveis chamados. Playwright inicia o servidor com `bun run dev --port 5173`. README e instruções operacionais atualizados; comandos históricos de validação preservados.
+- Vite, TypeScript, Playwright, tipos `@types/node` e import `node:url` preservados. São necessários à ferramenta/configuração existente e compatíveis com Bun; não foi adicionada dependência de runtime Node.js.
+- `bun install --frozen-lockfile`, `bun run build`, descoberta de **24 testes** por `bun run test --list` e `git diff --check` aprovados. `bun run which node` resolve o shim `/tmp/bun-node-34cbb9a40/node`, apontando para `/home/luca/.bun/bin/bun`.
+- `bun run test --global-timeout 15000` não iniciou a suíte por `EPERM` ao abrir o servidor na porta 5173. Preview também bloqueado pelo sandbox ao abrir 4173. Esses resultados não contradizem a execução normal no terminal do usuário.
+- Tentativa isolada dos dois testes de lógica pelo runner Playwright, com configuração temporária sem servidor, excedeu o timeout do worker; reprodução mínima de IPC Bun também não recebeu a mensagem. Causa não determinada nesta sessão. Os mesmos dois testes existentes passaram via adaptador temporário para `bun:test`: **2 aprovados, 10 filtrados, 1.634 assertions**. Isso valida a lógica, não a suíte Playwright inteira.
+- Artefatos diagnósticos em `/tmp/augeo-bun-logic.config.ts`, `/tmp/augeo-bun-motion.test.ts` e `/tmp/augeo-bun-ipc*` são temporários e não versionados. Nenhum fluxo Impeccable reexecutado ou bloco visual encerrado nesta manutenção.
+
+Próxima ação de manutenção: limpeza conservadora e conferência final. Validação integrada no navegador e comunicação dos workers Bun/Playwright permanecem pendentes em um ambiente que permita executar a suíte.
 
 ## Ajuste atual — cores alternadas a cada passagem
 

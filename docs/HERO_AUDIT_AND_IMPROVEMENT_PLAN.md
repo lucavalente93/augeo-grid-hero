@@ -331,7 +331,7 @@ Registrar o modo Persuade e a estratégia específica do hero no briefing da sup
 - Comparar tempos de callbacks antes/depois em 1440×900, DPR 2, no mesmo cenário de ponteiro sobre o lettering e clique. Reportar mediana, p95 e long tasks sem convertê-los indevidamente em FPS ou alegações sobre aparelhos físicos.
 - Preservar os testes de legibilidade, deformação limitada e abertura do “A”.
 - Atualizar intencionalmente testes que pressupõem animação infinita, a copy antiga ou EXPLORE como botão ativo. Não manter o teste de uma seção injetada como prova de navegação real no protótipo.
-- Executar `npm run build` e os testes Playwright pertinentes. Durante a última alteração do hero, os 12 testes existentes passaram; isso é histórico, não substitui validação da futura implementação.
+- Executar `bun run build` e os testes Playwright pertinentes com `bun run test`. Durante a última alteração do hero, os 12 testes existentes passaram; isso é histórico, não substitui validação da futura implementação.
 - Executar uma checagem final do detector conforme a skill, depois das alterações, e interpretar os achados no contexto da direção visual.
 
 ### Encerramento

@@ -32,6 +32,8 @@ As atualizações por marco reduzem a perda de contexto. Uma interrupção abrup
 
 ## Git e preferências
 
+- Usar Bun para instalação e execução: `bun install --frozen-lockfile`, `bun run dev`, `bun run build`, `bun run preview` e `bun run test` (Playwright). O `bunfig.toml` força Bun nos executáveis dos scripts; manter somente `bun.lock`. Para instalar Chromium, usar `bunx --bun playwright install chromium`.
+
 - Por padrão, commit e push ficam a cargo do usuário; executar essas ações apenas quando ele solicitar explicitamente. Quando necessário, fornecer comandos para commits separados por responsabilidade; manter implementação e testes correspondentes juntos.
 - Escrever assuntos e corpos de commits Git em inglês, seguindo Conventional Commits (`type(scope): description`, com escopo quando útil) e separando responsabilidades em commits coerentes.
 - Em Plan Mode, identificar cada referência anexada utilizada por rótulo e caminho local exato. Não acrescentar esses caminhos à entrega planejada sem solicitação.
