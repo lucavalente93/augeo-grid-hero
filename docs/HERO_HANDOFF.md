@@ -1,6 +1,16 @@
 # Hero — ponto de retomada
 
-Atualizado em 2026-10-09. Para tarefas do hero, leia este arquivo primeiro; ele concentra o estado atual. A rotina de leitura e atualização dos registros está no [AGENTS.md do projeto](../AGENTS.md). O [plano](HERO_AUDIT_AND_IMPROVEMENT_PLAN.md) guarda a especificação, as evidências da auditoria e as referências visuais, sem substituir este registro de progresso.
+Atualizado em 2026-10-11. Para tarefas do hero, leia este arquivo primeiro; ele concentra o estado atual. A rotina de leitura e atualização dos registros está no [AGENTS.md do projeto](../AGENTS.md). O [plano](HERO_AUDIT_AND_IMPROVEMENT_PLAN.md) guarda a especificação, as evidências da auditoria e as referências visuais, sem substituir este registro de progresso.
+
+## Correção do contra-forma do lettering — 2026-10-11
+
+Relato: no deploy da Vercel, o “A” do lettering AUGEO aparecia preenchido, embora o mesmo repositório e a visualização local permanecessem vazados. A causa provável estava na composição SVG → `<img>` → canvas reativo: o contra-forma dependia de um `clipPath` com regra de recorte aplicada indiretamente. O SVG foi reestruturado para preencher cada letra diretamente com o padrão CRT e declarar `fill-rule="evenodd"` no próprio caminho do “A” e do “O”; não houve alteração de geometria, proporção, animação ou interação.
+
+- Build de produção `bun run build` aprovado; `git diff --check` aprovado.
+- Renderização local independente do SVG convertida para PNG e inspecionada: “A” vazado, “O” vazado e scanlines preservadas. A URL de produção não respondeu nesta sessão, portanto a confirmação do deploy ainda depende de publicar e recarregar a implantação.
+- Alteração limitada a `src/assets/augeo-lettering.svg`; sem commit/push. Artefatos de inspeção em `/tmp/augeo-lettering*.png` são temporários.
+
+Próxima ação: publicar esta alteração na Vercel e verificar o lettering no mesmo navegador/viewport do relato. Se persistir, comparar o HTML/asset efetivamente servido no deploy; não avançar outros blocos do hero.
 
 ## Registro das implementações pendentes — 2026-10-09
 
