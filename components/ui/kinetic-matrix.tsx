@@ -382,6 +382,29 @@ export function KineticMatrix({ title = 'TOPOLOGY', titleArtwork, reactiveArtwor
     containerRef.current?.dispatchEvent(new Event('matrix-running-change'));
   }, [isRunning]);
 
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    const hero = container.closest('.hero');
+    if (!hero) return;
+
+    const handlePointerMove = (e: globalThis.PointerEvent) => {
+      const rect = container.getBoundingClientRect();
+      pointerRef.current = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+    };
+
+    const handlePointerLeave = () => {
+      pointerRef.current = { x: -2000, y: -2000 };
+    };
+
+    hero.addEventListener('pointermove', handlePointerMove as EventListener);
+    hero.addEventListener('pointerleave', handlePointerLeave as EventListener);
+    return () => {
+      hero.removeEventListener('pointermove', handlePointerMove as EventListener);
+      hero.removeEventListener('pointerleave', handlePointerLeave as EventListener);
+    };
+  }, []);
+
   function leave() { pointerRef.current = { x: -2000, y: -2000 }; }
   function move(event: PointerEvent<HTMLDivElement>) {
     const rect = event.currentTarget.getBoundingClientRect();

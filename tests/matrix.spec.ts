@@ -41,7 +41,7 @@ test('landing: canvas draws, reduced motion freezes it, pointer works, triangles
   expect(errors).toEqual([]);
 });
 
-test('triangles keep their lateral position and remain clear of the copy', async ({ page }) => {
+test('symbol and copy align with the triangles at their existing lateral position', async ({ page }) => {
   await page.goto('/');
   await page.evaluate(() => document.fonts.ready);
   for (const [width, height] of [[1440, 900], [900, 600], [768, 600], [844, 390]]) {
@@ -51,7 +51,11 @@ test('triangles keep their lateral position and remain clear of the copy', async
     expect(cue.width).toBe(36);
     expect(cue.height).toBe(63);
     expect(cue.y + cue.height).toBeLessThanOrEqual(height);
-    expect(cue.x + cue.width).toBeLessThan(heading.x);
+    const brand = (await page.locator('.brand').boundingBox())!;
+    const intro = (await page.locator('.intro').boundingBox())!;
+    expect(heading.x).toBeCloseTo(cue.x, 1);
+    expect(intro.x).toBeCloseTo(cue.x, 1);
+    expect(brand.x).toBeCloseTo(cue.x, 1);
     await expect(page.locator('.scroll-cue path')).toHaveCount(2);
     await expect(page.locator('.explore')).toHaveCount(0);
   }
