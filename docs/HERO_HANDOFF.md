@@ -1,6 +1,25 @@
 # Hero — ponto de retomada
 
-Atualizado em 2026-10-12. Para tarefas do hero, leia este arquivo primeiro; ele concentra o estado atual. A rotina de leitura e atualização dos registros está no [AGENTS.md do projeto](../AGENTS.md). O [plano](HERO_AUDIT_AND_IMPROVEMENT_PLAN.md) guarda a especificação, as evidências da auditoria e as referências visuais, sem substituir este registro de progresso.
+Atualizado em 2026-10-13. Para tarefas do hero, leia este arquivo primeiro; ele concentra o estado atual. A rotina de leitura e atualização dos registros está no [AGENTS.md do projeto](../AGENTS.md). O [plano](HERO_AUDIT_AND_IMPROVEMENT_PLAN.md) guarda a especificação, as evidências da auditoria e as referências visuais, sem substituir este registro de progresso.
+
+## Publicação do redesenho mobile — 2026-10-13
+
+- Usuário autorizou commit de todas as mudanças, push na `main` do GitHub e atualização da implantação Vercel. Correção de entendimento: o componente inteiro do grid passou para o footer do hero mobile, acompanhado de mudanças de ergonomia/acessibilidade e escala do lettering; não é apenas um ajuste decorativo. CSS mobile confirma lettering em `min(85%, 360px)` e padding responsivo, preservando a geometria do SVG.
+- Validação atual: `bun run build`, `git diff --check` e `bun run test` aprovados (**24/24**, 18,8 s, Chromium). A tentativa inicial da suíte foi bloqueada por `EPERM` na porta; execução autorizada fora do sandbox passou. `git fetch origin main` confirmou branch alinhado ao remoto antes da publicação. Nenhum novo fluxo Impeccable aplicado nesta publicação.
+- Vercel: skills `vercel-cli` e `deployments-cicd` consultadas. O plugin está instalado, mas nenhuma ferramenta Vercel foi exposta nesta sessão e a consulta MCP retornou `unknown MCP server 'vercel'`. Tentativa de CLI interrompida pelo usuário ao solicitar uso do plugin; nenhum deploy executado. Commit/push e confirmação de produção ainda pendentes nesta etapa.
+
+
+## Redesenho Mobile — CTA visível e matriz como footer retangular — 2026-10-13
+
+Pedido: resolver a ausência do CTA no mobile, o padding esquerdo assimétrico e o conflito de touch/scroll com o bloco quadrado da matriz, implementando a transformação da matriz em uma faixa retangular inferior (footer da hero mobile).
+
+- **Entrada Comercial (CTA Mobile)**: `.hero-cta` agora é visível em viewports móveis (`display: inline-flex`), posicionado organicamente abaixo do parágrafo `.intro` (`margin-top: 24px` a `28px`). Altura ergonômica mínima de 44px com padding responsivo e proteção contra quebra horizontal sob escalonamento de fonte de até 200% (`max-width: 100%`, quebra controlada em telas ultra-estreitas e `white-space: nowrap` preservado no desktop).
+- **Remoção da Coluna Fantasma de 64 px**: a estrutura de `.hero` em telas `< 768px` foi migrada de grid bidimensional assimétrico (que reservava 64px para o antigo scroll-cue) para fluxo vertical flexbox (`display: flex; flex-direction: column; justify-content: space-between; min-height: calc(100dvh - 70px)`), eliminando o desvio unilateral e restabelecendo recuos homogêneos de 20px no texto.
+- **Ressignificação da Matriz (Footer Retangular)**: `.matrix-deck` foi reconfigurado de bloco quadrado central para uma faixa panorâmica inferior (`width: 100%`, `height: clamp(140px, 22dvh, 180px)`, `margin-top: auto`), arrematada por costura arquitetônica superior (`border-top: 1px solid var(--border)`). O lettering AUGEO ganha enquadramento proporcional e legível.
+- **Ergonomia de Touch e Rolagem**: adicionado `touch-action: pan-y` à matriz e canvas no mobile, garantindo que o gesto de rolagem vertical pelo polegar nunca seja sequestrado ou engasgado. A área nobre de leitura e conversão (cerca de 75% da altura da tela) fica livre de interceptações acidentais de touch.
+- **Testes e Cobertura**:
+  - [tests/matrix.spec.ts](../tests/matrix.spec.ts): asserções mobile atualizadas para verificar que a matriz inicia na borda lateral completa (`deck.x === 0`), a ordem vertical é estritamente mantida (`intro -> cta -> deck`), e o lettering AUGEO permanece completamente acima da dobra em todos os viewports de teste (incluindo 320×600).
+- **Validação**: `bun run build` aprovado sem erros; `bun run test` aprovado com **24/24 testes** (19,1s em Chromium). Sem commit/push, conforme diretriz padrão.
 
 ## Implementação visual do painel escuro esquerdo (design-taste-frontend) — 2026-10-12
 

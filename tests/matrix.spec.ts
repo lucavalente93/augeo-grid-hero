@@ -88,8 +88,10 @@ test('mobile preserves the matrix position and shows the whole signature above t
       const deck = (await page.locator('.matrix-deck').boundingBox())!;
       const artwork = (await page.locator('.matrix-artwork').boundingBox())!;
       const intro = (await page.locator('.intro').boundingBox())!;
-      expect(deck.x).toBe(64);
-      expect(deck.y).toBeGreaterThan(intro.y + intro.height);
+      const cta = (await page.locator('.hero-cta').boundingBox())!;
+      expect(deck.x).toBe(0);
+      expect(cta.y).toBeGreaterThan(intro.y + intro.height);
+      expect(deck.y).toBeGreaterThan(cta.y + cta.height);
       expect(artwork.y + artwork.height).toBeLessThanOrEqual(height);
       expect(artwork.x).toBeGreaterThanOrEqual(deck.x);
       expect(artwork.x + artwork.width).toBeLessThanOrEqual(width);
