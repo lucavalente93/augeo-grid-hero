@@ -8,7 +8,7 @@ Atualizado em 2026-10-13. Aqui ficam continuidade operacional, trabalho técnico
 - Última validação da aplicação: `bun run build` aprovado e `bun run test` **24/24 em 18,5 s**, Chromium, dois workers, servidor iniciado separadamente. Código da aplicação não alterado nesta revisão documental; testes não repetidos.
 - Site publicado em `augeocreative.com` e `www.augeocreative.com`; usuário confirmou acesso e nova verificação HTTPS retornou HTTP 200 em ambos. DNS Hostinger e e-mail comercial preservados. Redirecionamento canônico entre os endereços ainda pendente.
 - Especificação revisada integralmente contra código e contexto: stack, matriz, copy, temas, assets, domínio e publicação descritos como bases existentes; Processo e formulário continuam previstos; matriz como footer visual mobile e CTA de conversão já implementados. Pro/WhatsApp Business adiados por decisão do usuário.
-- Revisão da especificação publicada em `ea09147`, com push confirmado por gh. Consolidação posterior para seis documentos concluída localmente, conforme pedido do usuário; incluída no commit local solicitado após a correção da especificação. Avaliações do hero permanecem no [registro de decisões](HERO_DECISIONS_AND_IDEAS.md#avaliações-e-decisões-ainda-abertas).
+- Revisão da especificação publicada em `ea09147`, com push confirmado por gh. Consolidação posterior para seis documentos concluída localmente, conforme pedido do usuário; publicada em `b7d7b51` após a correção da especificação, com push posteriormente autorizado e confirmado por gh. Avaliações do hero permanecem no [registro de decisões](HERO_DECISIONS_AND_IDEAS.md#avaliações-e-decisões-ainda-abertas).
 
 ## Tooling — restrição de sockets no sandbox; diagnóstico encerrado
 
@@ -420,10 +420,16 @@ Os nomes longos/hash dos assets do moodboard vêm da coleção e têm índice CS
 - Usuário pediu reduzir os onze documentos a cinco ou seis. Mantidos PRODUCT, 02-WEBSITE_SPEC, HERO_HANDOFF, BACKLOG, HERO_DECISIONS_AND_IDEAS e HERO_AUDIT_AND_IMPROVEMENT_PLAN. Sem novo índice ou arquivos de encaminhamento.
 - Contexto estratégico e operação interna incorporados como seções de PRODUCT; implementação técnica desatualizada da operação reconciliada com a especificação. Rascunhos de copy preservados na especificação e identificados como não implementados/sem aprovação final registrada. Auditoria nominal e protocolo movidos para este backlog, com tabelas explicitamente históricas. Encaminhamento do bloco 2 removido porque seu conteúdo já havia sido distribuído.
 - AGENTS, README e referências dos documentos ajustados aos destinos e âncoras. Mantida a separação entre implementação/direção, execução e decisões, sem fechar avaliações ou avançar blocos. Somente Markdown alterado; sem build/suíte funcional ou novo fluxo Impeccable.
-- Verificação: seis documentos em docs; script Python aprovou 57 links locais, incluindo oito âncoras, e `git diff --check` passou; referências operacionais aos cinco arquivos removidos verificadas. Nomes de arquivos antigos em registros históricos preservados quando explicam a transferência. Consolidação incluída no commit local posteriormente solicitado pelo usuário; push desta rodada não solicitado.
+- Verificação: seis documentos em docs; script Python aprovou 57 links locais, incluindo oito âncoras, e `git diff --check` passou; referências operacionais aos cinco arquivos removidos verificadas. Nomes de arquivos antigos em registros históricos preservados quando explicam a transferência. Consolidação incluída em `b7d7b51`; push posteriormente solicitado pelo usuário e confirmado por gh.
 
 ## Correção de footer mobile, conversão e hover — 2026-10-13
 
 - Usuário corrigiu a descrição: a matriz inteira já virou o footer mobile, o botão de conversão existe e a composição reativa em hover está implementada. Especificação ajustada em estado publicado, arquitetura, função/campo visual do hero e pendências; retiradas as negativas redundantes e a apresentação do footer como entrega ausente. Formulário `#entrada` permanece previsto, conforme App; não confundir botão de conversão existente com recebimento de dados implementado.
 - Handoff, produto e decisão de composição mobile sincronizados. Nenhuma mudança de UI; consolidação para seis documentos preservada. Usuário solicitou salvar todas as alterações locais em commit, sem novo pedido de push.
 - Verificação documental: links locais/âncoras e `git diff --check` conferidos antes do commit. Sem nova suíte/build por mudança somente Markdown. Próxima ação: novas alterações conforme pedido do usuário; commit local desta rodada inclui consolidação e correções relacionadas.
+
+## Push da consolidação documental — 2026-10-13
+
+- Usuário solicitou commits e push. Alterações já reunidas em `b7d7b51` (`docs(website): consolidate records and clarify hero composition`); árvore inicialmente limpa, sem necessidade de recriar o commit.
+- `git push origin main` concluiu de `ea09147` para `b7d7b51`; `gh api repos/lucavalente93/augeo-grid-hero/commits/main --jq .sha` confirmou SHA remoto `b7d7b5168600e301c7b921b4c8c4bab462b647e4`.
+- Este registro acompanha em commit documental separado. Sem mudança de aplicação ou nova suíte; `git diff --check` conferido. Integração Git pode disparar deploy automático, ainda não verificado nesta tarefa. Próximas frentes dependem de pedido do usuário.
