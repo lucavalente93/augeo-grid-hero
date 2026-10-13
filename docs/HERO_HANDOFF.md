@@ -2,6 +2,21 @@
 
 Atualizado em 2026-10-12. Para tarefas do hero, leia este arquivo primeiro; ele concentra o estado atual. A rotina de leitura e atualização dos registros está no [AGENTS.md do projeto](../AGENTS.md). O [plano](HERO_AUDIT_AND_IMPROVEMENT_PLAN.md) guarda a especificação, as evidências da auditoria e as referências visuais, sem substituir este registro de progresso.
 
+## Implementação visual do painel escuro esquerdo (design-taste-frontend) — 2026-10-12
+
+Pedido: implementar o plano de evolução visual para a hero section elaborado segundo a skill `design-taste-frontend`, com foco prioritário no painel escuro esquerdo.
+
+- Materialidade e Chassi: adicionada micro-profundidade ao `.hero-copy` através de vinheta radial imperceptível de iluminação ótica sobre `--background`, evitando fundos estéreis e sem violar a regra de banimento de AI-gradients.
+- Borda Divisória Arquitetônica (Vertical Seam): adicionada costura de 1px (`border-right: 1px solid var(--border)`) em desktop (`min-width: 768px`) entre o painel esquerdo (44%) e o deck da matriz (56%), definindo a separação mecânica dos planos com base em tokens de borda do tema.
+- Entrada Comercial (CTA Primário): implementado o ponto de conversão previsto na especificação ([02-WEBSITE_SPEC.md](02-WEBSITE_SPEC.md)), ancorado em `.hero-copy` com o rótulo `"Apresentar negócio"`. Botão monolítico em linha única desktop (sem quebra de linha), contraste superior a 17:1 (`bg-[var(--foreground)] text-[var(--background)]`), hover com micro-glow suave, foco visível no acento (`#ff482c`) e feedback tátil no `:active` (`scale(0.98)`). Em viewports reduzidas e desktop curto (≤ 700px e ≤ 500px), dimensões e respiro foram comprimidos proporcionalmente; no mobile (`< 768px`), permanece oculto para preservar a dobra rigorosa de 320×600 onde a matriz e o lettering já ocupam o espaço útil documentado.
+- Tipografia e Ritmo: descender clearance adicionada ao `h1` (`padding-bottom: 2px`) para prevenir corte de letras descensoras com entrelinha 1.02; texto de apoio `.intro` condensado para `max-width: 34ch` e margem de 28px, reforçando o ritmo editorial compacto.
+- Dinâmica de Alinhamento: o `ResizeObserver` de alinhamento vertical do lettering em [src/App.tsx](../src/App.tsx) passa a observar também o `.hero-cta`, recalculando `--hero-title-center` automaticamente se o botão sofrer redimensionamento.
+- Testes e Cobertura:
+  - [tests/matrix.spec.ts](../tests/matrix.spec.ts): asserção de alinhamento expandida para verificar que o CTA também compartilha a borda de 48px (`--hero-copy-inset`) junto com título, apoio, símbolo e triângulos nos quatro viewports desktop cobertos.
+  - [tests/scroll-cue-preview.spec.ts](../tests/scroll-cue-preview.spec.ts): eliminada instabilidade de precisão de ponto flutuante na medição do tempo pausado da animação.
+- Validação: `bun run build` aprovado sem erros de tipos; `bun run test` aprovado com **24/24 testes** (18,1s em Chromium). Sem commit/push, conforme diretriz padrão.
+
+
 ## Revisão das alterações atribuídas ao Gemini Flash — 2026-10-12
 
 Pedido: analisar as alterações locais, corrigir este handoff e preparar hero, testes e documentação para staging. A atribuição ao Gemini Flash foi informada pelo usuário; o diff confirma as mudanças, mas não identifica o modelo autor.
