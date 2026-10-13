@@ -1,7 +1,7 @@
 // Seconds and CSS pixels. Shared tuning for every container proportion.
-export const MOTION = {
+export const MATRIX_MOTION = {
   spacing: 58,
-  step: 1 / 120,
+  simulationStepSeconds: 1 / 120,
   pointerRadius: 155,
   displacement: 32,
   response: 12,
@@ -19,7 +19,7 @@ export interface MotionPoint { x: number; y: number }
 export interface MotionWave extends MotionPoint { age: number; radius: number }
 
 export const ARTWORK_WARP = {
-  step: 8,
+  sampleSpacingPx: 8,
   scale: 0.10,
   maxShift: 6,
   maxNeighborDelta: 2,
@@ -36,18 +36,18 @@ export function displacementAt(
   const dx = point.x - pointer.x, dy = point.y - pointer.y;
   const distance = Math.hypot(dx, dy);
   const influence = Math.max(0, 1 - distance / pointerRadius);
-  let x = (distance ? dx / distance : 0) * MOTION.displacement * influence * influence;
-  let y = (distance ? dy / distance : 0) * MOTION.displacement * influence * influence;
+  let x = (distance ? dx / distance : 0) * MATRIX_MOTION.displacement * influence * influence;
+  let y = (distance ? dy / distance : 0) * MATRIX_MOTION.displacement * influence * influence;
   let waveTension = 0;
   for (const wave of waves) {
     const wx = point.x - wave.x, wy = point.y - wave.y;
     const wd = Math.hypot(wx, wy);
-    const age = wave.age / MOTION.impulseDuration;
-    const band = Math.max(0, 1 - Math.abs(wd - wave.radius * age) / 80);
+    const waveProgress = wave.age / MATRIX_MOTION.impulseDuration;
+    const band = Math.max(0, 1 - Math.abs(wd - wave.radius * waveProgress) / 80);
     const strength = Math.sin(band * Math.PI / 2) ** 2 *
-      Math.min(1, wave.age / 0.16) * (1 - age * 0.65);
-    x += (wd ? wx / wd : 0) * MOTION.impulseDisplacement * strength;
-    y += (wd ? wy / wd : 0) * MOTION.impulseDisplacement * strength;
+      Math.min(1, wave.age / 0.16) * (1 - waveProgress * 0.65);
+    x += (wd ? wx / wd : 0) * MATRIX_MOTION.impulseDisplacement * strength;
+    y += (wd ? wy / wd : 0) * MATRIX_MOTION.impulseDisplacement * strength;
     waveTension = Math.max(waveTension, strength);
   }
   return { x, y, influence, waveTension };
@@ -61,13 +61,13 @@ export function artworkShiftTargets(
   waves: readonly MotionWave[],
   pointerRadius: number,
 ) {
-  const shifts = new Float32Array(Math.ceil(artwork.width / ARTWORK_WARP.step) + 1);
+  const shifts = new Float32Array(Math.ceil(artwork.width / ARTWORK_WARP.sampleSpacingPx) + 1);
   const sampleY = artwork.y + artwork.height / 2;
-  for (let col = 0; col < shifts.length; col++) {
+  for (let sampleIndex = 0; sampleIndex < shifts.length; sampleIndex++) {
     const field = displacementAt(
-      { x: artwork.x + col * ARTWORK_WARP.step, y: sampleY }, pointer, waves, pointerRadius,
+      { x: artwork.x + sampleIndex * ARTWORK_WARP.sampleSpacingPx, y: sampleY }, pointer, waves, pointerRadius,
     );
-    shifts[col] = field.x * ARTWORK_WARP.scale;
+    shifts[sampleIndex] = field.x * ARTWORK_WARP.scale;
   }
   return constrainArtworkShifts(shifts);
 }
@@ -101,13 +101,13 @@ export function randomBetween(range: readonly [number, number]) {
 }
 
 // Unequal dwell times, generated once per pulse, keep its travel ordered.
-export function pulseStops() {
+export function createPulseProgressThresholds() {
   const weights = Array.from({ length: 12 }, () => 0.45 + Math.random() * 1.3);
   const total = weights.reduce((sum, weight) => sum + weight, 0);
   let time = 0;
   return weights.map((weight) => (time += weight / total));
 }
 
-export function steppedProgress(progress: number, stops: number[]) {
-  return stops.filter((stop) => progress >= stop).length / stops.length;
+export function steppedProgress(progress: number, progressThresholds: number[]) {
+  return progressThresholds.filter((stop) => progress >= stop).length / progressThresholds.length;
 }

@@ -7,20 +7,20 @@ export default function ScrollCue() {
   useEffect(() => {
     const cue = cueRef.current;
     if (!cue) return;
-    let visible = false;
-    const sync = () => {
-      cue.style.animationPlayState = visible && !document.hidden ? 'running' : 'paused';
+    let isCueInViewport = false;
+    const syncCueAnimationState = () => {
+      cue.style.animationPlayState = isCueInViewport && !document.hidden ? 'running' : 'paused';
     };
-    const observer = new IntersectionObserver(([entry]) => {
-      visible = entry.isIntersecting;
-      sync();
+    const intersectionObserver = new IntersectionObserver(([entry]) => {
+      isCueInViewport = entry.isIntersecting;
+      syncCueAnimationState();
     });
-    observer.observe(cue);
-    document.addEventListener('visibilitychange', sync);
-    sync();
+    intersectionObserver.observe(cue);
+    document.addEventListener('visibilitychange', syncCueAnimationState);
+    syncCueAnimationState();
     return () => {
-      observer.disconnect();
-      document.removeEventListener('visibilitychange', sync);
+      intersectionObserver.disconnect();
+      document.removeEventListener('visibilitychange', syncCueAnimationState);
     };
   }, []);
 

@@ -5,7 +5,7 @@
 import KineticMatrix from "@/components/ui/kinetic-matrix";
 
 // ONLY DEFAULT EXPORT WILL BE TREATED AS A DEMO
-export default function DemoOne() {
+export default function KineticMatrixDemo() {
   return (
     <div className="flex min-h-dvh w-full items-center justify-center bg-neutral-100 p-4 sm:p-6 dark:bg-neutral-950">
       {/* Constrained Centered Card Container */}

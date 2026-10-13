@@ -5,8 +5,8 @@ test('cue keeps contrasting after the introduction and becomes static with reduc
   await page.emulateMedia({reducedMotion:'no-preference'});
   await page.goto('/');
   const cue=page.locator('.scroll-cue');
-  const states=()=>cue.evaluate(n=>n.getAnimations({subtree:true}).map(a=>a.playState));
-  await expect.poll(states).toEqual(['running','running']);
+  const readAnimationStates=()=>cue.evaluate(n=>n.getAnimations({subtree:true}).map(a=>a.playState));
+  await expect.poll(readAnimationStates).toEqual(['running','running']);
   const timing=await cue.evaluate(n=>n.getAnimations({subtree:true}).map(a=>a.effect!.getTiming()));
   expect(timing.map(t=>[t.duration,t.delay,t.iterations])).toEqual([[5600,300,Infinity],[5600,1280,Infinity]]);
   const before=await cue.boundingBox();
@@ -14,12 +14,12 @@ test('cue keeps contrasting after the introduction and becomes static with reduc
   expect(await cue.boundingBox()).toEqual(before);
   expect(await cue.locator('path').first().evaluate(n=>getComputedStyle(n).transform)).toBe('none');
   await cue.evaluate(n=>n.getAnimations({subtree:true}).forEach(a=>{a.currentTime=3600;a.play();}));
-  await expect.poll(states).toEqual(['running','running']);
+  await expect.poll(readAnimationStates).toEqual(['running','running']);
   const fills = () => cue.locator('path').evaluateAll(nodes => nodes.map(node => getComputedStyle(node).fill));
   const ongoing = await fills();
   await expect.poll(fills).not.toEqual(ongoing);
   await page.emulateMedia({reducedMotion:'reduce'});
-  await expect.poll(states).toEqual([]);
+  await expect.poll(readAnimationStates).toEqual([]);
   await expect(cue.locator('path').first()).toHaveCSS('fill','rgb(97, 97, 93)');
   await expect(cue.locator('path').last()).toHaveCSS('fill','rgb(97, 97, 93)');
 });
@@ -29,26 +29,31 @@ test('offscreen and hidden-document suspension resumes elapsed animation time', 
   await page.goto('/');
   await page.addStyleTag({content:'body {padding-bottom:200vh;}'});
   const cue=page.locator('.scroll-cue');
-  const states=()=>cue.evaluate(n=>n.getAnimations({subtree:true}).map(a=>a.playState));
-  await expect.poll(states).toEqual(['running','running']);
+  const readAnimationStates=()=>cue.evaluate(n=>n.getAnimations({subtree:true}).map(a=>a.playState));
+  await expect.poll(readAnimationStates).toEqual(['running','running']);
   await page.evaluate(()=>window.scrollTo(0,1200));
-  await expect.poll(states).toEqual(['paused','paused']);
-  const times=()=>cue.evaluate(n=>n.getAnimations({subtree:true}).map(a=>Number(a.currentTime)));
+  await expect.poll(readAnimationStates).toEqual(['paused','paused']);
+  const readAnimationTimesMs=()=>cue.evaluate(async node=>{
+    const animations=node.getAnimations({subtree:true});
+    // playState can change before the pending pause/play task settles.
+    await Promise.all(animations.map(animation=>animation.ready));
+    return animations.map(animation=>Number(animation.currentTime));
+  });
   await page.waitForTimeout(50);
-  const paused=await times();
+  const pausedAnimationTimesMs=await readAnimationTimesMs();
   await page.waitForTimeout(100);
-  expect(await times()).toEqual(paused);
+  expect(await readAnimationTimesMs()).toEqual(pausedAnimationTimesMs);
   await page.evaluate(()=>window.scrollTo(0,0));
-  await expect.poll(states).toEqual(['running','running']);
-  expect((await times())[0]).toBeGreaterThanOrEqual(paused[0] - 0.1);
+  await expect.poll(readAnimationStates).toEqual(['running','running']);
+  expect((await readAnimationTimesMs())[0]).toBeGreaterThanOrEqual(pausedAnimationTimesMs[0] - 0.1);
   // Test the visibility handler deterministically; real OS tab switching is a
   // separate manual verification, not implied by this synthetic state.
   await page.evaluate(()=>{Object.defineProperty(document,'hidden',{configurable:true,value:true});document.dispatchEvent(new Event('visibilitychange'));});
-  await expect.poll(states).toEqual(['paused','paused']);
-  const hidden=await times(); await page.waitForTimeout(150); expect(await times()).toEqual(hidden);
+  await expect.poll(readAnimationStates).toEqual(['paused','paused']);
+  const hiddenAnimationTimesMs=await readAnimationTimesMs(); await page.waitForTimeout(150); expect(await readAnimationTimesMs()).toEqual(hiddenAnimationTimesMs);
   await page.evaluate(()=>{Reflect.deleteProperty(document,'hidden');document.dispatchEvent(new Event('visibilitychange'));});
-  await expect.poll(states).toEqual(['running','running']);
-  expect((await times())[0]).toBeGreaterThanOrEqual(hidden[0]);
+  await expect.poll(readAnimationStates).toEqual(['running','running']);
+  await expect.poll(async ()=>(await readAnimationTimesMs())[0]).toBeGreaterThanOrEqual(hiddenAnimationTimesMs[0]);
 });
 
 for (const colorScheme of ['light', 'dark'] as const) {
@@ -79,7 +84,7 @@ for (const colorScheme of ['light', 'dark'] as const) {
       const lightPeak = 'rgb(226, 226, 223)';
       const darkPeak = 'rgb(32, 32, 31)';
       const rest = colorScheme === 'light' ? 'rgb(97, 97, 93)' : 'rgb(158, 158, 162)';
-      for (const [phase, time, leading, peak] of [
+      for (const [phase, time, activeTriangleIndex, peak] of [
         ['upper', 860, 0, lightPeak], ['lower', 1840, 1, darkPeak],
         ['rest', 2700, -1, rest],
         ['alternate-upper', 3660, 0, darkPeak], ['alternate-lower', 4640, 1, lightPeak],
@@ -90,18 +95,18 @@ for (const colorScheme of ['light', 'dark'] as const) {
           animation.currentTime = time;
         }), time);
         const fills = await cue.locator('path').evaluateAll(nodes => nodes.map(node => getComputedStyle(node).fill));
-        if (leading === -1) expect(fills).toEqual([rest, rest]);
+        if (activeTriangleIndex === -1) expect(fills).toEqual([rest, rest]);
         else {
-          expect(fills[leading]).toBe(peak);
-          expect(fills[1 - leading]).toBe(rest);
+          expect(fills[activeTriangleIndex]).toBe(peak);
+          expect(fills[1 - activeTriangleIndex]).toBe(rest);
           // The upper tip lies inside the lower triangle. Hit testing that
           // shared ink proves the active triangle is painted above its sibling.
-          const paintedTriangle = await cue.evaluate(node => {
+          const topmostTriangleIndex = await cue.evaluate(node => {
             const bounds = node.getBoundingClientRect();
             const hit = document.elementFromPoint(bounds.x + bounds.width / 2, bounds.y + 32);
             return Array.from(node.querySelectorAll('path')).indexOf(hit as SVGPathElement);
           });
-          expect(paintedTriangle).toBe(leading);
+          expect(topmostTriangleIndex).toBe(activeTriangleIndex);
         }
         expect(bounds.width).toBe(36);
         expect(bounds.height).toBe(63);

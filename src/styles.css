@@ -119,7 +119,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
 button { cursor: pointer; }
 a:focus-visible, button:focus-visible { outline: 2px solid #ff482c; outline-offset: 5px; }
 .page { width: 100%; --hero-copy-inset: 48px; }
-.nav { position: absolute; top: 0; left: 0; z-index: 2; display: flex; align-items: center; height: 96px; padding: 0 var(--hero-copy-inset); }
+.site-header { position: absolute; top: 0; left: 0; z-index: 2; display: flex; align-items: center; height: 96px; padding: 0 var(--hero-copy-inset); }
 .brand { display: block; width: 66px; height: 66px; }
 .brand img { width: 100%; height: 100%; object-fit: contain; }
 @media (prefers-color-scheme: dark) {
@@ -144,7 +144,7 @@ a:focus-visible, button:focus-visible { outline: 2px solid #ff482c; outline-offs
 }
 .hero-copy h1 { max-width: 11ch; margin: 0; font-size: clamp(2rem, 19.5cqw, 6rem); font-weight: 620; letter-spacing: -.035em; line-height: 1.02; overflow-wrap: anywhere; text-wrap: balance; padding-bottom: 2px; }
 .hero-copy h1 span { display: block; }
-.intro { max-width: 34ch; margin: 28px 0 0; color: var(--muted-foreground); font-size: clamp(1.125rem, 1.6vw, 1.5rem); line-height: 1.5; letter-spacing: -.015em; }
+.hero-description { max-width: 34ch; margin: 28px 0 0; color: var(--muted-foreground); font-size: clamp(1.125rem, 1.6vw, 1.5rem); line-height: 1.5; letter-spacing: -.015em; }
 
 .hero-cta {
   display: inline-flex;
@@ -199,11 +199,11 @@ a:focus-visible, button:focus-visible { outline: 2px solid #ff482c; outline-offs
 }
 @media (min-width: 768px) and (max-height: 500px) {
   .hero-copy { padding-top: 80px; padding-bottom: 32px; }
-  .intro { margin-top: 16px; font-size: 1rem; }
+  .hero-description { margin-top: 16px; font-size: 1rem; }
   .hero-cta { margin-top: 16px; height: 36px; padding: 0 16px; font-size: 0.8125rem; }
 }
-.matrix-deck { position: relative; min-width: 0; min-height: 100dvh; }
-.matrix-deck > .kinetic-matrix { position: absolute; inset: 0; }
+.hero-matrix-panel { position: relative; min-width: 0; min-height: 100dvh; }
+.hero-matrix-panel > .kinetic-matrix { position: absolute; inset: 0; }
 .kinetic-matrix { container-type: size; position: relative; isolation: isolate; width: 100%; height: 100%; overflow: hidden; user-select: none; background: var(--background); --crt-line: rgba(17, 17, 17, .045); --crt-center: transparent; --crt-edge: rgba(17, 17, 17, .055); }
 .kinetic-matrix::after { content: ""; position: absolute; z-index: 1; inset: 0; pointer-events: none; background: radial-gradient(ellipse at center, var(--crt-center) 0%, transparent 55%, var(--crt-edge) 100%), repeating-linear-gradient(to bottom, transparent 0 3px, var(--crt-line) 3px 4px); }
 @media (prefers-color-scheme: dark) {
@@ -213,15 +213,15 @@ a:focus-visible, button:focus-visible { outline: 2px solid #ff482c; outline-offs
 .light .kinetic-matrix { --crt-line: rgba(17, 17, 17, .045); --crt-center: transparent; --crt-edge: rgba(17, 17, 17, .055); }
 .matrix-title { position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; padding: 12%; }
 .matrix-title h2 { max-width: 100%; margin: 0; font-size: min(14cqw, 24cqh, 8rem); line-height: 1; overflow-wrap: anywhere; text-align: center; }
-.augeo-matrix .matrix-title { bottom: auto; height: calc(var(--hero-title-center, 50dvh) * 2); padding: clamp(16px, 5cqw, 68px); }
-.augeo-matrix { --crt-line: rgba(17, 17, 17, .03); }
+.hero-matrix .matrix-title { bottom: auto; height: calc(var(--hero-heading-center-y, 50dvh) * 2); padding: clamp(16px, 5cqw, 68px); }
+.hero-matrix { --crt-line: rgba(17, 17, 17, .03); }
 @media (prefers-color-scheme: dark) {
-  :root:not(.light) .augeo-matrix { --crt-line: rgba(255, 255, 255, .0567); }
+  :root:not(.light) .hero-matrix { --crt-line: rgba(255, 255, 255, .0567); }
 }
-.dark .augeo-matrix { --crt-line: rgba(255, 255, 255, .0567); }
-.light .augeo-matrix { --crt-line: rgba(17, 17, 17, .03); }
+.dark .hero-matrix { --crt-line: rgba(255, 255, 255, .0567); }
+.light .hero-matrix { --crt-line: rgba(17, 17, 17, .03); }
 .matrix-title .matrix-artwork-title { width: min(78.2%, 527px); }
-.augeo-matrix .matrix-artwork-title { width: min(88%, 680px); }
+.hero-matrix .matrix-artwork-title { width: min(88%, 680px); }
 .matrix-artwork-stack { position: relative; display: block; width: 100%; }
 .matrix-artwork { display: block; width: 100%; height: auto; max-height: 70cqh; object-fit: contain; }
 .matrix-artwork-reactive { position: absolute; inset: 0; width: 100%; height: 100%; visibility: hidden; pointer-events: none; }
@@ -237,7 +237,7 @@ a:focus-visible, button:focus-visible { outline: 2px solid #ff482c; outline-offs
 
 }
 @media (max-width: 767px) {
-  .nav { position: relative; height: 70px; padding: 0 20px; }
+  .site-header { position: relative; height: 70px; padding: 0 20px; }
   .brand { width: 58px; height: 58px; }
   .hero {
     display: flex;
@@ -262,9 +262,9 @@ a:focus-visible, button:focus-visible { outline: 2px solid #ff482c; outline-offs
     background: var(--hero-panel-background);
   }
   .hero-copy h1 { font-size: min(clamp(2.75rem, 16cqw, 3.75rem), calc(16cqw + 1rem)); }
-  .intro { margin-top: 20px; }
+  .hero-description { margin-top: 20px; }
   .hero-cta { margin-top: 24px; }
-  .matrix-deck {
+  .hero-matrix-panel {
     width: 100%;
     height: clamp(140px, 22dvh, 180px);
     min-height: 140px;
@@ -272,14 +272,14 @@ a:focus-visible, button:focus-visible { outline: 2px solid #ff482c; outline-offs
     border-top: 1px solid var(--border);
     touch-action: pan-y;
   }
-  .matrix-deck .kinetic-matrix {
+  .hero-matrix-panel .kinetic-matrix {
     touch-action: pan-y;
   }
-  .augeo-matrix .matrix-title {
+  .hero-matrix .matrix-title {
     height: 100%;
     padding: clamp(12px, 3cqw, 24px);
   }
-  .augeo-matrix .matrix-artwork-title {
+  .hero-matrix .matrix-artwork-title {
     width: min(85%, 360px);
   }
 }
@@ -289,27 +289,27 @@ a:focus-visible, button:focus-visible { outline: 2px solid #ff482c; outline-offs
 }
 
 /* Decorative descending triangles. */
-.scroll-cue { --cue-rest: var(--muted-foreground); --cue-contrast: #e2e2df; --cue-next-contrast: #20201f; display: none; color: var(--cue-rest); animation-play-state: paused; }
+.scroll-cue { --cue-rest-color: var(--muted-foreground); --cue-first-peak-color: #e2e2df; --cue-second-peak-color: #20201f; display: none; color: var(--cue-rest-color); animation-play-state: paused; }
 @media (prefers-color-scheme: dark) {
-  :root:not(.light) .scroll-cue { --cue-rest: #9e9ea2; }
+  :root:not(.light) .scroll-cue { --cue-rest-color: #9e9ea2; }
 }
-.dark .scroll-cue { --cue-rest: #9e9ea2; }
+.dark .scroll-cue { --cue-rest-color: #9e9ea2; }
 @media (min-width: 768px) {
-  .cue-study .scroll-cue { display: block; position: absolute; left: var(--hero-copy-inset); top: min(calc(89dvh + 8px), calc(100dvh - 69px)); width: 36px; height: 63px; overflow: hidden; }
-  .scroll-cue svg { display: block; position: absolute; inset: 0; width: 100%; height: 100%; fill: var(--cue-rest); z-index: 1; }
+  .hero-page .scroll-cue { display: block; position: absolute; left: var(--hero-copy-inset); top: min(calc(89dvh + 8px), calc(100dvh - 69px)); width: 36px; height: 63px; overflow: hidden; }
+  .scroll-cue svg { display: block; position: absolute; inset: 0; width: 100%; height: 100%; fill: var(--cue-rest-color); z-index: 1; }
   .scroll-cue-triangle { animation: cue-contrast 5.6s ease-in-out .3s infinite; animation-play-state: inherit; }
-  .scroll-cue-triangle:nth-child(2) { --cue-contrast: #20201f; --cue-next-contrast: #e2e2df; animation-delay: 1.28s; }
+  .scroll-cue-triangle:nth-child(2) { --cue-first-peak-color: #20201f; --cue-second-peak-color: #e2e2df; animation-delay: 1.28s; }
 }
 @media (min-width: 768px) and (max-height: 500px) {
-  .cue-study .scroll-cue { top: min(calc(89dvh + 4px), calc(100dvh - 63px)); }
+  .hero-page .scroll-cue { top: min(calc(89dvh + 4px), calc(100dvh - 63px)); }
 }
 @keyframes cue-contrast {
-  0%, 50% { fill: var(--cue-rest); z-index: 2; }
-  10% { fill: var(--cue-contrast); }
-  60% { fill: var(--cue-next-contrast); }
+  0%, 50% { fill: var(--cue-rest-color); z-index: 2; }
+  10% { fill: var(--cue-first-peak-color); }
+  60% { fill: var(--cue-second-peak-color); }
   /* Keep the entire active triangle above the intersecting resting one. */
   19.999%, 69.999% { z-index: 2; }
-  20%, 49.999%, 70%, 100% { fill: var(--cue-rest); z-index: 1; }
+  20%, 49.999%, 70%, 100% { fill: var(--cue-rest-color); z-index: 1; }
 }
 @media (prefers-reduced-motion: reduce) {
   .scroll-cue-triangle { animation: none; }
