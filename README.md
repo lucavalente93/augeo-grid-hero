@@ -39,4 +39,4 @@ O `bunfig.toml` força o runtime Bun nos scripts e nos executáveis chamados por
 
 O protótipo anterior em HTML/JavaScript foi retirado; a aplicação e a demonstração da matriz são os pontos de entrada atuais. O guia pessoal e a configuração `.codex/` permanecem locais, ignorados pelo Git.
 
-Consulte [AGENTS.md](AGENTS.md) para a rotina de trabalho e [o handoff do hero](docs/HERO_HANDOFF.md) para o estado atual.
+Consulte [AGENTS.md](AGENTS.md) para a rotina de trabalho, incluindo o fallback autorizado dos testes, e [BACKLOG.md](docs/BACKLOG.md) para o estado atual e as pendências. O [handoff do hero](docs/HERO_HANDOFF.md) permanece como contexto histórico.
