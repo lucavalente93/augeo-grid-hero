@@ -9,7 +9,9 @@ Este arquivo define a rotina de trabalho e encaminha a leitura dos documentos. I
 - [Hero — decisões e ideias](docs/HERO_DECISIONS_AND_IDEAS.md): antecedentes, alternativas superadas, propostas não implementadas, ideias e avaliações/decisões pendentes.
 - [Auditoria e plano do hero](docs/HERO_AUDIT_AND_IMPROVEMENT_PLAN.md): briefing, sequência de implementação, critérios de aceitação e referências; a auditoria é histórica.
 - [Especificação do website](docs/02-WEBSITE_SPEC.md): arquitetura, requisitos e limites da landing.
-- [Produto](docs/PRODUCT.md): resumo para a skill. [Contexto estratégico](docs/CONTEXT.md) e [operação interna](docs/03-INTERNAL.md): aprofundamento conforme a tarefa.
+- [Produto](docs/PRODUCT.md): resumo para a skill, contexto estratégico e operação interna em seções próprias. Rascunhos de copy pertencem à especificação; auditoria e protocolo de nomenclatura ficam no backlog.
+
+A documentação em `docs/` fica limitada a seis arquivos; consolidar novos registros no documento pertinente, sem criar relatórios ou encaminhamentos separados por padrão.
 
 Até agora, a frente de refinamento do hero e os documentos existentes podem ser encaminhados diretamente por estas instruções. Um índice separado de orquestração acrescentaria manutenção e duplicação sem resolver uma necessidade presente. Se surgirem várias frentes simultâneas, reavaliar a necessidade de um índice próprio com função e nome explícitos.
 
@@ -37,7 +39,7 @@ Uma interrupção pode anteceder o registro do último avanço; na retomada, rec
 
 - Priorizar GitHub CLI (`gh`) nas operações do GitHub quando houver comando equivalente disponível, como consulta de repositórios, PRs, issues, checks e releases. Não substituir essas operações por Git, chamadas HTTP ou outras ferramentas sem necessidade. Para operações locais sem equivalente no `gh`, como staging e criação de commits, usar Git. A disponibilidade do `gh` não autoriza commit, push ou publicação sem pedido explícito do usuário.
 
-- Na refatoração de nomenclatura, aplicar `coding-standards` de `affaan-m/ECC`, lendo seu [SKILL.md original](https://raw.githubusercontent.com/affaan-m/ECC/main/skills/coding-standards/SKILL.md) antes das mudanças. Escopo, exceções para a simulação e verificações obrigatórias estão em [NAMING_AUDIT.md](docs/NAMING_AUDIT.md). A leitura remota não equivale a instalação local. Preservar comportamento e migrar referências relacionadas juntas.
+- Na refatoração de nomenclatura, aplicar `coding-standards` de `affaan-m/ECC`, lendo seu [SKILL.md original](https://raw.githubusercontent.com/affaan-m/ECC/main/skills/coding-standards/SKILL.md) antes das mudanças. Escopo, exceções para a simulação e verificações obrigatórias estão em [protocolo e auditoria de nomenclatura](docs/BACKLOG.md#auditoria-de-nomenclatura--referência-histórica-e-protocolo). A leitura remota não equivale a instalação local. Preservar comportamento e migrar referências relacionadas juntas.
 
 - Usar Bun para instalação e execução: `bun install --frozen-lockfile`, `bun run dev`, `bun run build`, `bun run preview` e `bun run test` (Playwright). O `bunfig.toml` força Bun nos executáveis dos scripts; manter somente `bun.lock`. Para instalar Chromium, usar `bunx --bun playwright install chromium`.
 

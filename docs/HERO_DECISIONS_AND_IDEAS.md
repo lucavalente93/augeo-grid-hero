@@ -18,7 +18,7 @@ Consolidado em 2026-10-13. Aqui ficam os antecedentes da composição, propostas
 | Alternar contraste dos triângulos | Aumentar a geometria em 50%, reduzir frequência para 2,8 s por passagem, preservar ponta e trocar cores a cada passagem | Incorporada |
 | Unificar temas e ampliar o campo de ponteiro | Tema escuro também na coluna textual; listeners no hero permitem alcançar a matriz a partir do painel esquerdo | Incorporada |
 | Materialidade do painel e CTA | Iluminação radial sutil, divisória de 1 px e CTA comercial no painel textual | Incorporada |
-| Expor CTA e transformar o mobile | Usuário pediu matriz inteira como footer retangular, recuos simétricos e rolagem vertical pela área da matriz | Incorporada |
+| Expor CTA e transformar o mobile | Matriz inteira como footer visual retangular abaixo da copy e do botão de conversão, com recuos simétricos e rolagem vertical pela área da matriz | Incorporada; nomenclatura reafirmada pelo usuário em 13/10 |
 | Manter fundo contínuo no mobile | Correção do fundo atrás do cabeçalho aprovada pelo usuário; um único painel cobre símbolo e texto | Incorporada e aprovada |
 | Preservar contra-formas | Preenchimento direto dos caminhos A/O com `evenodd`, sem alterar geometria ou interação | Incorporada |
 
@@ -80,7 +80,7 @@ A faixa lateral de 64 px e a matriz quadrada de 288–340 px pertencem ao mobile
 ## Referências de contexto
 
 - [Plano e auditoria](HERO_AUDIT_AND_IMPROVEMENT_PLAN.md): briefing original, critérios e moodboard; EXPLORE, faixa mobile e paletas antigas são referências históricas superadas por este registro.
-- [Produto](PRODUCT.md) e [contexto estratégico](CONTEXT.md): posicionamento para futuras revisões de copy.
+- [Produto](PRODUCT.md) e [contexto estratégico](PRODUCT.md#contexto-estratégico): posicionamento para futuras revisões de copy.
 - [Especificação](02-WEBSITE_SPEC.md): arquitetura e integração das seções futuras.
 
 As ideias acima preservam sua origem e seu estado. Uma proposta pendente, uma execução passada e uma aprovação visual são fatos diferentes.

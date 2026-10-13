@@ -34,7 +34,7 @@ O `bunfig.toml` força o runtime Bun nos scripts e nos executáveis chamados por
 - `src/`: aplicação, estilos e assets.
 - `components/` e `lib/`: matriz compartilhada, demonstração e utilitários.
 - `tests/`: regressões da matriz e do indicador de triângulos.
-- `docs/`: produto, especificação e registros de implementação.
+- `docs/`: seis documentos — produto/contexto/operação, especificação/copy, implementação do hero, backlog técnico, decisões e plano/auditoria.
 - `docs/references/`: referências históricas em ZIP e captura de bug; moodboard e estudos da marca permanecem em `src/assets/`.
 
 O protótipo anterior em HTML/JavaScript foi retirado; a aplicação e a demonstração da matriz são os pontos de entrada atuais. O guia pessoal e a configuração `.codex/` permanecem locais, ignorados pelo Git.

@@ -7,8 +7,8 @@ Atualizado em 2026-10-13. Aqui ficam continuidade operacional, trabalho técnico
 - Base publicada na `main`: `43e7ab1` reúne refatoração/testes; `044e8bd` reúne a reorganização documental. Consulta GitHub/Vercel confirmou o último deploy anterior a esta revisão em 2026-10-13 às 10:11 BRT, produção/Ready, associado a `044e8bd`, então último commit remoto da `main`.
 - Última validação da aplicação: `bun run build` aprovado e `bun run test` **24/24 em 18,5 s**, Chromium, dois workers, servidor iniciado separadamente. Código da aplicação não alterado nesta revisão documental; testes não repetidos.
 - Site publicado em `augeocreative.com` e `www.augeocreative.com`; usuário confirmou acesso e nova verificação HTTPS retornou HTTP 200 em ambos. DNS Hostinger e e-mail comercial preservados. Redirecionamento canônico entre os endereços ainda pendente.
-- Especificação revisada integralmente contra código e contexto: stack, matriz, copy, temas, assets, domínio e publicação descritos como bases existentes; Processo, formulário e footer continuam requisitos da landing completa. Pro/WhatsApp Business adiados por decisão do usuário.
-- Usuário autorizou commit de todas as atualizações documentais desta frente e push na `main`. Próxima frente depende de pedido próprio; avaliações do hero permanecem no [registro de decisões](HERO_DECISIONS_AND_IDEAS.md#avaliações-e-decisões-ainda-abertas).
+- Especificação revisada integralmente contra código e contexto: stack, matriz, copy, temas, assets, domínio e publicação descritos como bases existentes; Processo e formulário continuam previstos; matriz como footer visual mobile e CTA de conversão já implementados. Pro/WhatsApp Business adiados por decisão do usuário.
+- Revisão da especificação publicada em `ea09147`, com push confirmado por gh. Consolidação posterior para seis documentos concluída localmente, conforme pedido do usuário; incluída no commit local solicitado após a correção da especificação. Avaliações do hero permanecem no [registro de decisões](HERO_DECISIONS_AND_IDEAS.md#avaliações-e-decisões-ainda-abertas).
 
 ## Tooling — restrição de sockets no sandbox; diagnóstico encerrado
 
@@ -27,7 +27,7 @@ Atualizado em 2026-10-13. Aqui ficam continuidade operacional, trabalho técnico
 
 ## Nomenclatura — migração implementada e validada
 
-- **Autorização e skill:** usuário autorizou retomar a refatoração após formalizar o fallback. `coding-standards` de `affaan-m/ECC` relida na fonte original e aplicada à migração conforme [NAMING_AUDIT.md](NAMING_AUDIT.md); não instalada localmente. Revisão `vercel:react-best-practices` aplicada aos TSX: dependências dos efeitos, refs, listeners/cleanup, tipos, nomes acessíveis e estrutura conferidos. Sem novo fluxo visual Impeccable, alteração de composição ou avanço de bloco do hero.
+- **Autorização e skill:** usuário autorizou retomar a refatoração após formalizar o fallback. `coding-standards` de `affaan-m/ECC` relida na fonte original e aplicada à migração conforme [protocolo e auditoria de nomenclatura](BACKLOG.md#auditoria-de-nomenclatura--referência-histórica-e-protocolo); não instalada localmente. Revisão `vercel:react-best-practices` aplicada aos TSX: dependências dos efeitos, refs, listeners/cleanup, tipos, nomes acessíveis e estrutura conferidos. Sem novo fluxo visual Impeccable, alteração de composição ou avanço de bloco do hero.
 - **Implementação:** prioridades 1/2 migradas: `MATRIX_MOTION.simulationStepSeconds`, `ARTWORK_WARP.sampleSpacingPx`, tempos/IDs/índices de estado, endpoints/limiares do pulso, observers, funções de controle e buffers/interpolação RGBA. Props públicas agora `titleArtworkSrc`/`enableArtworkMotion`, com consumidor do App migrado; API continua genérica. Demo agora `KineticMatrixDemo` em `components/ui/kinetic-matrix-demo.tsx`; indicador em `tests/scroll-cue.spec.ts`. Helpers e descrição mobile dos testes esclarecidos. Seletores da landing, CSS, queries e Playwright migrados juntos; `.cue-study` tornou-se `.hero-page`, mantendo escopo/especificidade. Variáveis CSS explicitam coordenada vertical e cores.
 - **Conferência nominal:** normalização inversa dos mapeamentos comparada aos nove arquivos originais preservados temporariamente confirmou igualdade integral antes do ajuste de sincronização descrito abaixo. Valores, fórmulas, estrutura DOM e asserções eram idênticos. Busca de nomes antigos em fontes/consumidores ativos e revisão do diff concluídas; histórico documental preservado. Primeira checagem do build detectou referências incompletas no App; corrigidas antes da validação final. `bun run build` posterior passou no sandbox.
 - **Falha de sincronização encontrada:** duas rodadas completas após renomear passaram 23/24 (19,0 s e 19,3 s). Mesmo teste de suspensão/retomada falhou por comparação de ponto flutuante (~5,7e-14 ms) e, depois, avanço de um frame durante pausa pendente. Caso isolado, sem alteração de asserção, passou 1/1 em 1,5 s. Ajuste adicional somente no teste: aguardar `Animation.ready` antes de medir tempos; usar polling na comparação final de retomada, com o mesmo limite. Igualdade estrita durante suspensão preservada; sem tolerância nova, retries configurados ou mudança na animação. A [especificação Web Animations](https://www.w3.org/TR/web-animations-1/#current-ready-promise) fundamenta a espera pela tarefa pendente de play/pause.
@@ -54,7 +54,7 @@ Atualizado em 2026-10-13. Aqui ficam continuidade operacional, trabalho técnico
 - Cobertura ainda limitada a Chromium/emulação: sem aparelhos físicos/outros motores, zoom real, CLS ou perfil de frames em hardware. Essas limitações devem informar o fechamento, não gerar repetição automática de verificações já válidas.
 - Limpezas separadas da migração nominal: remover a identidade `pixel`, eliminar a camada de escopo do cue, dividir `tests/matrix.spec.ts`, mover/renomear assets e otimizar o warp. Sem implementação autorizada neste bloco; propostas e dependências visuais ficam no registro de decisões.
 - Figma: recuperar ou regenerar `docs/references/figma/augeo-matrix-light-2x.png` e `docs/references/figma/augeo-hero-dark-left-light-matrix-preview-2x.png`, ausentes no checkout e no Git. A geração histórica não prova disponibilidade atual. Ver contexto de importação/edição no [registro de decisões](HERO_DECISIONS_AND_IDEAS.md#propostas-de-figma--frente-independente).
-- Implementar Processo, formulário de entrada comercial e footer conforme a especificação em frente própria. Definição dos destinos está no registro de decisões; não criar seção artificial para satisfazer testes.
+- Implementar Processo e formulário de entrada comercial conforme a especificação em frente própria, preservando o footer visual mobile existente. Definição dos destinos está no registro de decisões; não criar seção artificial para satisfazer testes.
 
 ## Histórico técnico transferido do hero
 
@@ -73,7 +73,7 @@ Os registros abaixo preservam evidências nas datas das execuções. Comandos np
 - `find-skills`: playbook e leaderboard consultados, buscas CLI executadas, candidatas conferidas via web. `affaan-m/ECC@coding-standards`: conteúdo original lido, cerca de 4,7 mil instalações na página e 278 mil estrelas no repositório; referência geral comunitária, sem glossário específico da matriz. Alternativa `pproenca/dot-skills@clean-code-ts-react`: apresentação lida, 157 instalações/214 estrelas; regras completas não verificadas. Nenhuma skill instalada nem fluxo integral dessas candidatas aplicado. Fontes e comando opcional com Bun no relatório.
 - Validação: `git diff --check` aprovado. Só documentação alterada; sem build/teste, alteração visual, novo fluxo Impeccable, commit/push ou publicação.
 
-Diagnóstico nominal e fontes estão em [NAMING_AUDIT.md](NAMING_AUDIT.md); migração e validações posteriores estão na seção Nomenclatura acima.
+Diagnóstico nominal e fontes estão em [protocolo e auditoria de nomenclatura](BACKLOG.md#auditoria-de-nomenclatura--referência-histórica-e-protocolo); migração e validações posteriores estão na seção Nomenclatura acima.
 
 ### Continuidade do fundo mobile e publicação — 2026-10-13
 
@@ -288,7 +288,7 @@ Estado final: DNS validado, usuário confirmou site online e HTTPS dos dois ende
 
 - Correção explícita do usuário: handoff limitado à implementação persistente e direção visual/conceitual; execução técnica e registros cronológicos neste backlog; antecedentes, propostas e avaliações em HERO_DECISIONS_AND_IDEAS.md. Essa regra substitui a divisão anterior que tratava o handoff como arquivo histórico.
 - Implementação conferida em App, CSS, ScrollCue, matriz e física; descrições atuais usam os nomes pós-refatoração. Estados antigos de EXPLORE, faixa mobile, CTA oculto e 38/62 foram separados e marcados como superados. Registros de testes, fluxos, commits, deploys e artefatos foram transferidos com seus limites.
-- Referências à captura mobile removida não alegam mais que ela está preservada/disponível. AGENTS, README e encaminhamentos do plano/especificação foram ajustados. HERO_BLOCK2_REITERATION.md conserva apenas o encaminhamento para os destinos, sem duplicar o diário.
+- Referências à captura mobile removida não alegam mais que ela está preservada/disponível. AGENTS, README e encaminhamentos do plano/especificação foram ajustados. Naquela reorganização, HERO_BLOCK2_REITERATION.md conservou apenas o encaminhamento; esse arquivo foi posteriormente removido na consolidação para seis documentos.
 - Verificação documental: 59 links locais, incluindo quatro âncoras, aprovados por script Python; `git diff --check` aprovado. Busca de referências obsoletas à função dos documentos e ao nome da captura removida concluída, sem ocorrências do arquivo removido. Diff limitado a Markdown; sem build/teste novo por não haver alteração de código. Sem novo fluxo Impeccable ou deploy manual. Após a entrega, usuário autorizou commit/push e reforçou uso do GitHub CLI: gh para consultar o repositório e conferir o SHA remoto; Git para staging, commit e push, sem equivalentes no gh. A publicação acompanha em um único commit documental, sem commit separado para registrar o envio.
 
 ## Revisão integral da especificação e publicação documental — 2026-10-13
@@ -297,3 +297,133 @@ Estado final: DNS validado, usuário confirmou site online e HTTPS dos dois ende
 - Corrigidos escopo publicado versus landing completa, fluxo ainda sem destino `#entrada`, matriz já implementada, temas unificados, tipografia/paleta/tokens existentes, assets e copy aplicados. Seções 10/11 distinguem base técnica definida, integrações futuras e requisitos para completar a landing. `PRODUCT.md` sincronizado para não manter o estado anterior de protótipo/copy integralmente indefinida. Nenhuma alteração da UI ou decisão de arquitetura comercial nova.
 - Evidência de produção: `curl -sSI --max-time 15` para HTTPS raiz e www retornou HTTP/2 200 em ambos, mesmo ETag `4b0333cf11ee7f604edb78874a6d5412`; supera a falha TLS inicial registrada na conexão do domínio, sem apagar seu histórico. Confirma HTTPS/acesso, sem teste visual, entrega de e-mail ou formulário. Usuário também confirmou o primeiro site em produção.
 - Validação documental: `git diff --check` aprovado e 18 links locais dos três documentos revisados conferidos por script Python, sem erros, antes do commit; sem build/suíte funcional por alteração somente Markdown. Sem novo fluxo Impeccable, deploy manual ou avanço de bloco. Commit/push autorizados nesta entrega; integração Git pode gerar deploy automático. Próxima ação após envio: novas frentes somente conforme pedido do usuário.
+
+## Auditoria de nomenclatura — referência histórica e protocolo
+
+Relatório de 2026-10-13 antes mantido em documento separado. As tabelas são o diagnóstico anterior à migração; estado implementado e validações estão em “Nomenclatura — migração implementada e validada” acima. O protocolo e as exceções continuam aplicáveis a futuras refatorações.
+
+Pedido original: avaliar nomes confusos em praticamente todo o projeto e procurar uma skill útil. As tabelas abaixo registram a auditoria inicial; a migração posterior está delimitada na seção seguinte, com estado e validações em BACKLOG.md.
+
+### Migração autorizada — 2026-10-13
+
+Usuário autorizou retomar a refatoração após formalizar o fallback dos testes. Escopo desta migração: prioridades 1/2, props da imagem, nomes da demo e do teste do indicador, helpers dos testes e seletores/custom properties relacionados. Os mapeamentos abaixo orientam a implementação; valores, fórmulas, asserções e estrutura permanecem iguais. `.cue-study` será `.hero-page`, preservando a camada de escopo e a especificidade. Remoção de `pixel`, eliminação desse escopo, divisão da suíte e movimentação de assets continuam separadas no backlog. Resultados atuais pertencem ao [BACKLOG.md](BACKLOG.md); os registros da auditoria inicial abaixo são históricos.
+
+Migração implementada e validada: build aprovado, suíte final 24/24 em 19,1 s no contexto autorizado e oito pares de capturas idênticos. Além das renomeações, corrigida a sincronização do teste de suspensão para aguardar tarefas pendentes de animação, preservando as asserções; detalhes, comandos e limites no backlog. O escopo `.cue-study` agora é `.hero-page`.
+
+Revisão de 2026-10-13: usuário pediu assegurar o uso da candidata recomendada e proteger a refatoração contra regressões. A skill escolhida é `coding-standards` de `affaan-m/ECC`; seu [SKILL.md original](https://raw.githubusercontent.com/affaan-m/ECC/main/skills/coding-standards/SKILL.md) foi lido integralmente nesta revisão e suas orientações de nomes descritivos, funções com verbos, simplicidade e testes foram aplicadas ao protocolo abaixo. Não houve instalação local nem implementação de renomeações. Trabalhos futuros e avaliações foram consolidados em [BACKLOG.md](BACKLOG.md).
+
+### Skill adotada e protocolo de segurança da refatoração
+
+Uso obrigatório de `affaan-m/ECC@coding-standards` na futura migração, também registrado no [AGENTS.md](../AGENTS.md). É uma referência geral de nomenclatura, não um novo projeto de arquitetura: seus exemplos de Next.js, imutabilidade, memoização e divisão de funções não autorizam mudar os buffers mutáveis, a física ou o ciclo canvas desta matriz. A própria fonte inclui mutação intencional por desempenho entre seus exemplos documentados. Preservar as convenções de arquivo já utilizadas; PascalCase nos exemplos da skill não obriga renomear todos os arquivos do projeto.
+
+1. Registrar o conjunto atual → proposto por bloco e buscar todos os usos antes da edição. Renomear identificadores respeitando escopo e tipos; não fazer substituições globais de palavras como `step`, `title`, `from`, `to` ou `source`.
+2. Migrar declarações e consumidores juntos: imports/exports, props, landing e demo `?demo=matrix`, seletores CSS/Playwright, consultas DOM, custom properties e referências operacionais. Para `.cue-study`, uma troca de nome preservando escopo e especificidade é mais conservadora que remover o seletor; a remoção exige análise própria.
+3. Preservar valores, fórmulas, unidades efetivas, ordem dos desenhos e listeners, cleanup dos observers, estrutura DOM, dimensões, temas, reduced motion, touch/scroll e destinos dos links. Acrescentar uma unidade ao nome não autoriza converter o valor. A API da matriz continua genérica.
+4. Separar propostas que excedem renomeação: remover `pixel`, eliminar escopos CSS, reorganizar testes, mover assets ou extrair funções. Não otimizar o warp, mudar timings ou avançar blocos visuais durante esta entrega.
+5. Rodar `bun run build` e `bun run test` antes e depois das mudanças. Manter as asserções e contextos existentes; atualizar apenas referências/descritivos pertinentes. Investigar qualquer falha em vez de relaxar asserções ou reduzir a suíte para obter sucesso.
+6. Se classes, seletores ou caminhos mudarem, comparar capturas equivalentes antes/depois da landing e demo, nos temas, preferências de movimento e viewports pertinentes. Build não detecta seletor CSS que deixou de corresponder; a revisão visual complementa os testes.
+7. Revisar o diff e buscar referências antigas nos arquivos ativos. Manter nomes antigos nas evidências históricas quando descrevem o código daquela data; não reescrever o histórico como se a migração já existisse. Rodar `git diff --check` e registrar resultados/limites no backlog, conforme a orientação vigente do usuário.
+
+**Base verificada nesta revisão:** `bun run build` aprovado; `bun run test` passou com **24/24 testes em 17,6 s**, Chromium, em execução autorizada fora da sandbox. As tentativas restritas falharam antes da suíte por `EPERM` ao abrir a porta do Vite; o primeiro pedido de execução escalada foi interrompido, e o usuário pediu repetir o teste. A suíte cobre matemática do warp, retorno ao repouso, canvas, temas/reduced motion, responsividade, toque, lettering e suspensão/retomada do indicador. Não comprova isoladamente o ponteiro vindo da coluna esquerda nem aparelhos físicos/outros motores; essa pendência está no backlog.
+
+Não há garantia absoluta antecipada de ausência de regressão. A entrega das renomeações dependerá desses resultados sobre o código alterado; a base aprovada não deve ser apresentada como validação de uma refatoração ainda não executada.
+
+### Diagnóstico
+
+O principal problema é a perda de significado: nomes não dizem se o valor é um índice, tempo, ID, retângulo, posição ou buffer. A concentração é maior no efeito principal de `components/ui/kinetic-matrix.tsx`, que reúne simulação, desenho, deformação da imagem e ciclo de animação. Ali, nomes curtos vivem por centenas de linhas e cruzam responsabilidades. Em callbacks pequenos, a mesma concisão costuma ser aceitável.
+
+Há também resquícios de demonstração/estudo nos nomes de componentes, seletores e arquivos de teste. Configurações e pontos de entrada têm nomes convencionais claros; não há motivo para renomear tudo. O componente da matriz tem demonstração independente e suporte a texto/imagem arbitrários: sua generalidade é real. Não substituir todo `artwork` por `augeoLettering` dentro da API compartilhada.
+
+### Prioridade 1 — nomes que escondem tipo, unidade ou significado
+
+| Local | Nome atual | O que representa | Proposta |
+| --- | --- | --- | --- |
+| `lib/matrix-motion.ts:2` | `MOTION` | Configuração da simulação da matriz | `MATRIX_MOTION` |
+| `lib/matrix-motion.ts:4` | `MOTION.step` | Intervalo fixo de simulação, em segundos | `simulationStepSeconds` |
+| `lib/matrix-motion.ts:22` | `ARTWORK_WARP.step` | Distância horizontal entre amostras, em pixels CSS | `sampleSpacingPx` |
+| `components/ui/kinetic-matrix.tsx:70` | `frame` | ID retornado por requestAnimationFrame | `animationFrameId` |
+| `components/ui/kinetic-matrix.tsx:66` | `clock` | Tempo acumulado da simulação, em segundos | `simulationTimeSeconds` |
+| `components/ui/kinetic-matrix.tsx:70` | `lastTime` | Timestamp de performance/requestAnimationFrame, em milissegundos | `lastFrameTimeMs` |
+| `components/ui/kinetic-matrix.tsx:70` | `accumulator` | Tempo ainda não consumido pela simulação | `pendingSimulationSeconds` |
+| `components/ui/kinetic-matrix.tsx:65` | `artworkElapsed` | Tempo acumulado para o próximo desenho da imagem | `pendingArtworkRenderSeconds` |
+| `components/ui/kinetic-matrix.tsx:66–68` | `nextPulse`, `quietUntil`, `lastImpulse`, `inspectedSince` | Instantes na escala temporal da simulação | `nextPulseAtSeconds`, `pulsesResumeAtSeconds`, `lastImpulseAtSeconds`, `nodeHoverStartedAtSeconds` |
+| `components/ui/kinetic-matrix.tsx:68` | `inspected`, `nearest` | Índices de nós; `-1` indica ausência | `hoveredNodeIndex`, `nearestNodeIndex` |
+| `components/ui/kinetic-matrix.tsx:12` | `Pulse.from`, `Pulse.to` | Índices dos nós extremos, não posições nem objetos | `fromNodeIndex`, `toNodeIndex` |
+| `components/ui/kinetic-matrix.tsx:205` | `a`, `b` | Nós de origem e destino do pulso | `startNode`, `endNode` |
+| `src/App.tsx:16–18` | `title`, `center`, `alignArtwork` | DOMRect do heading, centro vertical relativo ao hero e escrita dessa coordenada em CSS | `headingBounds`, `headingCenterY`, `updateHeroHeadingCenter` |
+
+O comentário inicial de `matrix-motion.ts` já informa segundos e pixels CSS. A proposta torna essa distinção visível nos usos, especialmente ao cruzar com milissegundos de APIs do navegador. Não acrescentar sufixos a toda variável indiscriminadamente: usar onde há mistura ou fronteira entre escalas.
+
+### Prioridade 2 — responsabilidades e buffers
+
+| Local | Nome atual | Proposta e motivo |
+| --- | --- | --- |
+| `kinetic-matrix.tsx:39–40` | `preference`, `update` | `reducedMotionQuery`, `updateMotionPreference`: identificar a preferência e a ação |
+| `kinetic-matrix.tsx:69–71` | `dark`, `visible`, `theme` | `isDarkTheme`, `isMatrixInViewport`, `darkSchemeQuery`: distinguir tema aplicado, interseção e preferência do sistema |
+| `kinetic-matrix.tsx:231,296` | `step`, `syncLoop` | `advanceSimulation`, `syncAnimationLoop`: separar atualização física do controle de agendamento |
+| `kinetic-matrix.tsx:305,360` | `resize`, `visibility` | `resizeObserver`, `intersectionObserver`: são objetos observadores |
+| `kinetic-matrix.tsx:408–411` | `leave`, `move` | `clearPointerPosition`, `updatePointerPosition`: descrevem a ação, inclusive quando chamadas em pointerup/cancel/down |
+| `ScrollCue.tsx:10–14` | `visible`, `sync`, `observer` | `isCueInViewport`, `syncCueAnimationState`, `intersectionObserver` |
+| `kinetic-matrix.tsx:104–125` | `source`, `output`, `target` | `sourceRgba`, `outputRgba`, `outputPixelOffset`: dois buffers e um offset, não três objetos equivalentes |
+| `kinetic-matrix.tsx:113–118` | `col`, `colMix`, `left`, `mix` | `sampleIndex`, `sampleBlend`, `leftSourcePixelX`, `pixelBlend`: diferenciar interpolação das amostras e dos pixels |
+| `matrix-motion.ts:45` | `age` | `waveProgress`: local é `wave.age / impulseDuration`, um progresso normalizado; `wave.age` é tempo |
+| `matrix-motion.ts:104–112` | `pulseStops`, `stops` | `createPulseProgressThresholds`, `progressThresholds`: são limiares normalizados usados na progressão por degraus; desenho final mistura essa progressão com a contínua |
+
+`pixel(value)` em `kinetic-matrix.tsx:172` apenas devolve `value`. Seu nome sugere arredondamento/conversão que não ocorre. A recomendação é remover essa função identidade em uma futura limpeza, não inventar outro nome. Isso ultrapassa uma troca puramente nominal e deve aparecer como tal no diff.
+
+`ctx`, `dt`, `x/y`, `dx/dy` e `i` não são defeitos por si só. Coordenadas e contadores locais são convenções úteis; em funções matemáticas pequenas, nomes curtos podem ser mais legíveis. Se dois contextos canvas coexistem, explicitar `gridContext` e `artworkContext` passa a ajudar. `approach`, `randomBetween`, `displacementAt`, `MatrixNode` e `KineticMatrix` descrevem operações/conceitos reais.
+
+### CSS, componentes, arquivos e testes
+
+| Nome atual | Avaliação | Proposta |
+| --- | --- | --- |
+| `DemoOne` / `components/ui/demo.tsx` | Número arbitrário não identifica o que demonstra | `KineticMatrixDemo` / `kinetic-matrix-demo.tsx` |
+| `.nav` | Aplicada ao header; atualmente não há um elemento nav | `.site-header` |
+| `.intro` | Parágrafo de apoio específico do hero com seletor global | `.hero-description` |
+| `.cue-study` | Nome de estudo na página normal; usos encontrados apenas delimitam CSS do cue | Remover essa camada de escopo se desnecessária, ou usar um estado real; não perpetuar o nome de estudo |
+| `.matrix-deck` | Metáfora de área/painel, não falha grave | `.hero-matrix-panel` se houver padronização por responsabilidade |
+| `.augeo-matrix` | Identifica a marca, mas os overrides diferenciam a matriz do hero da demo | `.hero-matrix` |
+| `--hero-title-center` | Coordenada vertical relativa ao hero | `--hero-heading-center-y` |
+| `--cue-rest`, `--cue-contrast`, `--cue-next-contrast` | Guardam cores; "contrast" pode parecer razão/medida de contraste | `--cue-rest-color`, `--cue-first-peak-color`, `--cue-second-peak-color` |
+| `scroll-cue-preview.spec.ts` | Testa o componente em uso na landing; preview não descreve mais seu papel | `scroll-cue.spec.ts` |
+| `tests/matrix.spec.ts` | Mistura matemática da deformação, comportamento canvas e layout do hero | Em eventual reorganização: `matrix-motion.spec.ts`, `kinetic-matrix.spec.ts`, `hero-layout.spec.ts` |
+| Teste mobile: "preserves the matrix position" | Formulação histórica; agora afirma matriz nas bordas e abaixo do CTA | Descrever a matriz como painel inferior e o lettering acima da dobra |
+
+Nos testes, `states`, `times`, `paused`, `hidden`, `leading`, `paintedTriangle`, `check`, `axis` e `opening` podem virar `readAnimationStates`, `readAnimationTimesMs`, `pausedAnimationTimesMs`, `hiddenAnimationTimesMs`, `activeTriangleIndex`, `topmostTriangleIndex`, `expectBoundedMonotonicShifts`, `alignmentBounds` e `measureAOpening`. Nem todo callback exige expansão; priorizar os que ocultam coleção, índice ou a evidência medida. `rowInk` conta pixels opacos por linha: `countOpaquePixelsByRow` explica o resultado melhor.
+
+As props `titleArtwork` e `reactiveArtwork` são compreensíveis, mas podem ficar mais precisas como `titleArtworkSrc` e `enableArtworkMotion`. O `title` público é texto/conteúdo acessível, diferente do DOMRect chamado `title` no App. API compartilhada, markup, CSS e seletores Playwright devem ser migrados juntos em qualquer renomeação.
+
+`App.tsx`, `main.tsx`, `vite.config.ts`, `playwright.config.ts`, `tsconfig.json`, `bunfig.toml`, `index.html`, `root`, aliases do shadcn e tokens como `--background`/`--foreground` são convenções claras neste contexto. `cn` em `lib/utils.ts` segue a convenção do helper de classes usado com shadcn; renomear só por ser curto daria pouco ganho. O nome do pacote ainda termina em `prototype`, coerente com a descrição do README.
+
+Os nomes longos/hash dos assets do moodboard vêm da coleção e têm índice CSV e referências documentais; são pouco memoráveis, mas não recomendaria renomear a coleção sem migrar sua rastreabilidade. `symbol.png` poderia ser `augeo-symbol.png` para facilitar busca fora da pasta. Não foi feita auditoria visual dos binários. Na auditoria inicial, a dificuldade documental era a mistura de seções históricas intituladas "Próxima ação", com rumos superados. A reorganização posterior separou implementação/direção em [HERO_HANDOFF.md](HERO_HANDOFF.md), execução técnica em [BACKLOG.md](BACKLOG.md) e antecedentes/propostas em [HERO_DECISIONS_AND_IDEAS.md](HERO_DECISIONS_AND_IDEAS.md).
+
+### Critério proposto para futuras alterações
+
+1. Nomear o conceito e o papel: índice, bounds, timestamp, buffer, query ou observer quando isso evita ambiguidade.
+2. Usar verbos nas funções (`update`, `read`, `draw`, `create`, `advance`) acompanhados do objeto da ação quando o escopo não o deixa evidente.
+3. Nomear booleanos como perguntas/estados (`isMatrixInViewport`) e flags de configuração como ações habilitadas (`enableArtworkMotion`).
+4. Explicitar unidades nas fronteiras entre segundos/milissegundos e pixels CSS/bitmap. Não misturar nomes de tempo e distância como `step`.
+5. Usar um vocabulário consistente: matriz/grade → nós e ligações; pulso percorre ligação; onda nasce da interação; artwork é a imagem genérica, lettering AUGEO é seu uso no hero.
+6. Preservar nomes convencionais e abreviações matemáticas de escopo curto. Evitar prefixar tudo com AUGEO ou criar nomes enormes.
+
+### Skills e evidências — auditoria inicial
+
+- `find-skills` aplicada: leitura do playbook, consulta inicial ao leaderboard e buscas CLI. Após o usuário preparar `~/.cache/bun-tmp`, `TMPDIR="$HOME/.cache/bun-tmp" bunx --bun skills find naming` e a busca por `"coding standards"` terminaram com código 0, sem EROFS, mas retornaram "No skills found" nesta execução. O usuário havia obtido candidatas com a mesma busca em seu shell. A causa da diferença de resultados não foi determinada; isso não comprova que não existam skills.
+- Candidata geral: [coding-standards de affaan-m/ECC](https://www.skills.sh/affaan-m/ecc/coding-standards), cerca de 4,7 mil instalações na página consultada; [repositório](https://github.com/affaan-m/ECC) com cerca de 278 mil estrelas. Fonte comunitária, não skill oficial TypeScript/React. [Conteúdo original](https://raw.githubusercontent.com/affaan-m/ECC/main/skills/coding-standards/SKILL.md) inspecionado: nomes descritivos, funções com verbos e nomes de arquivos/testes. É uma referência geral, não um glossário desta matriz; regras amplas de imutabilidade não devem ser aplicadas cegamente aos buffers da simulação.
+- Alternativa específica: [clean-code-ts-react de pproenca/dot-skills](https://www.skills.sh/pproenca/dot-skills/clean-code-ts-react), 157 instalações na página consultada e [repositório](https://github.com/pproenca/dot-skills) com 214 estrelas. Apresentação inspecionada, enfatiza TypeScript/React e exceções contextuais; regras completas não foram verificadas. Menor evidência de adoção, não é a recomendação principal.
+- Se houver interesse em instalar apenas a candidata geral: `TMPDIR="$HOME/.cache/bun-tmp" bunx --bun skills add affaan-m/ECC --skill coding-standards`. Comando fornecido, não executado. Nenhuma skill foi instalada nem seu fluxo integral aplicado ao código.
+- Inspeção estática dos fontes TS/TSX, CSS completo, testes completos, configurações, README, SVG do lettering, organização dos arquivos, índice CSV, estrutura dos documentos e trechos pertinentes de produto/especificação. Não foi uma revisão integral de todo o texto estratégico nem de arquivos binários/dependências.
+- Nenhum código alterado, build/teste executado, commit/push ou fluxo Impeccable aplicado nesta entrega. Validação documental: `git diff --check`. Próxima etapa sugerida: migrar primeiro os nomes ambíguos da simulação e os resquícios de prévia, preservando comportamento; build e suíte existente seriam a validação dessa futura refatoração.
+
+## Consolidação para seis documentos — 2026-10-13
+
+- Usuário pediu reduzir os onze documentos a cinco ou seis. Mantidos PRODUCT, 02-WEBSITE_SPEC, HERO_HANDOFF, BACKLOG, HERO_DECISIONS_AND_IDEAS e HERO_AUDIT_AND_IMPROVEMENT_PLAN. Sem novo índice ou arquivos de encaminhamento.
+- Contexto estratégico e operação interna incorporados como seções de PRODUCT; implementação técnica desatualizada da operação reconciliada com a especificação. Rascunhos de copy preservados na especificação e identificados como não implementados/sem aprovação final registrada. Auditoria nominal e protocolo movidos para este backlog, com tabelas explicitamente históricas. Encaminhamento do bloco 2 removido porque seu conteúdo já havia sido distribuído.
+- AGENTS, README e referências dos documentos ajustados aos destinos e âncoras. Mantida a separação entre implementação/direção, execução e decisões, sem fechar avaliações ou avançar blocos. Somente Markdown alterado; sem build/suíte funcional ou novo fluxo Impeccable.
+- Verificação: seis documentos em docs; script Python aprovou 57 links locais, incluindo oito âncoras, e `git diff --check` passou; referências operacionais aos cinco arquivos removidos verificadas. Nomes de arquivos antigos em registros históricos preservados quando explicam a transferência. Consolidação incluída no commit local posteriormente solicitado pelo usuário; push desta rodada não solicitado.
+
+## Correção de footer mobile, conversão e hover — 2026-10-13
+
+- Usuário corrigiu a descrição: a matriz inteira já virou o footer mobile, o botão de conversão existe e a composição reativa em hover está implementada. Especificação ajustada em estado publicado, arquitetura, função/campo visual do hero e pendências; retiradas as negativas redundantes e a apresentação do footer como entrega ausente. Formulário `#entrada` permanece previsto, conforme App; não confundir botão de conversão existente com recebimento de dados implementado.
+- Handoff, produto e decisão de composição mobile sincronizados. Nenhuma mudança de UI; consolidação para seis documentos preservada. Usuário solicitou salvar todas as alterações locais em commit, sem novo pedido de push.
+- Verificação documental: links locais/âncoras e `git diff --check` conferidos antes do commit. Sem nova suíte/build por mudança somente Markdown. Próxima ação: novas alterações conforme pedido do usuário; commit local desta rodada inclui consolidação e correções relacionadas.

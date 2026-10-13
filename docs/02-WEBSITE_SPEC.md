@@ -21,7 +21,7 @@ O site não deve tentar compensar a ausência de cases públicos com projetos fi
 - Hero
 - Processo
 - Formulário de entrada e triagem
-- Footer
+- Footer visual mobile, integrado à composição do hero
 
 ### Fora do escopo nesta versão
 
@@ -31,48 +31,37 @@ O site não deve tentar compensar a ausência de cases públicos com projetos fi
 - FAQ
 - Páginas internas, blog e área de cliente
 
-**Estado publicado:** cabeçalho com marca e hero com copy, CTA, matriz e indicativo desktop. Processo, formulário e footer da página ainda não foram implementados. A faixa inferior da matriz no mobile pertence ao hero; não é o footer institucional. A publicação atual não encerra a primeira versão completa. Não há checkout nem fluxo de conversão funcional nesta etapa.
-
-As frentes de atuação da AUGEO continuam informando a mensagem e a qualificação do lead, mas não aparecem como uma vitrine de módulos independentes.
+**Estado publicado:** cabeçalho, hero com copy e botão de conversão “Apresentar negócio”, matriz reativa em hover e indicativo desktop. No mobile, o componente inteiro da matriz foi reposicionado como footer visual, abaixo da copy e do CTA. Processo e formulário de entrada ainda estão previstos.
 
 ## 3. Arquitetura e Fluxo
 
-| Ordem | Camada | Responsabilidade |
-|---|---|---|
-| 1 | Header | Identificar a AUGEO, oferecer navegação mínima e acesso à ação comercial. |
-| 2 | Hero | Estabelecer presença, apresentar a tese da agência e direcionar para a entrada comercial. |
-| 3 | Processo | Explicar como uma demanda inicial se transforma em entendimento, direcionamento e proposta. É a seção informativa central da landing. |
-| 4 | Formulário | Coletar contexto inicial e classificar a natureza da demanda para orientar a próxima conversa. |
-| 5 | Footer | Reunir canais, dados institucionais e links necessários sem competir com a conversão. |
+| Camada | Função e estado |
+|---|---|
+| Header | Marca com retorno ao início; implementado. |
+| Hero | Posicionamento, assinatura interativa e botão de conversão; implementado. |
+| Footer mobile | Matriz e lettering encerram a composição abaixo da copy e do CTA; implementado. |
+| Processo | Explicar entendimento, direcionamento e proposta; previsto. |
+| Formulário | Receber o contexto do negócio para triagem; previsto em `#entrada`. |
 
-O fluxo previsto para a landing completa é: **hero ou header → formulário → triagem → contato inicial**. A seção de processo deverá reduzir a incerteza entre a intenção do visitante e esse envio. Hoje, o cabeçalho contém apenas a marca com link para `#inicio`; o CTA do hero aponta para `#entrada`, cujo destino ainda não existe. Navegação para as seções e envio/triagem são requisitos futuros.
+“Apresentar negócio” é a entrada de conversão já presente na composição. A etapa seguinte é conectar seu destino ao formulário real; o código atual usa `href="#entrada"`.
 
 ## 4. Hero
 
 ### Função
 
-A hero é a porta de entrada da página. Ela deve comunicar o posicionamento de modo breve, estabelecer o nível de acabamento da AUGEO e levar o visitante ao formulário. Não tem responsabilidade de explicar serviços, processo inteiro ou tecnologia utilizada.
+Apresentar o posicionamento da AUGEO, demonstrar direção pela própria composição e oferecer a ação “Apresentar negócio”. No desktop, texto e matriz se contrapõem em duas colunas. No mobile, a matriz foi levada para o footer para preservar a ordem **mensagem → CTA → assinatura visual**.
 
 ### Campo visual interativo
 
-A matriz interativa já está implementada em `KineticMatrix`, com grade em canvas e lettering SVG listrado AUGEO. No desktop, ocupa o painel direito da composição 44/56; no mobile, uma faixa retangular abaixo da copy e do CTA. Grade e lettering respondem ao campo de ponteiro acompanhado em todo o hero, incluindo a coluna textual; clique/toque produz ondas. A função é estética e de assinatura visual, sem representar literalmente um serviço, produto ou etapa do processo.
+A composição reativa já está implementada: grade em canvas e lettering SVG listrado respondem juntos ao hover/ponteiro em todo o hero, inclusive na coluna textual. Clique ou toque gera ondas; ao encerrar a interação, a deformação retorna ao repouso.
 
-A base funcional da matriz está resolvida; não há escolha de componente ou definição inicial de interação pendente. O comportamento atual inclui pulsos automáticos contínuos, pausa fora da tela/aba oculta e versão estática com movimento reduzido. Introdução finita seguida de repouso e otimização do warp são refinamentos ainda não implementados, com dependências de avaliação registradas nos documentos do hero.
+No desktop, a matriz ocupa a coluna direita do split 44/56. No mobile, o mesmo componente inteiro forma o footer retangular de largura integral, com lettering centralizado e rolagem vertical permitida pela área interativa. Essa mudança é uma escolha de composição e ergonomia, não a criação de outro componente.
 
-### Requisitos de comportamento
+Os temas claro/escuro abrangem texto e matriz. A interação pausa fora da tela e com aba oculta; `prefers-reduced-motion` mantém a composição estática. Os pulsos automáticos atuais continuam; introdução finita e otimização do warp são refinamentos registrados nos documentos do hero.
 
-- Manter uma composição visual válida sem hover, especialmente em touch.
-- Respeitar `prefers-reduced-motion` com uma versão estática ou movimento significativamente reduzido.
-- Preservar legibilidade, contraste e desempenho; a interação não pode bloquear o CTA nem depender de hardware gráfico excepcional.
-- A divisão entre texto e matriz é compositiva, não uma exigência de colunas com temas opostos. Os temas claro e escuro já abrangem ambos os painéis; essa divisão não é uma regra de layout para o restante da página.
+### Continuidade e conversão
 
-### Continuidade para Processo
-
-O indicativo de continuidade do hero aponta conceitualmente para a seção Processo, abaixo. Na página completa, deverá ter integração por link nativo para `#processo`. A versão publicada usa dois triângulos decorativos no desktop, sem ação ou foco, enquanto Processo não existe. A proposta anterior de EXPLORE AQUI foi superada; antecedentes e decisões de integração estão em [HERO_DECISIONS_AND_IDEAS.md](HERO_DECISIONS_AND_IDEAS.md). A composição persistente está em [HERO_HANDOFF.md](HERO_HANDOFF.md), e a continuidade técnica em [BACKLOG.md](BACKLOG.md).
-
-### CTA
-
-O CTA implementado é **“Apresentar negócio”**, com destino `#entrada`. Sua função é iniciar a apresentação do negócio. A conexão ao formulário real permanece pendente; o botão publicado ainda não inicia um envio ou contato. Revisões futuras de copy não reabrem automaticamente sua função.
+Os dois triângulos desktop indicam continuidade por scroll e permanecem decorativos. A integração com `#processo` depende da seção prevista. O botão **“Apresentar negócio”** tem função distinta: conversão para a entrada comercial `#entrada`, com o formulário ainda por implementar.
 
 ## 5. Processo Público
 
@@ -86,7 +75,7 @@ O processo é a principal peça comercial da landing. Sua função é mostrar qu
 
 ### Limite de exposição
 
-O site comunica o modelo de trabalho, não o procedimento interno completo. Call inicial, estruturação de briefing, handoffs, validação e segunda call pertencem à operação e estão documentados em [03-INTERNAL.md](03-INTERNAL.md); só devem aparecer publicamente se contribuírem para a decisão do lead.
+O site comunica o modelo de trabalho, não o procedimento interno completo. Call inicial, estruturação de briefing, handoffs, validação e segunda call pertencem à operação e estão documentados em [operação interna](PRODUCT.md#operação-interna); só devem aparecer publicamente se contribuírem para a decisão do lead.
 
 ## 6. Entrada Comercial e Formulário
 
@@ -153,7 +142,7 @@ Grades e sistemas gráficos devem funcionar como linguagem de estrutura, respost
 
 ### Consolidação visual ainda pendente
 
-- Estender os papéis tipográficos e tokens existentes a Processo, formulário e footer.
+- Estender os papéis tipográficos e tokens existentes a Processo e formulário.
 - Estruturar e avaliar a composição dessas seções, sem repetir mecanicamente o hero.
 - Registrar o sistema em `DESIGN.md`, conforme a frente prevista do hero.
 - Definir motion fora do hero e necessidade de assets complementares quando houver função concreta.
@@ -190,7 +179,7 @@ A copy do hero já está aplicada:
 - Apoio: **“O contexto do seu negócio define como conectamos marca, website, aquisição e operação digital.”**
 - CTA: **“Apresentar negócio”.**
 
-Processo, formulário, estados de envio e footer ainda precisam de copy própria. A mensagem deve deixar claro que a AUGEO atua em direção, presença e operação digital, sem transformar o site em uma lista de serviços. O processo deve mostrar que o cliente mantém a decisão de seguir ou não; a AUGEO agrega critério para que essa decisão e o escopo tenham coerência.
+Processo e formulário ainda precisam de copy própria, incluindo estados de envio; rascunhos estão ao final deste documento. A mensagem deve deixar claro que a AUGEO atua em direção, presença e operação digital, sem transformar o site em uma lista de serviços. O processo deve mostrar que o cliente mantém a decisão de seguir ou não; a AUGEO agrega critério para que essa decisão e o escopo tenham coerência.
 
 Evitar promessas de resultado, retorno rápido, fórmula, solução total sem contexto e qualquer alegação de cases, clientes ou métricas inexistentes.
 
@@ -228,7 +217,8 @@ A stack, a hospedagem, o domínio e a interação inicial da matriz já foram de
 
 ### Base já implementada e publicada
 
-- Cabeçalho com marca, hero responsivo, copy aplicada, CTA, matriz/lettering interativos e indicativo desktop.
+- Cabeçalho com marca, hero responsivo, copy aplicada, botão de conversão, composição reativa em hover e indicativo desktop.
+- Footer mobile implementado com a matriz e o lettering abaixo da copy e do CTA.
 - Temas, fontes locais, cor de ênfase e tokens do hero presentes no código.
 - Stack React/TypeScript/Vite/Tailwind, tooling Bun e testes Playwright existentes.
 - Deploy de produção na Vercel e domínio próprio conectado; primeira publicação já realizada.
@@ -238,10 +228,10 @@ Publicação não equivale a conclusão da landing, aprovação visual global ou
 ### Para concluir a landing completa
 
 - Concluir as avaliações e refinamentos autorizados do hero conforme os pontos de avaliação existentes; introdução finita, desempenho, extração do sistema e acabamento integrado permanecem frentes específicas.
-- Estruturar visualmente Processo, formulário e footer, com copy coerente com o posicionamento e sem prova social fictícia.
+- Estruturar Processo e formulário com copy coerente com o posicionamento. Preservar o footer mobile já implementado.
 - Fechar campos obrigatórios, ferramenta de recebimento, tratamento de dados, responsável pela triagem e mensagens de sucesso/erro.
 - Implementar `#processo` e `#entrada`, integrar navegação/continuidade e conectar o CTA ao formulário funcional.
-- Definir os canais públicos do footer, usando o e-mail existente; WhatsApp Business depende de configuração futura.
+- Definir onde apresentar os canais públicos, usando o e-mail existente; WhatsApp Business depende de configuração futura.
 - Validar a experiência completa: responsividade, teclado/foco, contraste, movimento reduzido, carregamento, envio, falhas e recebimento real para triagem.
 - Definir a política de redirecionamento/canonical dos domínios e metadados de publicação/indexação; manter HTTPS válido nos dois endereços antes de encerrar a entrega completa.
 
@@ -251,3 +241,51 @@ Essas pendências não autorizam avanço automático de bloco nem contratação 
 
 - Avaliar inclusão de cases, portfólio, prova social, FAQ e páginas internas a partir de trabalhos e objeções reais.
 - Complementar abstrações visuais com evidências de trabalho publicado quando houver material adequado, preservando a assinatura gráfica que já foi construída.
+
+## Rascunhos de copy das seções futuras
+
+Material anteriormente em `copywriting.md`, ainda não aplicado ao site nem registrado como copy final aprovada. Preservado como ponto de partida para Header, Processo, entrada comercial e footer; não substitui a copy implementada do hero na seção 9.
+
+### Header
+
+Nosso processo · Apresentar negócio
+
+### Processo
+
+**Nós estruturamos sua presença digital.**
+
+Conhecemos seu negócio, identificamos o que precisa mudar e propomos um projeto para conectar apresentação e operação.
+
+#### 1. Conhecemos seu negócio
+
+Investigamos seu momento atual e os obstáculos que motivaram o contato.
+
+#### 2. Definimos as prioridades
+
+Analisamos quais mudanças fazem sentido e como as entregas devem trabalhar juntas.
+
+#### 3. Apresentamos o projeto
+
+Explicamos nossa recomendação, o escopo e o investimento. Você decide sobre a contratação.
+
+**Apresentar negócio**
+
+### Entrada comercial
+
+**Vamos entender o que seu negócio precisa.**
+
+Compartilhe uma breve apresentação e o motivo do contato. A análise e o direcionamento ficam com a AUGEO.
+
+**Apresentar negócio**
+
+#### Após o envio
+
+Recebemos sua apresentação. Vamos analisar as informações antes de retornar pelo contato indicado.
+
+### Footer
+
+AUGEO Creative
+
+Direção, presença e operação digital.
+
+Atendimento remoto.

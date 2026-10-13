@@ -12,7 +12,7 @@ Copy aplicada:
 
 - Título: “Presença digital com direção.”, em três linhas.
 - Apoio: “O contexto do seu negócio define como conectamos marca, website, aquisição e operação digital.”
-- CTA comercial: “Apresentar negócio”.
+- Botão de conversão: “Apresentar negócio”, com destino `#entrada`.
 
 A assinatura gráfica contrapõe o título; o apoio fica agrupado à mensagem, e o indicativo de continuidade ocupa a borda inferior esquerda no desktop. A composição estática mantém a leitura da marca quando o visitante prefere movimento reduzido.
 
@@ -28,7 +28,7 @@ O painel textual tem iluminação radial branca de 2% sobre o fundo do tema, com
 
 Abaixo de 768 px, cabeçalho e hero seguem fluxo vertical. O cabeçalho tem 70 px, símbolo de 58 px e recuo de 20 px. A copy usa recuos simétricos de 20 px; título, apoio e CTA antecedem a matriz. O CTA fica visível, com altura mínima de 44 px e margem superior de 24 px.
 
-A matriz funciona como **faixa retangular inferior do hero**, de largura integral e altura `clamp(140px, 22dvh, 180px)`, com divisória superior de 1 px e margem automática acima. O lettering fica centralizado nesse painel e usa `min(85%, 360px)`. `touch-action: pan-y` permite rolagem vertical pela área da matriz.
+A matriz inteira foi reposicionada como **footer visual do hero mobile**, de largura integral e altura `clamp(140px, 22dvh, 180px)`, com divisória superior de 1 px e margem automática acima. O lettering fica centralizado nesse painel e usa `min(85%, 360px)`. `touch-action: pan-y` permite rolagem vertical pela área da matriz.
 
 A superfície da copy se estende pelos 70 px do cabeçalho: um único fundo cobre símbolo e texto até a matriz, sem reiniciar a iluminação na divisão entre cabeçalho e hero. O indicativo de triângulos fica oculto no mobile.
 
@@ -50,7 +50,7 @@ O lettering preserva geometria, proporção, listras e contra-formas. No SVG, �
 
 `KineticMatrix` continua um componente compartilhado, com demo em `?demo=matrix`. O hero passa `title="AUGEO"`, `titleArtworkSrc`, `enableArtworkMotion` e `gridSpacing={72}`; o padrão da demo é 58 px. A grade adapta o espaçamento às dimensões disponíveis, preservando nós e ligações no campo visível.
 
-Grade e lettering respondem ao mesmo campo de ponteiro e ondas, com escala própria para a imagem. O ponteiro também é acompanhado no ancestral `.hero`, incluindo a coluna esquerda; clique/toque produz uma onda. Ao encerrar a interação, a deformação converge ao repouso sem rebote. O warp usa um mapa horizontal comum às scanlines para evitar ruptura das letras, com deslocamento máximo de 6 px e diferença máxima de 2 px entre amostras de 8 px.
+A composição reativa em hover já está implementada: grade e lettering respondem ao mesmo campo de ponteiro e ondas, com escala própria para a imagem. O ponteiro também é acompanhado no ancestral `.hero`, incluindo a coluna esquerda; clique/toque produz uma onda. Ao encerrar a interação, a deformação converge ao repouso sem rebote. O warp usa um mapa horizontal comum às scanlines para evitar ruptura das letras, com deslocamento máximo de 6 px e diferença máxima de 2 px entre amostras de 8 px.
 
 O ciclo atual da matriz mantém pulsos automáticos contínuos, além das respostas pontuais. Pausa fora da tela e com documento oculto; movimento reduzido mantém grade e lettering estáticos. Rótulos técnicos `0x…` ainda aparecem após inspeção prolongada de um nó.
 
