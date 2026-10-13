@@ -1,5 +1,7 @@
 # AUGEO Website: Especificação
 
+Atualizada em 2026-10-13 a partir da implementação e das decisões vigentes. Esta especificação define a landing completa e distingue seus requisitos do estado publicado. Composição detalhada do hero: [HERO_HANDOFF.md](HERO_HANDOFF.md). Execução e validações: [BACKLOG.md](BACKLOG.md). Propostas e avaliações pendentes: [HERO_DECISIONS_AND_IDEAS.md](HERO_DECISIONS_AND_IDEAS.md).
+
 ## 1. Papel do Site
 
 Landing page institucional e comercial da AUGEO Creative. Ela deve:
@@ -13,7 +15,7 @@ O site não deve tentar compensar a ausência de cases públicos com projetos fi
 
 ## 2. Escopo da Primeira Versão
 
-### Incluído
+### Incluído na landing completa
 
 - Header
 - Hero
@@ -29,6 +31,8 @@ O site não deve tentar compensar a ausência de cases públicos com projetos fi
 - FAQ
 - Páginas internas, blog e área de cliente
 
+**Estado publicado:** cabeçalho com marca e hero com copy, CTA, matriz e indicativo desktop. Processo, formulário e footer da página ainda não foram implementados. A faixa inferior da matriz no mobile pertence ao hero; não é o footer institucional. A publicação atual não encerra a primeira versão completa. Não há checkout nem fluxo de conversão funcional nesta etapa.
+
 As frentes de atuação da AUGEO continuam informando a mensagem e a qualificação do lead, mas não aparecem como uma vitrine de módulos independentes.
 
 ## 3. Arquitetura e Fluxo
@@ -41,7 +45,7 @@ As frentes de atuação da AUGEO continuam informando a mensagem e a qualificaç
 | 4 | Formulário | Coletar contexto inicial e classificar a natureza da demanda para orientar a próxima conversa. |
 | 5 | Footer | Reunir canais, dados institucionais e links necessários sem competir com a conversão. |
 
-O caminho primário é: **hero ou header → formulário → triagem → contato inicial**. A seção de processo reduz a incerteza entre a intenção do visitante e esse envio.
+O fluxo previsto para a landing completa é: **hero ou header → formulário → triagem → contato inicial**. A seção de processo deverá reduzir a incerteza entre a intenção do visitante e esse envio. Hoje, o cabeçalho contém apenas a marca com link para `#inicio`; o CTA do hero aponta para `#entrada`, cujo destino ainda não existe. Navegação para as seções e envio/triagem são requisitos futuros.
 
 ## 4. Hero
 
@@ -51,22 +55,24 @@ A hero é a porta de entrada da página. Ela deve comunicar o posicionamento de 
 
 ### Campo visual interativo
 
-O lado direito da hero contém um componente visual próprio de interação por hover: uma grade estruturada reage e se deforma conforme a interação. A função é estética e de assinatura visual; ele não precisa representar literalmente um serviço, produto ou etapa do processo.
+A matriz interativa já está implementada em `KineticMatrix`, com grade em canvas e lettering SVG listrado AUGEO. No desktop, ocupa o painel direito da composição 44/56; no mobile, uma faixa retangular abaixo da copy e do CTA. Grade e lettering respondem ao campo de ponteiro acompanhado em todo o hero, incluindo a coluna textual; clique/toque produz ondas. A função é estética e de assinatura visual, sem representar literalmente um serviço, produto ou etapa do processo.
+
+A base funcional da matriz está resolvida; não há escolha de componente ou definição inicial de interação pendente. O comportamento atual inclui pulsos automáticos contínuos, pausa fora da tela/aba oculta e versão estática com movimento reduzido. Introdução finita seguida de repouso e otimização do warp são refinamentos ainda não implementados, com dependências de avaliação registradas nos documentos do hero.
 
 ### Requisitos de comportamento
 
 - Manter uma composição visual válida sem hover, especialmente em touch.
 - Respeitar `prefers-reduced-motion` com uma versão estática ou movimento significativamente reduzido.
 - Preservar legibilidade, contraste e desempenho; a interação não pode bloquear o CTA nem depender de hardware gráfico excepcional.
-- O split claro/escuro da hero não é uma regra de layout para o restante da página.
+- A divisão entre texto e matriz é compositiva, não uma exigência de colunas com temas opostos. Os temas claro e escuro já abrangem ambos os painéis; essa divisão não é uma regra de layout para o restante da página.
 
 ### Continuidade para Processo
 
-O indicativo de continuidade do hero aponta conceitualmente para a seção Processo, abaixo. Na página completa, deverá ter integração por link nativo para `#processo`. O protótipo atual usa dois triângulos decorativos no desktop, sem ação ou foco, enquanto Processo não existe. A proposta anterior de EXPLORE AQUI foi superada; antecedentes e decisões de integração estão em [HERO_DECISIONS_AND_IDEAS.md](HERO_DECISIONS_AND_IDEAS.md). A composição persistente está em [HERO_HANDOFF.md](HERO_HANDOFF.md), e a continuidade técnica em [BACKLOG.md](BACKLOG.md).
+O indicativo de continuidade do hero aponta conceitualmente para a seção Processo, abaixo. Na página completa, deverá ter integração por link nativo para `#processo`. A versão publicada usa dois triângulos decorativos no desktop, sem ação ou foco, enquanto Processo não existe. A proposta anterior de EXPLORE AQUI foi superada; antecedentes e decisões de integração estão em [HERO_DECISIONS_AND_IDEAS.md](HERO_DECISIONS_AND_IDEAS.md). A composição persistente está em [HERO_HANDOFF.md](HERO_HANDOFF.md), e a continuidade técnica em [BACKLOG.md](BACKLOG.md).
 
 ### CTA
 
-O CTA principal da hero conduz ao formulário de entrada. O texto final do CTA será definido na etapa de copy; sua função já está fixa: iniciar a apresentação do negócio, e não abrir um “contato genérico”.
+O CTA implementado é **“Apresentar negócio”**, com destino `#entrada`. Sua função é iniciar a apresentação do negócio. A conexão ao formulário real permanece pendente; o botão publicado ainda não inicia um envio ou contato. Revisões futuras de copy não reabrem automaticamente sua função.
 
 ## 5. Processo Público
 
@@ -84,7 +90,7 @@ O site comunica o modelo de trabalho, não o procedimento interno completo. Call
 
 ## 6. Entrada Comercial e Formulário
 
-Há um único formulário de entrada. Ele não cria duas jornadas separadas nem obriga o visitante a já saber qual serviço comprar.
+A landing completa terá um único formulário de entrada, ainda não implementado. Ele não cria duas jornadas separadas nem obriga o visitante a já saber qual serviço comprar.
 
 ### Papel do formulário
 
@@ -112,7 +118,7 @@ Há um único formulário de entrada. Ele não cria duas jornadas separadas nem 
 
 Essas opções qualificam o contato; não constituem catálogo, pacote fechado ou compromisso de contratação avulsa.
 
-### Pós-envio
+### Pós-envio previsto
 
 Após o envio, a interface confirma o recebimento e informa que a AUGEO fará a leitura inicial antes do retorno. Não deve prometer prazo, orçamento automático ou reunião garantida enquanto esses parâmetros não estiverem definidos pela operação.
 
@@ -124,8 +130,10 @@ Após o envio, a interface confirma o recebimento e informa que a AUGEO fará a 
 
 ### Fundamentos já definidos
 
-- Base cromática: preto e branco.
-- Cor de ênfase: laranja-cereja, reservada para ação, estado e ênfase pontual.
+- Base cromática implementada: claro com fundo `#f7f7f5`/texto `#111111`; escuro com fundo `#06070a`/texto `#f7f7f5`.
+- Cor de ênfase implementada: laranja-cereja `#ff482c`, usada pontualmente, inclusive em foco. Uso em futuras superfícies deve preservar contraste adequado.
+- Tipografia atual: Hanken Grotesk local na landing, título com peso 620; Archivo como alternativa declarada e Share Tech Mono no componente/demo. O sistema completo para as seções futuras ainda precisa ser consolidado.
+- Temas seguem a preferência do sistema, com suporte às classes explícitas `.light`/`.dark`; não há seletor de tema na landing.
 - A marca e o símbolo existentes não devem ser redesenhados.
 - A hero usa contraste entre presença humana/comercial e campo técnico; essa divisão não deve ser repetida mecanicamente no restante da página.
 - A tipografia deve sustentar impacto e clareza comercial; experimentação não pode comprometer leitura de conteúdo, formulários ou navegação.
@@ -143,25 +151,25 @@ Grades e sistemas gráficos devem funcionar como linguagem de estrutura, respost
 - gradientes neon, Memphis corporativo, minimalismo sem construção tipográfica e estética genérica de IA;
 - qualquer redução de contraste, acessibilidade ou performance para preservar efeito visual.
 
-### Decisões visuais ainda em aberto
+### Consolidação visual ainda pendente
 
-- família tipográfica, pesos e regras de uso;
-- hexadecimal e requisitos de contraste da cor de ênfase;
-- tokens de layout, espaçamento, bordas e superfícies;
-- regras definitivas de motion fora da hero;
-- tratamento e necessidade de assets complementares.
+- Estender os papéis tipográficos e tokens existentes a Processo, formulário e footer.
+- Estruturar e avaliar a composição dessas seções, sem repetir mecanicamente o hero.
+- Registrar o sistema em `DESIGN.md`, conforme a frente prevista do hero.
+- Definir motion fora do hero e necessidade de assets complementares quando houver função concreta.
+- Concluir as avaliações e refinamentos do hero registrados nos documentos pertinentes.
 
-Essas decisões pertencem à frente de design visual e não bloqueiam a arquitetura de informação já definida.
+Fontes, cores e composição atuais são a base existente, não escolhas iniciais em aberto. Isso não equivale a aprovação visual global nem à conclusão do sistema para toda a landing.
 
 ## 8. Assets
 
 ### Diretriz
 
-Assets devem ser definidos depois que a arquitetura e as necessidades de cada seção estiverem estáveis. Não há exigência de preencher a página com objetos 3D para compensar a ausência de portfólio.
+Marca, lettering, fontes locais e matriz já estão incorporados ao hero. O moodboard informa direção e geometria; suas imagens não são decoração a importar para a página. Assets adicionais devem ser definidos conforme as necessidades das seções futuras. Não há exigência de preencher a página com objetos 3D para compensar a ausência de portfólio.
 
 ### Prioridades
 
-1. Componente interativo da hero.
+1. Preservar o componente interativo e os assets de marca já implementados no hero; refinamentos pendentes devem respeitar essa base.
 2. Sistema gráfico que acompanhe a leitura do processo, se ele se mostrar necessário ao design.
 3. Assets pontuais para sustentação de composição e ritmo.
 
@@ -176,9 +184,13 @@ Cada asset precisa ter função de composição, narrativa ou interação, atend
 
 ## 9. Copy e Conteúdo
 
-A copy será desenvolvida em etapa própria. A arquitetura não depende de texto definitivo neste momento.
+A copy do hero já está aplicada:
 
-Quando escrita, a mensagem deve deixar claro que a AUGEO atua em direção, presença e operação digital, sem transformar o site em uma lista de serviços. O processo deve mostrar que o cliente mantém a decisão de seguir ou não; a AUGEO agrega critério para que essa decisão e o escopo tenham coerência.
+- Título: **“Presença digital com direção.”**
+- Apoio: **“O contexto do seu negócio define como conectamos marca, website, aquisição e operação digital.”**
+- CTA: **“Apresentar negócio”.**
+
+Processo, formulário, estados de envio e footer ainda precisam de copy própria. A mensagem deve deixar claro que a AUGEO atua em direção, presença e operação digital, sem transformar o site em uma lista de serviços. O processo deve mostrar que o cliente mantém a decisão de seguir ou não; a AUGEO agrega critério para que essa decisão e o escopo tenham coerência.
 
 Evitar promessas de resultado, retorno rápido, fórmula, solução total sem contexto e qualquer alegação de cases, clientes ou métricas inexistentes.
 
@@ -191,33 +203,51 @@ Evitar promessas de resultado, retorno rápido, fórmula, solução total sem co
 - Formulário com validação, confirmação de envio e encaminhamento para a triagem comercial.
 - Estrutura preparada para adicionar cases e páginas futuras sem reescrever o fluxo principal.
 
-### Decisões técnicas ainda abertas
+### Base técnica implementada
 
-- framework e arquitetura de front-end;
-- solução de estilos e componentes;
-- hospedagem e domínio;
-- backend/serviço de recebimento do formulário;
-- CMS, se houver necessidade real de conteúdo editável na primeira versão;
-- analytics e rastreamento, respeitando privacidade e consentimento aplicáveis.
+- Front-end: React 19 e TypeScript, com Vite 8; aplicação de uma página, sem roteador ou CMS implementado.
+- Estilos: Tailwind CSS 4 integrado ao Vite e CSS próprio em `src/styles.css`, com fontes locais, tokens e temas.
+- Hero: `KineticMatrix` compartilhado entre landing e demo `?demo=matrix`, com física/warp em `lib/matrix-motion.ts`; indicador em `ScrollCue`.
+- Tooling: Bun para instalação e execução, com `bun.lock` e `bunfig.toml`. Build por `bun run build`; regressões por `bun run test` com Playwright/Chromium; inspeção visual/interativa por `dev-browser`.
+- Hospedagem: projeto `augeo-grid-hero` na equipe `augeocreative` da Vercel, conectado ao repositório GitHub `lucavalente93/augeo-grid-hero`, com produção na `main` e integração de deploy por push.
+- Domínio próprio: `augeocreative.com` e `www.augeocreative.com` vinculados ao projeto. O usuário confirmou o site online no domínio, e HTTPS respondeu 200 nos dois endereços; evidências de DNS/HTTPS e publicação pertencem ao backlog. O alias `augeo-grid-hero.vercel.app` permanece disponível.
+- DNS gerenciado na Hostinger; e-mail comercial existente `hello@augeocreative.com`, independente do deploy. Preservar os registros de e-mail ao alterar o apontamento do site.
+- Plano Vercel atual mantido por decisão do usuário; contratação do Pro e configuração do WhatsApp Business adiadas até concluir o site. Não são bloqueios para o desenvolvimento nem tarefas autorizadas nesta revisão.
 
-Nenhuma dessas decisões deve ser fechada por hábito de stack: elas precisam ser escolhidas depois de definir o comportamento do componente da hero, a operação do formulário e a necessidade de edição de conteúdo.
+### Decisões e integrações técnicas ainda abertas
 
-## 11. Backlog de Decisões
+- Campos obrigatórios e validação do formulário; backend/serviço de recebimento, armazenamento, proteção contra abuso e tratamento de falhas.
+- Tratamento de dados, informações de privacidade e parâmetros operacionais de triagem/retorno.
+- CMS somente se surgir necessidade real de edição de conteúdo; não há adoção decidida.
+- Analytics e rastreamento, quando houver objetivo de medição definido, respeitando privacidade e consentimento aplicáveis.
+- Endereço canônico e redirecionamento entre domínio raiz e `www`, ainda sem configuração confirmada.
 
-### Antes da implementação visual
+A stack, a hospedagem, o domínio e a interação inicial da matriz já foram definidos e implementados. Integrações comerciais futuras devem ser escolhidas conforme o fluxo de entrada e a operação, sem reabrir essas bases por padrão.
 
-- Consolidar a hero já produzida e seus estados de interação.
-- Definir sistema visual mínimo: tipografia, cor de ênfase, tokens e regras de motion.
-- Estruturar visualmente a seção de processo e validar sua leitura.
+## 11. Estado e Próximas Decisões
 
-### Antes da publicação
+### Base já implementada e publicada
 
-- Definir a copy final de hero, processo, formulário e footer.
-- Fechar campos obrigatórios, ferramenta de recebimento, responsável pela triagem e resposta pós-envio.
-- Definir stack, hospedagem, domínio e tratamento de dados do formulário.
-- Testar responsividade, acessibilidade, redução de movimento, carregamento e envio do formulário.
+- Cabeçalho com marca, hero responsivo, copy aplicada, CTA, matriz/lettering interativos e indicativo desktop.
+- Temas, fontes locais, cor de ênfase e tokens do hero presentes no código.
+- Stack React/TypeScript/Vite/Tailwind, tooling Bun e testes Playwright existentes.
+- Deploy de produção na Vercel e domínio próprio conectado; primeira publicação já realizada.
 
-### Futuro, após a primeira versão
+Publicação não equivale a conclusão da landing, aprovação visual global ou fechamento dos fluxos metodológicos do hero. Resultados de testes e limitações de cobertura ficam no backlog, sem tratar evidências históricas como validação automática de versões futuras.
+
+### Para concluir a landing completa
+
+- Concluir as avaliações e refinamentos autorizados do hero conforme os pontos de avaliação existentes; introdução finita, desempenho, extração do sistema e acabamento integrado permanecem frentes específicas.
+- Estruturar visualmente Processo, formulário e footer, com copy coerente com o posicionamento e sem prova social fictícia.
+- Fechar campos obrigatórios, ferramenta de recebimento, tratamento de dados, responsável pela triagem e mensagens de sucesso/erro.
+- Implementar `#processo` e `#entrada`, integrar navegação/continuidade e conectar o CTA ao formulário funcional.
+- Definir os canais públicos do footer, usando o e-mail existente; WhatsApp Business depende de configuração futura.
+- Validar a experiência completa: responsividade, teclado/foco, contraste, movimento reduzido, carregamento, envio, falhas e recebimento real para triagem.
+- Definir a política de redirecionamento/canonical dos domínios e metadados de publicação/indexação; manter HTTPS válido nos dois endereços antes de encerrar a entrega completa.
+
+Essas pendências não autorizam avanço automático de bloco nem contratação de serviços. A sequência operacional e as autorizações ficam no backlog; propostas e avaliações do hero ficam no registro de decisões.
+
+### Futuro, após a primeira versão completa
 
 - Avaliar inclusão de cases, portfólio, prova social, FAQ e páginas internas a partir de trabalhos e objeções reais.
-- Substituir ou complementar abstrações visuais por evidências de trabalho publicado quando houver material adequado.
+- Complementar abstrações visuais com evidências de trabalho publicado quando houver material adequado, preservando a assinatura gráfica que já foi construída.

@@ -20,10 +20,11 @@ A contratação começa pelo entendimento do cenário do negócio. A AUGEO combi
 
 ## Capabilities and Constraints
 
-- A presença inicial é uma landing page comercial. O protótipo atual contém apenas o hero; processo e formulário de entrada estão previstos na especificação.
+- A presença inicial é uma landing page comercial. A versão atual já está publicada em `augeocreative.com`, com cabeçalho e hero; Processo, formulário de entrada e footer da landing completa ainda estão previstos na especificação.
 - A interação visual do hero deve manter uma composição válida em touch e com movimento reduzido.
+- E-mail comercial existente: `hello@augeocreative.com`. Pro da Vercel e WhatsApp Business foram adiados pelo usuário até concluir o site.
 - A agência atende remotamente. A entrada comercial, quando implementada, deverá aceitar demandas específicas ou ainda indefinidas.
-- Copy final, campos do formulário, solução de envio e parâmetros de triagem seguem em aberto.
+- Copy do hero e matriz interativa já estão implementadas. Copy das seções futuras, campos do formulário, solução de envio e parâmetros de triagem seguem em aberto.
 
 ## Brand Commitments
 

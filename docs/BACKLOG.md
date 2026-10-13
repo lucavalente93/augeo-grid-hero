@@ -4,10 +4,11 @@ Atualizado em 2026-10-13. Aqui ficam continuidade operacional, trabalho técnico
 
 ## Estado operacional e próxima ação
 
-- Código atual publicado na `main`: `43e7ab1` reúne refatoração/testes; `cf5cdf3` reúne a documentação consolidada. A revisão posterior do histórico substituiu os commits documentais intermediários; não tratá-los como commits pendentes de envio.
-- Última validação da aplicação: `bun run build` aprovado e `bun run test` **24/24 em 18,5 s**, Chromium, dois workers, servidor iniciado separadamente. Nenhuma alteração na aplicação nesta reorganização documental; resultados não foram repetidos.
-- Reorganização documental entregue; usuário autorizou commit e push para `main`. Publicação reúne a reorganização, os encaminhamentos e as evidências em um único commit documental. Sem alteração da aplicação ou avanço visual.
-- Avaliações e dependências conceituais estão no [registro de decisões](HERO_DECISIONS_AND_IDEAS.md#avaliações-e-decisões-ainda-abertas). Nenhuma pendência autoriza retomada automática. Próxima ação: enviar a reorganização autorizada e confirmar o SHA remoto com gh; novas frentes dependem de autorização própria.
+- Base publicada na `main`: `43e7ab1` reúne refatoração/testes; `044e8bd` reúne a reorganização documental. Consulta GitHub/Vercel confirmou o último deploy anterior a esta revisão em 2026-10-13 às 10:11 BRT, produção/Ready, associado a `044e8bd`, então último commit remoto da `main`.
+- Última validação da aplicação: `bun run build` aprovado e `bun run test` **24/24 em 18,5 s**, Chromium, dois workers, servidor iniciado separadamente. Código da aplicação não alterado nesta revisão documental; testes não repetidos.
+- Site publicado em `augeocreative.com` e `www.augeocreative.com`; usuário confirmou acesso e nova verificação HTTPS retornou HTTP 200 em ambos. DNS Hostinger e e-mail comercial preservados. Redirecionamento canônico entre os endereços ainda pendente.
+- Especificação revisada integralmente contra código e contexto: stack, matriz, copy, temas, assets, domínio e publicação descritos como bases existentes; Processo, formulário e footer continuam requisitos da landing completa. Pro/WhatsApp Business adiados por decisão do usuário.
+- Usuário autorizou commit de todas as atualizações documentais desta frente e push na `main`. Próxima frente depende de pedido próprio; avaliações do hero permanecem no [registro de decisões](HERO_DECISIONS_AND_IDEAS.md#avaliações-e-decisões-ainda-abertas).
 
 ## Tooling — restrição de sockets no sandbox; diagnóstico encerrado
 
@@ -271,9 +272,28 @@ Validação disponível em Chromium. Sem iPhone/Android/tablet físicos, Safari/
 
 Naquela entrega, a próxima ação era avaliação visual do usuário do bloco 2. Os limites de cobertura de `adapt` permanecem registrados; a entrega não autoriza avançar automaticamente para movimento ou fechar os blocos seguintes.
 
+## Conexão do domínio próprio — 2026-10-13
+
+Estado final: DNS validado, usuário confirmou site online e HTTPS dos dois endereços foi confirmado na revisão da especificação abaixo. Os itens seguintes registram as etapas anteriores; redirecionamento canônico permanece pendente.
+
+- Após o usuário ajustar a zona na Hostinger: `dig` confirmou os dois A recomendados e o CNAME www; MX preservados. Nova execução de `vercel domains verify` para cada endereço retornou `configured_correctly`, `ok: true`, sem conflitos. HTTP de www respondeu 200 pela Vercel, com ETag igual ao endereço de produção `.vercel.app`; HTTPS dos domínios próprios falhou com `curl` código 35 (`unexpected eof while reading`), inclusive com `--noproxy '*'`. HTTPS do `.vercel.app` respondeu 200. `vercel certs ls --scope augeocreative` não listou certificados; isso, isoladamente, não determina o estado dos certificados automáticos. DNS concluído; próximo passo é confirmar HTTPS dos dois endereços e configurar o redirecionamento canônico pendente.
+- Usuário autorizou conectar o domínio ao site já publicado, mantendo o plano atual e adiando Pro/WhatsApp Business para depois da conclusão do site. E-mail comercial existente: `hello@augeocreative.com`.
+- Skill `vercel:domains` aplicada. Git inicialmente limpo; `vercel whoami`, `vercel project ls` e `vercel project inspect augeo-grid-hero --scope augeocreative --non-interactive` confirmaram conta, equipe e projeto `prj_SrK36bHFjy5Ns6eQvOW8OvuqXGRX`.
+- `vercel domains add www.augeocreative.com augeo-grid-hero --scope augeocreative --non-interactive` e equivalente para `augeocreative.com` concluídos com `domain_added`. Nenhum novo deploy, commit ou push.
+- `dig` confirmou DNS externo na Hostinger (`helios.dns-parking.com`/`aster.dns-parking.com`), A raiz `2.57.91.91`, CNAME www para a raiz e MX `mx1.hostinger.com`/`mx2.hostinger.com`. Nenhum registro DNS alterado.
+- `vercel domains verify` executado uma vez por endereço com `--project augeo-grid-hero --scope augeocreative --json`: ambos vinculados/verificados quanto à propriedade, mas com `invalid_configuration` no apontamento. Valores retornados: A `@` → `216.198.79.1` e `64.29.17.1`; CNAME `www` → `854fde2e385e7678.vercel-dns-017.com`. Conexão pública/HTTPS ainda pendentes.
+- Disponibilidade de sessão para DNS investigada com CLI `dev-browser` (`--help`, `status`, `browsers`, `chrome --list`); nenhum navegador/sessão em execução disponível. Sem acesso autenticado à Hostinger nesta execução. Próxima ação: usuário atualizar os registros do site na zona DNS da Hostinger, preservando MX/TXT de e-mail e nameservers; depois verificar propagação e HTTPS. Redirecionamento canônico ainda não configurado. Sem alteração de UI ou nova suíte funcional.
+
 ## Organização documental concluída — 2026-10-13
 
 - Correção explícita do usuário: handoff limitado à implementação persistente e direção visual/conceitual; execução técnica e registros cronológicos neste backlog; antecedentes, propostas e avaliações em HERO_DECISIONS_AND_IDEAS.md. Essa regra substitui a divisão anterior que tratava o handoff como arquivo histórico.
 - Implementação conferida em App, CSS, ScrollCue, matriz e física; descrições atuais usam os nomes pós-refatoração. Estados antigos de EXPLORE, faixa mobile, CTA oculto e 38/62 foram separados e marcados como superados. Registros de testes, fluxos, commits, deploys e artefatos foram transferidos com seus limites.
 - Referências à captura mobile removida não alegam mais que ela está preservada/disponível. AGENTS, README e encaminhamentos do plano/especificação foram ajustados. HERO_BLOCK2_REITERATION.md conserva apenas o encaminhamento para os destinos, sem duplicar o diário.
 - Verificação documental: 59 links locais, incluindo quatro âncoras, aprovados por script Python; `git diff --check` aprovado. Busca de referências obsoletas à função dos documentos e ao nome da captura removida concluída, sem ocorrências do arquivo removido. Diff limitado a Markdown; sem build/teste novo por não haver alteração de código. Sem novo fluxo Impeccable ou deploy manual. Após a entrega, usuário autorizou commit/push e reforçou uso do GitHub CLI: gh para consultar o repositório e conferir o SHA remoto; Git para staging, commit e push, sem equivalentes no gh. A publicação acompanha em um único commit documental, sem commit separado para registrar o envio.
+
+## Revisão integral da especificação e publicação documental — 2026-10-13
+
+- Solicitação do usuário: atualizar toda `02-WEBSITE_SPEC.md`, sobretudo seções 10/11 e matriz, depois commit/push das atualizações. Revisão cruzou App/main, CSS, package/Vite, handoff, decisões, backlog, produto e contexto estratégico.
+- Corrigidos escopo publicado versus landing completa, fluxo ainda sem destino `#entrada`, matriz já implementada, temas unificados, tipografia/paleta/tokens existentes, assets e copy aplicados. Seções 10/11 distinguem base técnica definida, integrações futuras e requisitos para completar a landing. `PRODUCT.md` sincronizado para não manter o estado anterior de protótipo/copy integralmente indefinida. Nenhuma alteração da UI ou decisão de arquitetura comercial nova.
+- Evidência de produção: `curl -sSI --max-time 15` para HTTPS raiz e www retornou HTTP/2 200 em ambos, mesmo ETag `4b0333cf11ee7f604edb78874a6d5412`; supera a falha TLS inicial registrada na conexão do domínio, sem apagar seu histórico. Confirma HTTPS/acesso, sem teste visual, entrega de e-mail ou formulário. Usuário também confirmou o primeiro site em produção.
+- Validação documental: `git diff --check` aprovado e 18 links locais dos três documentos revisados conferidos por script Python, sem erros, antes do commit; sem build/suíte funcional por alteração somente Markdown. Sem novo fluxo Impeccable, deploy manual ou avanço de bloco. Commit/push autorizados nesta entrega; integração Git pode gerar deploy automático. Próxima ação após envio: novas frentes somente conforme pedido do usuário.
