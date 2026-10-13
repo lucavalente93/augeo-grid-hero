@@ -136,7 +136,8 @@ a:focus-visible, button:focus-visible { outline: 2px solid #ff482c; outline-offs
   justify-content: center;
   min-width: 0;
   padding: 140px clamp(24px, 3.2vw, 64px) 100px var(--hero-copy-inset);
-  background: radial-gradient(100% 80% at 0% 0%, rgba(255, 255, 255, 0.02) 0%, transparent 70%), var(--background);
+  --hero-panel-background: radial-gradient(100% 80% at 0% 0%, rgba(255, 255, 255, 0.02) 0%, transparent 70%), var(--background);
+  background: var(--hero-panel-background);
 }
 @media (min-width: 768px) {
   .hero-copy { border-right: 1px solid var(--border); }
@@ -248,6 +249,17 @@ a:focus-visible, button:focus-visible { outline: 2px solid #ff482c; outline-offs
   .hero-copy {
     padding: 32px 20px 24px;
     flex: 1 0 auto;
+    isolation: isolate;
+    background: none;
+  }
+  .hero-copy::before {
+    content: "";
+    position: absolute;
+    /* Include the in-flow mobile header in one continuous panel surface. */
+    inset: -70px 0 0;
+    z-index: -1;
+    pointer-events: none;
+    background: var(--hero-panel-background);
   }
   .hero-copy h1 { font-size: min(clamp(2.75rem, 16cqw, 3.75rem), calc(16cqw + 1rem)); }
   .intro { margin-top: 20px; }

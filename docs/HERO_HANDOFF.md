@@ -2,6 +2,14 @@
 
 Atualizado em 2026-10-13. Para tarefas do hero, leia este arquivo primeiro; ele concentra o estado atual. A rotina de leitura e atualização dos registros está no [AGENTS.md do projeto](../AGENTS.md). O [plano](HERO_AUDIT_AND_IMPROVEMENT_PLAN.md) guarda a especificação, as evidências da auditoria e as referências visuais, sem substituir este registro de progresso.
 
+## Correção da continuidade do fundo mobile — 2026-10-13
+
+- Relato do usuário: iluminação sutil do painel começava abaixo da faixa do símbolo no mobile; referência local `tests/brave_eL3LtJC3k5.png` (não rastreada, preservada).
+- Causa confirmada no CSS: o gradiente pertencia somente à `.hero-copy`; no mobile, `.nav` ocupa 70 px no fluxo, fora desse bloco. No desktop, o cabeçalho absoluto já fica sobre o painel.
+- Correção em `src/styles.css`: fundo existente compartilhado por `--hero-panel-background`; somente no mobile, pseudo-elemento da copy estende a superfície em 70 px até o topo, com isolamento de empilhamento e sem interceptar ponteiros. Um único gradiente cobre cabeçalho e texto até a matriz, sem reinício na antiga divisão. Geometria do conteúdo e tratamento desktop preservados.
+- Validação: `bun run build`, `git diff --check` e `bun run test` aprovados (**24/24**, 18,6 s, Chromium). Primeira tentativa da suíte bloqueada por `EPERM` na porta; execução autorizada fora do sandbox passou. Ensaio temporário `bun run test tests/panel-inspection.spec.ts` aprovado (**1/1**): viewport 393×852, dark/reduced motion, superfície inicia em y=0 e termina junto à matriz. Captura `/tmp/augeo-mobile-panel-393x852.png` inspecionada visualmente; teste temporário removido. Artefato temporário, não referência persistente. Sem aparelhos físicos ou outros motores; nenhum novo fluxo Impeccable aplicado/concluído.
+- Avaliação: usuário aprovou a correção ("Ótimo") e autorizou commit/push e deploy usando os CLIs GitHub/Vercel instalados e autenticados. Skills `vercel-cli` e `deployments-cicd` consultadas; `gh auth status` e `gh repo view` confirmaram usuário/repositório, `git fetch origin main` confirmou alinhamento (0/0), e `vercel project inspect augeo-grid-hero --scope augeocreative --non-interactive` confirmou o projeto Vite `prj_SrK36bHFjy5Ns6eQvOW8OvuqXGRX`. Publicação em andamento; demais blocos continuam fora do escopo.
+
 ## Publicação do redesenho mobile — 2026-10-13
 
 - Usuário autorizou commit de todas as mudanças, push na `main` do GitHub e atualização da implantação Vercel. Correção de entendimento: o componente inteiro do grid passou para o footer do hero mobile, acompanhado de mudanças de ergonomia/acessibilidade e escala do lettering; não é apenas um ajuste decorativo. CSS mobile confirma lettering em `min(85%, 360px)` e padding responsivo, preservando a geometria do SVG.
