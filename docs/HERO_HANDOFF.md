@@ -1,318 +1,71 @@
-# Hero — ponto de retomada
-
-Atualizado em 2026-10-13. Para tarefas do hero, leia este arquivo primeiro; ele concentra o estado atual. Tarefas futuras e avaliações ficam no [BACKLOG.md](BACKLOG.md). A rotina de leitura e atualização dos registros está no [AGENTS.md do projeto](../AGENTS.md). O [plano](HERO_AUDIT_AND_IMPROVEMENT_PLAN.md) guarda a especificação, as evidências da auditoria e as referências visuais, sem substituir este registro de progresso.
+# Hero — implementação e direção
 
-## Estado atual e ponto de retomada
+Base conferida no código em 2026-10-13. Este documento descreve a composição persistente e a direção visual/conceitual do hero. [BACKLOG.md](BACKLOG.md) reúne execução, verificações e trabalho técnico; [HERO_DECISIONS_AND_IDEAS.md](HERO_DECISIONS_AND_IDEAS.md) reúne decisões anteriores, propostas e avaliações pendentes. A arquitetura da landing pertence à [especificação](02-WEBSITE_SPEC.md).
 
-- Hero implementado: divisão desktop 44/56, Hanken local, recuo desktop de 48 px, dois triângulos de contraste alternado, painel esquerdo com CTA e matriz reativa. No mobile, CTA visível, matriz retangular inferior, recuos simétricos e fundo contínuo atrás do cabeçalho.
-- A correção do fundo mobile foi aprovada e publicada em `6b1092b`, com resultado documentado em `cae3368`. Publicação não equivale ao fechamento visual/metodológico de todo o bloco 2. O bloco 1 está registrado como concluído; bloco 2 implementado/reiterado, sem encerramento global confirmado.
-- Entrega documental anterior: auditoria de nomes revisada com `affaan-m/ECC@coding-standards`; protocolo de migração e verificações registrado em [NAMING_AUDIT.md](NAMING_AUDIT.md) e encaminhado pelo AGENTS. Fonte original lida integralmente e aplicada à revisão; skill não instalada localmente. Renomeações de código não iniciadas.
-- Organização: trabalhos futuros, avaliações e dependências transferidos para [BACKLOG.md](BACKLOG.md). Próximos passos históricos superados foram retirados da retomada; decisões e evidências das entregas abaixo preservadas. O backlog diferencia pendências válidas de tarefas já superadas e não autoriza avanço de bloco.
-- Validação atual: `bun run build` aprovado; `bun run test` aprovado, **24/24 em 17,6 s**, Chromium, fora da sandbox. Tentativas restritas falharam com `EPERM` na porta do Vite antes da suíte; primeiro pedido de execução escalada interrompido e nova execução realizada após o usuário pedir repetir. São resultados da base atual, não de renomeações futuras. Capturas da suíte em `test-results/` são temporárias/ignoradas.
-- Conferência documental: os dois PNGs Figma descritos em 10/10 estão ausentes neste checkout e sem entradas no Git; recuperação registrada no backlog. Caminhos históricos mantidos como texto, sem links que aparentem disponibilidade.
-- Verificação da organização: `git diff --check` aprovado; script Python verificou **34 links Markdown locais** nos quatro documentos alterados, todos com destinos existentes após identificar os caminhos Figma ausentes. `git diff --name-only HEAD` confirmou ausência de alterações rastreadas fora da documentação. Busca de referências a âncoras/títulos retirados deste handoff nos demais Markdown não encontrou usos.
-- Escopo desta entrega: documentação e revisão de segurança; código, estilos, testes e assets preservados. Git inicial: handoff modificado, auditoria de nomes e `tests/brave_eL3LtJC3k5.png` não rastreados; preservados. Sem novo workflow Impeccable, commit, push ou deploy.
-- Próxima ação: apresentar/avaliar o diagnóstico abaixo; não mudar host, runtime ou configuração antes de distinguir o executor em que o bind funciona daquele em que falha. Demais frentes permanecem no backlog, sem retomada automática.
+## Conceito e hierarquia
 
-## Investigação do EPERM no Vite — 2026-10-13
+A AUGEO se apresenta pelo contexto do negócio e pela conexão entre marca, website, aquisição e operação digital. O hero cumpre o papel Persuade: mensagem editorial à esquerda e assinatura AUGEO no campo da matriz à direita. A própria composição demonstra direção e execução, sem acrescentar clientes, métricas ou promessas não documentadas.
 
-- Pedido e limite: investigar a diferença entre `bun run test` e `bunx vite --host 127.0.0.1 --port 5173 --strictPort`; não alterar configurações nem executar fora da sandbox. Usuário apresentou testes Node com bind bem-sucedido em `127.0.0.1`, `0.0.0.0`, `::1` e `::`. Não foram consultadas as restrições efetivas desses processos bem-sucedidos.
-- Configuração inspecionada: script `dev` usa `vite --host 0.0.0.0`; `webServer.command` é `bun run dev --port 5173`, URL/baseURL `http://127.0.0.1:5173`, `reuseExistingServer: true`. Vite não define override de servidor. O comando direto usa loopback e `--strictPort`; o comando da suíte não usa `--strictPort`. A URL de prontidão não troca o host de escuta.
-- Runtime/ambiente: `bunfig.toml` força Bun nos scripts; `bun run node -e` confirmou Bun **1.4.2** e shim `node` no PATH. Node direto é **24.14.1**. Stack de `bunx vite` usa `node:net`, enquanto a falha pelo script usa `serve`/`node:_http_server` do Bun. Sem `NODE_OPTIONS`, `BUN_OPTIONS`, `NODE_ENV` ou `CI` no ambiente inicial; `NO_COLOR=1`. Código instalado do Playwright (`node_modules/playwright/lib/runner/index.js`) adiciona defaults `BROWSER=none`, `FORCE_COLOR=1`, `DEBUG_COLORS=1`, herda `process.env` e aplica eventual `webServer.env` por último; o projeto não define esse override. O aviso de cores é explicado por esses defaults, sem evidência de causalidade sobre sockets.
-- Subprocessos: fonte instalada do launcher confirma shell, diretório da configuração, stdin/stdout/stderr em pipes e grupo de processo separado (`detached` no Linux). `DEBUG=pw:webserver bun run test --workers=1 --global-timeout=10000` confirmou subprocesso iniciado, checagem inicial/seguinte `ECONNREFUSED`, Vite executado e falha `EPERM` depois; a suíte não chegou aos testes. Ensaios adicionais de filhos mínimos não capturaram stdout e são inconclusivos para comparar seu ambiente.
-- Evidências decisivas dentro do executor restrito: `bun run test --workers=1 --global-timeout=10000`, o comando exato `bunx vite --host 127.0.0.1 --port 5173 --strictPort` e `bun run dev --host 127.0.0.1 --port 5173 --strictPort` falharam com `EPERM`. Node mínimo em porta aleatória também falhou. Python isolou o estágio: `socket(AF_INET/AF_INET6, SOCK_STREAM)` recebe errno 1 antes de bind/listen, para os quatro hosts e portas 0/5173. Bun mínimo também não conseguiu escutar.
-- Causa provável: restrição de criação de sockets TCP no executor do agente, aparentemente diferente do contexto efetivo dos comandos bem-sucedidos do usuário. `/proc/self/status` no processo diagnóstico mostrou `NoNewPrivs: 1`, `Seccomp: 2`, um filtro. Isso sustenta política de sandbox como hipótese; não identifica a regra exata. `strace -e trace=socket,bind,listen ...` foi impedido por `PTRACE_TRACEME: Operation not permitted`; nenhuma escalada realizada. A diferença alegada entre os dois comandos não foi reproduzida nesse mesmo executor: ambos falham.
-- Resultado: diagnóstico sustentado por reprodução direta e controle sem Vite/Playwright; sem correção proposta como comprovada. Apenas este registro atualizado, sem configuração, código, commit/push ou execução fora da sandbox. Script `/tmp/augeo-bind-probe.cjs` é artefato temporário; fatos essenciais persistidos aqui. A execução Vite pode atualizar caches ignorados; nenhum arquivo de configuração foi editado.
+A linguagem combina **estrutura precisa e comportamento instável**: título sólido e legível, lettering listrado, grade modular e deformação localizada. Símbolo, lettering e fontes locais sustentam a identidade. O moodboard orienta geometria, ritmo e hierarquia; suas imagens não são decoração a ser incorporada à página. As referências estão no [anexo do plano](HERO_AUDIT_AND_IMPROVEMENT_PLAN.md#anexo-c--moodboard-e-rastreabilidade).
 
-## Histórico de entregas e decisões
+Copy aplicada:
 
-Os registros abaixo descrevem cada entrega na sua data. Nomes, limitações e resultados antigos não são o estado atual nem uma fila de execução. Encaminhamentos futuros válidos estão somente no backlog.
+- Título: “Presença digital com direção.”, em três linhas.
+- Apoio: “O contexto do seu negócio define como conectamos marca, website, aquisição e operação digital.”
+- CTA comercial: “Apresentar negócio”.
 
-### Auditoria de nomenclatura — análise entregue, 2026-10-13
+A assinatura gráfica contrapõe o título; o apoio fica agrupado à mensagem, e o indicativo de continuidade ocupa a borda inferior esquerda no desktop. A composição estática mantém a leitura da marca quando o visitante prefere movimento reduzido.
 
-- Pedido: analisar nomes genéricos/confusos e buscar orientação com `find-skills`. Usuário ampliou explicitamente o escopo para praticamente todo o projeto, incluindo código, CSS, testes, configurações e nomes de arquivos; não restringir a `.ts`/`.tsx`. Naquela entrega, o pedido era de análise, sem refatoração implementada.
-- Resultado em [NAMING_AUDIT.md](NAMING_AUDIT.md): diagnóstico, mapeamento de nomes atuais/significados/propostas, prioridades, critérios e skills verificadas. Propostas ainda não implementadas/aprovadas como convenção permanente.
-- Inspeção concluída dos fontes TS/TSX, CSS e testes completos, configurações, README, SVG do lettering, organização dos arquivos, índice CSV, estrutura dos documentos e trechos pertinentes de produto/especificação. Sem revisão integral dos textos estratégicos, binários ou dependências. Git inicial tinha somente `tests/brave_eL3LtJC3k5.png` não rastreado; print preservado e mudanças documentais da interrupção preservadas/atualizadas.
-- Diagnóstico: maior ambiguidade no estado temporal/índices/buffers da matriz (`MOTION.step` temporal versus `ARTWORK_WARP.step` espacial, `frame` como ID, `inspected` como índice); no App, `title` é DOMRect. Resquícios de prévia: `DemoOne`, `.cue-study`, `scroll-cue-preview.spec.ts`. A função `pixel` é identidade, não conversão. Distinguir generalidade útil da matriz compartilhada de nomes vagos; abreviações matemáticas locais, nomes convencionais de configuração e `cn` não são problemas automaticamente.
-- Sandbox/busca: tentativa inicial e nova tentativa após reinício ainda falharam com EROFS no tempdir; pedidos de execução escalada interrompidos pelo usuário. Usuário identificou o diretório temporário somente leitura, criou `~/.cache/bun-tmp` e mostrou busca bem-sucedida em seu shell. Repetidas nesta sessão `TMPDIR="$HOME/.cache/bun-tmp" bunx --bun skills find naming` e busca por `"coding standards"`: ambas código 0, sem EROFS, mas retornaram "No skills found". Diferença de resultados não diagnosticada; sucesso do tempdir não comprova funcionamento de todos os recursos da sandbox.
-- `find-skills`: playbook e leaderboard consultados, buscas CLI executadas, candidatas conferidas via web. `affaan-m/ECC@coding-standards`: conteúdo original lido, cerca de 4,7 mil instalações na página e 278 mil estrelas no repositório; referência geral comunitária, sem glossário específico da matriz. Alternativa `pproenca/dot-skills@clean-code-ts-react`: apresentação lida, 157 instalações/214 estrelas; regras completas não verificadas. Nenhuma skill instalada nem fluxo integral dessas candidatas aplicado. Fontes e comando opcional com Bun no relatório.
-- Validação: `git diff --check` aprovado. Só documentação alterada; sem build/teste, alteração visual, novo fluxo Impeccable, commit/push ou publicação.
+## Composição desktop
 
-### Correção da continuidade do fundo mobile — 2026-10-13
+A partir de 768 px, o hero usa duas colunas **44/56**, com altura mínima de 100dvh. A coluna textual concentra símbolo, título, apoio e CTA; a matriz ocupa todo o painel direito. Marca, texto, CTA e triângulos compartilham o recuo de **48 px**. O cabeçalho fica absoluto sobre a coluna textual, com altura de 96 px e símbolo de 66 px.
 
-- Relato do usuário: iluminação sutil do painel começava abaixo da faixa do símbolo no mobile; referência local `tests/brave_eL3LtJC3k5.png` (não rastreada, preservada).
-- Causa confirmada no CSS: o gradiente pertencia somente à `.hero-copy`; no mobile, `.nav` ocupa 70 px no fluxo, fora desse bloco. No desktop, o cabeçalho absoluto já fica sobre o painel.
-- Correção em `src/styles.css`: fundo existente compartilhado por `--hero-panel-background`; somente no mobile, pseudo-elemento da copy estende a superfície em 70 px até o topo, com isolamento de empilhamento e sem interceptar ponteiros. Um único gradiente cobre cabeçalho e texto até a matriz, sem reinício na antiga divisão. Geometria do conteúdo e tratamento desktop preservados.
-- Validação: `bun run build`, `git diff --check` e `bun run test` aprovados (**24/24**, 18,6 s, Chromium). Primeira tentativa da suíte bloqueada por `EPERM` na porta; execução autorizada fora do sandbox passou. Ensaio temporário `bun run test tests/panel-inspection.spec.ts` aprovado (**1/1**): viewport 393×852, dark/reduced motion, superfície inicia em y=0 e termina junto à matriz. Captura `/tmp/augeo-mobile-panel-393x852.png` inspecionada visualmente; teste temporário removido. Artefato temporário, não referência persistente. Sem aparelhos físicos ou outros motores; nenhum novo fluxo Impeccable aplicado/concluído.
-- Avaliação/publicação: usuário aprovou a correção ("Ótimo") e autorizou commit/push e deploy usando os CLIs GitHub/Vercel instalados e autenticados. Skills `vercel-cli` e `deployments-cicd` consultadas; `gh auth status` e `gh repo view` confirmaram usuário/repositório (a primeira checagem restrita não validou login; fora do sandbox passou), `git fetch origin main` confirmou alinhamento (0/0), e `vercel project inspect augeo-grid-hero --scope augeocreative --non-interactive` confirmou o projeto Vite `prj_SrK36bHFjy5Ns6eQvOW8OvuqXGRX`. Commit `6b1092b` (`fix(hero): extend mobile panel background behind header`) enviado à `main` com Git; `gh` usado para autenticação/conferência, pois commit/push são operações Git.
-- Deploy CLI: `vercel deploy /tmp/augeo-release-6b1092b --prod --project prj_SrK36bHFjy5Ns6eQvOW8OvuqXGRX --scope augeocreative --non-interactive --yes --meta githubCommitSha=6b1092b --meta githubCommitRef=main` concluído com **READY**, deployment `dpl_7Ldjtrbh53QzTST4MeXQyeuRW8Zo` ([painel](https://vercel.com/augeocreative/augeo-grid-hero/7Ldjtrbh53QzTST4MeXQyeuRW8Zo)), alias [produção](https://augeo-grid-hero.vercel.app/). Fonte exportada com `git archive HEAD` para pasta temporária, excluindo o print não rastreado; instalação/build remotos usaram Bun. `vercel inspect` confirmou produção, aliases e build de 21 s. Integração Git continua existente e também pode construir os pushes.
-- Verificação pública: HTTP 200; HTML referencia os assets locais aprovados (`index-C2woN7yW.js`, `index-BJa9LR_t.css`); SHA-256 do CSS publicado idêntico ao local (`4d032f1750046b3e8597a5dff1cd41398dfa760289b749113cfc5fbae2a7a7a6`). `vercel logs` desta implantação, com `--level error --since 1h`, não retornou logs; isso não verifica erros de navegador. Captura/inspeção visual são locais, sem novo ensaio visual remoto ou aparelhos físicos. Drains/monitoramento não consultados. Arquivos `/tmp/augeo-panel-production.*` e pasta de exportação são temporários.
-- Estado: implementação aprovada e publicada; resultado registrado em commit documental separado. Usuário pediu explicação do ganho dos CLIs e comparação de gasto; não há telemetria histórica comparável de tempo, tokens ou custo para calcular médias/percentuais.
+O título usa Hanken Grotesk local, peso **620**, entrelinha **1,02** e tracking **−0,035em**. A escala responde à largura útil da coluna (`clamp(2rem, 19.5cqw, 6rem)`), com três spans, largura máxima de 11ch e 2 px inferiores para os descendentes. O apoio usa entrelinha 1,5, largura máxima de 34ch e escala de 18–24 px; janelas curtas têm ajustes próprios de escala e espaçamento.
 
-### Publicação do redesenho mobile — 2026-10-13
+O painel textual tem iluminação radial branca de 2% sobre o fundo do tema, com divisória vertical de 1 px. O CTA usa cores invertidas do tema, foco laranja, brilho no hover e redução de escala ao pressionar. Permanece em linha única no desktop.
 
-- Usuário autorizou commit de todas as mudanças, push na `main` do GitHub e atualização da implantação Vercel. Correção de entendimento: o componente inteiro do grid passou para o footer do hero mobile, acompanhado de mudanças de ergonomia/acessibilidade e escala do lettering; não é apenas um ajuste decorativo. CSS mobile confirma lettering em `min(85%, 360px)` e padding responsivo, preservando a geometria do SVG.
-- Validação atual: `bun run build`, `git diff --check` e `bun run test` aprovados (**24/24**, 18,8 s, Chromium). A tentativa inicial da suíte foi bloqueada por `EPERM` na porta; execução autorizada fora do sandbox passou. `git fetch origin main` confirmou branch alinhado ao remoto antes da publicação. Nenhum novo fluxo Impeccable aplicado nesta publicação.
-- Publicação: commit `23e1a62` (`feat(hero): redesign mobile matrix footer and expose CTA`) criado com implementação, testes e handoff; `git push origin main` aprovado, de `d496103` para `23e1a62`. O usuário reforçou preferência pelo plugin `@Vercel` para operar a plataforma.
-- Vercel: skills `vercel-cli` e `deployments-cicd` consultadas. O plugin está instalado, mas nenhuma ferramenta Vercel foi exposta nesta sessão e a consulta MCP retornou `unknown MCP server 'vercel'`. Tentativa de CLI interrompida pelo usuário; publicação realizada pela integração Git existente. A API pública do GitHub confirmou status Vercel `success` / `Deployment has completed` para `23e1a62`, ambiente `Production`, deployment GitHub `7030792535`, Vercel `E6eC8qjBhhcXy2SP6sHXCSvqdURQ` ([painel](https://vercel.com/augeocreative/augeo-grid-hero/E6eC8qjBhhcXy2SP6sHXCSvqdURQ)).
-- Verificação de produção: [site público](https://augeo-grid-hero.vercel.app/) respondeu HTTP 200; HTML referencia os mesmos assets JS/CSS do build local validado. CSS servido comparado por SHA-256 com o build local, idêntico. Arquivos `/tmp/augeo-production.html` e `/tmp/augeo-production.css` são temporários. Sem inspeção visual do deploy, logs de runtime ou aparelhos físicos nesta publicação; validação funcional permanece a suíte local. Resultado de publicação registrado em commit documental separado, sem alteração adicional da UI.
+## Composição mobile
 
+Abaixo de 768 px, cabeçalho e hero seguem fluxo vertical. O cabeçalho tem 70 px, símbolo de 58 px e recuo de 20 px. A copy usa recuos simétricos de 20 px; título, apoio e CTA antecedem a matriz. O CTA fica visível, com altura mínima de 44 px e margem superior de 24 px.
 
-### Redesenho Mobile — CTA visível e matriz como footer retangular — 2026-10-13
+A matriz funciona como **faixa retangular inferior do hero**, de largura integral e altura `clamp(140px, 22dvh, 180px)`, com divisória superior de 1 px e margem automática acima. O lettering fica centralizado nesse painel e usa `min(85%, 360px)`. `touch-action: pan-y` permite rolagem vertical pela área da matriz.
 
-Pedido: resolver a ausência do CTA no mobile, o padding esquerdo assimétrico e o conflito de touch/scroll com o bloco quadrado da matriz, implementando a transformação da matriz em uma faixa retangular inferior (footer da hero mobile).
+A superfície da copy se estende pelos 70 px do cabeçalho: um único fundo cobre símbolo e texto até a matriz, sem reiniciar a iluminação na divisão entre cabeçalho e hero. O indicativo de triângulos fica oculto no mobile.
 
-- **Entrada Comercial (CTA Mobile)**: `.hero-cta` agora é visível em viewports móveis (`display: inline-flex`), posicionado organicamente abaixo do parágrafo `.intro` (`margin-top: 24px` a `28px`). Altura ergonômica mínima de 44px com padding responsivo e proteção contra quebra horizontal sob escalonamento de fonte de até 200% (`max-width: 100%`, quebra controlada em telas ultra-estreitas e `white-space: nowrap` preservado no desktop).
-- **Remoção da Coluna Fantasma de 64 px**: a estrutura de `.hero` em telas `< 768px` foi migrada de grid bidimensional assimétrico (que reservava 64px para o antigo scroll-cue) para fluxo vertical flexbox (`display: flex; flex-direction: column; justify-content: space-between; min-height: calc(100dvh - 70px)`), eliminando o desvio unilateral e restabelecendo recuos homogêneos de 20px no texto.
-- **Ressignificação da Matriz (Footer Retangular)**: `.matrix-deck` foi reconfigurado de bloco quadrado central para uma faixa panorâmica inferior (`width: 100%`, `height: clamp(140px, 22dvh, 180px)`, `margin-top: auto`), arrematada por costura arquitetônica superior (`border-top: 1px solid var(--border)`). O lettering AUGEO ganha enquadramento proporcional e legível.
-- **Ergonomia de Touch e Rolagem**: adicionado `touch-action: pan-y` à matriz e canvas no mobile, garantindo que o gesto de rolagem vertical pelo polegar nunca seja sequestrado ou engasgado. A área nobre de leitura e conversão (cerca de 75% da altura da tela) fica livre de interceptações acidentais de touch.
-- **Testes e Cobertura**:
-  - [tests/matrix.spec.ts](../tests/matrix.spec.ts): asserções mobile atualizadas para verificar que a matriz inicia na borda lateral completa (`deck.x === 0`), a ordem vertical é estritamente mantida (`intro -> cta -> deck`), e o lettering AUGEO permanece completamente acima da dobra em todos os viewports de teste (incluindo 320×600).
-- **Validação**: `bun run build` aprovado sem erros; `bun run test` aprovado com **24/24 testes** (19,1s em Chromium). Sem commit/push, conforme diretriz padrão.
+## Temas e marca
 
-### Implementação visual do painel escuro esquerdo (design-taste-frontend) — 2026-10-12
+| Elemento | Claro | Escuro |
+| --- | --- | --- |
+| Fundo | `#f7f7f5` | `#06070a` |
+| Texto | `#111111` | `#f7f7f5` |
+| Apoio/repouso do indicativo | `#61615d` | `#9e9ea2` |
+| Bordas | preto a 8% | branco a 8% |
+| Acento/foco | `#ff482c` | `#ff482c` |
 
-Pedido: implementar o plano de evolução visual para a hero section elaborado segundo a skill `design-taste-frontend`, com foco prioritário no painel escuro esquerdo.
+A preferência do sistema e as classes explícitas `.light`/`.dark` controlam os temas. No escuro, o símbolo é invertido com opacidade 0,92 e o lettering com opacidade 0,88. O fundo CSS da matriz usa o token do tema; o canvas desenha sua superfície correspondente. A camada CRT do hero tem scanlines mais discretas que as da demo: 0,03 no claro e 0,0567 no escuro.
 
-- Materialidade e Chassi: adicionada micro-profundidade ao `.hero-copy` através de vinheta radial imperceptível de iluminação ótica sobre `--background`, evitando fundos estéreis e sem violar a regra de banimento de AI-gradients.
-- Borda Divisória Arquitetônica (Vertical Seam): adicionada costura de 1px (`border-right: 1px solid var(--border)`) em desktop (`min-width: 768px`) entre o painel esquerdo (44%) e o deck da matriz (56%), definindo a separação mecânica dos planos com base em tokens de borda do tema.
-- Entrada Comercial (CTA Primário): implementado o ponto de conversão previsto na especificação ([02-WEBSITE_SPEC.md](02-WEBSITE_SPEC.md)), ancorado em `.hero-copy` com o rótulo `"Apresentar negócio"`. Botão monolítico em linha única desktop (sem quebra de linha), contraste superior a 17:1 (`bg-[var(--foreground)] text-[var(--background)]`), hover com micro-glow suave, foco visível no acento (`#ff482c`) e feedback tátil no `:active` (`scale(0.98)`). Em viewports reduzidas e desktop curto (≤ 700px e ≤ 500px), dimensões e respiro foram comprimidos proporcionalmente; no mobile (`< 768px`), permanece oculto para preservar a dobra rigorosa de 320×600 onde a matriz e o lettering já ocupam o espaço útil documentado.
-- Tipografia e Ritmo: descender clearance adicionada ao `h1` (`padding-bottom: 2px`) para prevenir corte de letras descensoras com entrelinha 1.02; texto de apoio `.intro` condensado para `max-width: 34ch` e margem de 28px, reforçando o ritmo editorial compacto.
-- Dinâmica de Alinhamento: o `ResizeObserver` de alinhamento vertical do lettering em [src/App.tsx](../src/App.tsx) passa a observar também o `.hero-cta`, recalculando `--hero-title-center` automaticamente se o botão sofrer redimensionamento.
-- Testes e Cobertura:
-  - [tests/matrix.spec.ts](../tests/matrix.spec.ts): asserção de alinhamento expandida para verificar que o CTA também compartilha a borda de 48px (`--hero-copy-inset`) junto com título, apoio, símbolo e triângulos nos quatro viewports desktop cobertos.
-  - [tests/scroll-cue-preview.spec.ts](../tests/scroll-cue.spec.ts): eliminada instabilidade de precisão de ponto flutuante na medição do tempo pausado da animação.
-- Validação: `bun run build` aprovado sem erros de tipos; `bun run test` aprovado com **24/24 testes** (18,1s em Chromium). Sem commit/push, conforme diretriz padrão.
+O lettering preserva geometria, proporção, listras e contra-formas. No SVG, “A” e “O” declaram `fill-rule="evenodd"` diretamente nos caminhos preenchidos pelo padrão CRT. No desktop, sua largura é `min(88%, 680px)`; o centro vertical acompanha o centro do título, medido no hero e publicado em `--hero-heading-center-y`. O alinhamento observa hero, título, apoio e CTA. No mobile, o centro é o da matriz.
 
+## Matriz e interação persistentes
 
-### Revisão das alterações atribuídas ao Gemini Flash — 2026-10-12
+`KineticMatrix` continua um componente compartilhado, com demo em `?demo=matrix`. O hero passa `title="AUGEO"`, `titleArtworkSrc`, `enableArtworkMotion` e `gridSpacing={72}`; o padrão da demo é 58 px. A grade adapta o espaçamento às dimensões disponíveis, preservando nós e ligações no campo visível.
 
-Pedido: analisar as alterações locais, corrigir este handoff e preparar hero, testes e documentação para staging. A atribuição ao Gemini Flash foi informada pelo usuário; o diff confirma as mudanças, mas não identifica o modelo autor.
+Grade e lettering respondem ao mesmo campo de ponteiro e ondas, com escala própria para a imagem. O ponteiro também é acompanhado no ancestral `.hero`, incluindo a coluna esquerda; clique/toque produz uma onda. Ao encerrar a interação, a deformação converge ao repouso sem rebote. O warp usa um mapa horizontal comum às scanlines para evitar ruptura das letras, com deslocamento máximo de 6 px e diferença máxima de 2 px entre amostras de 8 px.
 
-- Tema: tokens escuros adicionados para preferência do sistema (`:root:not(.light)`) e classe `.dark`, com fundo `#06070a`, texto `#f7f7f5` e apoio `#9e9ea2`. Marca invertida com opacidade `.92` em dark e tratamento explícito em light. Fundo CSS da matriz passa a usar `var(--background)`, compartilhando a paleta da coluna esquerda. Tokens de superfícies/inputs também recebem variantes escuras; bordas passam a usar transparência de 8% e seleção de texto recebe laranja `#ff482c` sobre texto `#111111`.
-- Ponteiro: `KineticMatrix` adiciona listeners de `pointermove`/`pointerleave` no ancestral `.hero`, converte coordenadas para o espaço da matriz e remove os listeners no cleanup. Isso permite que o campo existente alcance a borda da matriz a partir da coluna esquerda; os handlers locais permanecem. Nenhuma mudança na API pública.
-- Correção do registro anterior: o diff não mostra remoção de tags/cruzes; o canvas ainda contém rótulos técnicos `0x…` exibidos após inspeção de um nó. Não há evidência para declarar eliminação de todo ruído decorativo ou conformidade estrita com `craft-floor.md`.
-- Separação das frentes: o diff também contém o recuo compartilhado de 48 px, o apoio maior e o teste de alinhamento de 09/10, descritos abaixo. Os registros e PNGs do Figma de 10/10 pertencem à entrega manual independente; seus arquivos ficam fora do stage por escolha do usuário.
-- Validação desta revisão: `bun run build` e `git diff --check` aprovados; `bun run test` passou com **24/24 testes** em Chromium (34,2 s). A primeira tentativa foi bloqueada por `EPERM` ao abrir a porta 5173; a execução fora do sandbox passou. Capturas da suíte em `test-results/` são artefatos locais ignorados, não referências persistentes.
-- Impeccable: o registro recebido relatava detector sem achados (`[]`); resultado preservado como relato anterior, sem reexecução nesta revisão. Nenhum novo playbook ou workflow Impeccable aplicado/concluído. Permanecem os limites metodológicos dos ajustes anteriores.
-- Staging: `git add -- components/ui/kinetic-matrix.tsx src/styles.css tests/matrix.spec.ts docs/HERO_HANDOFF.md` executado; os quatro arquivos estão no índice e os PNGs permanecem não rastreados. Escrita no índice exigiu execução fora do sandbox após bloqueio de `.git/index.lock`. `git diff --cached --check`, estatísticas e status conferidos; sem commit/push.
-- Publicação autorizada posteriormente pelo usuário: commit `42caf9b` (`feat(hero): unify themes and extend matrix pointer interaction`) enviado com sucesso por `git push origin main`. A primeira tentativa foi rejeitada porque o remoto tinha `73fd268` (`fix(hero): preserve lettering counters`); `git fetch origin main` e rebase integraram a correção. Conflito somente neste handoff, resolvido preservando ambos os registros; SVG remoto preservado. Após integração, `bun run build`, `git diff --check` e `bun run test` aprovados (**24/24**, 32,9 s). PNGs continuam fora do versionamento. Este registro de publicação segue em commit documental separado; nenhum deploy foi verificado.
-- Limite desta revisão: a suíte aprovada não comprovou isoladamente a reação ao ponteiro vindo da coluna esquerda.
+O ciclo atual da matriz mantém pulsos automáticos contínuos, além das respostas pontuais. Pausa fora da tela e com documento oculto; movimento reduzido mantém grade e lettering estáticos. Rótulos técnicos `0x…` ainda aparecem após inspeção prolongada de um nó.
 
-### Correção do contra-forma do lettering — 2026-10-11
+## Indicativo de continuidade
 
-Relato: no deploy da Vercel, o “A” do lettering AUGEO aparecia preenchido, embora o mesmo repositório e a visualização local permanecessem vazados. A causa provável estava na composição SVG → `<img>` → canvas reativo: o contra-forma dependia de um `clipPath` com regra de recorte aplicada indiretamente. O SVG foi reestruturado para preencher cada letra diretamente com o padrão CRT e declarar `fill-rule="evenodd"` no próprio caminho do “A” e do “O”; não houve alteração de geometria, proporção, animação ou interação.
+Dois triângulos sólidos transmitem direção descendente no desktop: cada um mede 36×27 px, com o segundo 18 px abaixo do primeiro e sobreposição de 9 px. O conjunto de 36×45 px fica centralizado no contêiner de 36×63 px. SVGs separados garantem que a ponta ativa seja pintada integralmente na interseção.
 
-- Build de produção `bun run build` aprovado; `git diff --check` aprovado.
-- Renderização local independente do SVG convertida para PNG e inspecionada: “A” vazado, “O” vazado e scanlines preservadas. A URL de produção não respondeu nesta sessão, portanto a renderização remota não foi confirmada naquela entrega.
-- Alteração limitada a `src/assets/augeo-lettering.svg`; sem commit/push. Artefatos de inspeção em `/tmp/augeo-lettering*.png` são temporários.
+Uma passagem ocorre a cada **2,8 s**, com defasagem de **980 ms** entre os triângulos. O ciclo CSS de 5,6 s contém duas passagens: superior claro/inferior escuro, depois superior escuro/inferior claro, usando `#e2e2df` e `#20201f`. Os atrasos iniciais são 300/1280 ms. A mudança afeta fill e ordem de pintura, mantendo a geometria imóvel. Pausa fora da tela/aba oculta conserva tempo e fase; movimento reduzido usa cinza estático.
 
+O indicativo atual é decorativo, `aria-hidden`, sem clique ou foco. Seu sentido é continuidade por scroll; o CTA comercial tem outra função. EXPLORE e a seta anterior não fazem parte do hero implementado. O CTA aponta para `#entrada`; essa seção ainda não existe na aplicação atual.
 
-### Figma — inversão de hierarquia, 2026-10-10 (arquivos prontos; edição MCP bloqueada)
+## Fontes da implementação
 
-Pedido: editar a referência 1:1 [AUGEO HERO](https://www.figma.com/design/wtc641vxh05ubxXIgrtzMy/AUGEO-HERO?node-id=5-45), tornando a matriz light, a coluna esquerda dark e invertendo símbolo/tipografia. Usuário permite usar o projeto real para gerar o snapshot, se necessário; isso não determina uma mudança permanente na landing. O handoff anterior do Figma estava em outra pasta e não foi encontrado pelo usuário, possivelmente temporário de outro chat. Contexto recuperado pela inspeção do arquivo, sem presumir o procedimento anterior de captura.
-
-- Skill `figma-use` e referências de API/gotchas consultadas. Duas chamadas read-only de `use_figma` executadas: páginas/componentes e hierarquia/cores. Arquivo `wtc641vxh05ubxXIgrtzMy`, página `0:1`; layout mestre `5:41`, instância desktop 1440×900 `5:64`, coluna esquerda `5:42`, textos mestre `5:10` (`5:11` título, `5:12` apoio), marca mestre `5:13` (raster `5:14`), indicador mestre `5:25` (`5:27`/`5:28` triângulos), matriz mestre `5:29` (raster de fundo `5:30`), lettering mestre `5:15` (linhas vetoriais `7:51`). A referência enviada aponta para a instância de textos `5:45`.
-- Paleta inspecionada: fundo do layout `#f7f7f5`, título `#111111`, apoio/triângulos `#61615d`, linhas do lettering `#f4f4f4`; fills ligados a variáveis. Matriz usa imagem sem lettering, que permanece vetorial/editável. Dimensões, divisão 44/56, posições, tipografia e máscaras do lettering eram limites da proposta.
-- Proposta ainda não aplicada nem avaliada pelo usuário: manter geometria/posição dos triângulos e usar dois tons claros de intensidades diferentes sobre dark. Não extrapolar isso para uma nova animação web.
-- Impedimento: `get_screenshot` recusado por limite de chamadas Figma MCP do plano Starter; chamada seguinte `use_figma` para consultar variáveis e screenshot também recusada pelo mesmo limite. Sem captura visual, escrita no Figma, novo raster, implementação web ou testes. Fluxo de edição/validação Figma incompleto; nenhum workflow Impeccable novo executado ou declarado concluído. Alterações locais anteriores em CSS/testes/handoff preservadas, sem commit/push.
-
-#### Entrega para importação manual
-
-Correção do usuário: MCP não é necessário para colar o snapshot; preparar o arquivo local e permitir importação manual. Limite MCP impede a edição remota, não a geração dos artefatos. Capturas da implementação real geradas com Playwright/Chromium via Bun, viewport 1440×900, DPR 2, tema light e reduced motion (grade em repouso). Nenhuma alteração permanente na implementação; estilos aplicados somente à página do navegador para captura.
-
-- Matriz light sem lettering (`references/figma/augeo-matrix-light-2x.png`, caminho histórico), 1614×1800 px, área CSS 806,390625×900 (largura raster arredondada pelo screenshot). Artefato preparado para o fill de `5:30`.
-- Prévia da inversão (`references/figma/augeo-hero-dark-left-light-matrix-preview-2x.png`, caminho histórico), 2880×1800 px: esquerda `#111111`, título `#f7f7f5`, apoio `#b7b7b2`, marca invertida, matriz light e lettering escuro original da aplicação. Triângulos superior `#e2e2df` e inferior `#858580`, geometria/posição preservadas. A prévia web auxilia a paleta; não substitui os componentes editáveis nem comprova equivalência pixel a pixel com o Figma, cujo lettering é uma reconstrução vetorial própria.
-- Comandos reais: `bun run dev --host 127.0.0.1 --port 5173` iniciou Vite; `bun /tmp/augeo-light-snapshot.cjs` falhou inicialmente ao iniciar Chromium no sandbox, depois passou com execução escalada. PNGs conferidos por `file`; prévia inspecionada visualmente. Script em `/tmp` é temporário; PNGs acima estão persistidos no repositório. Sem suíte de testes por não haver mudança no código. Nenhum novo workflow Impeccable.
-
-Entrega sem aprovação visual do usuário ou conclusão da edição Figma.
-
-### Ajuste — coluna esquerda e subheadline, 2026-10-09
-
-Pedido implementado: trazer símbolo e alinhamento tipográfico à coluna anterior imaginária, alinhada aos triângulos, e aumentar o subheadline. Após considerar o recuo inicial de aproximadamente 32 px excessivamente próximo à borda, o usuário autorizou **48 px no desktop para símbolo, título, apoio e triângulos juntos**. Todos usam o mesmo `--hero-copy-inset: 48px`; token anterior de recuo removido por ficar sem uso. `.intro` passa de `clamp(1rem, 1.35vw, 1.16rem)` para `clamp(1.125rem, 1.6vw, 1.5rem)`: cerca de 23 px em desktop 1440 px; mínimo 18 px e máximo 24 px. Mobile conserva margens de 20 px e recebe o apoio maior. Divisão 44/56, copy, fontes, temas e animação preservados; título continua dimensionado pela largura disponível da coluna.
-
-- Workflows aplicados nesta tarefa: `layout` e `typeset`, seguidos da revisão disponível de `polish`. CLI `context --target src/styles.css` realmente executada; implementação e handoff consultados; playbooks e `craft-floor` lidos. Avaliações realizadas em sequência no próprio agente, com evidência de fonte, antes dos scans: hero Persuade, título primário/apoio secundário; Hanken local variável e peso 620 preservados; grupo textual com intervalo de 30 px, sem novas caixas. Tese: uma borda esquerda comum à marca, mensagem e indicador, com maior presença do apoio. Container e media queries mobile existentes preservados. Estados de formulário, carregamento, erro e conteúdo vazio não se aplicam a esse ajuste estático.
-- Scans iniciais `detect --json --scope layout src/styles.css` e `--scope type` sem achados; detector geral final `detect --json src/styles.css` sem achados. `bun run build` aprovado e diff sem erros. Teste existente de posição atualizado para igualdade das bordas esquerdas de símbolo, título, apoio e triângulos nos quatro tamanhos desktop já cobertos; teste atualizado ainda não executado.
-- Reajuste autorizado para 48 px: continuação do workflow `layout`, com orientações de `polish` já lidas e `craft-floor` relido antes da edição. Verificação da fonte confirma o token compartilhado nos três seletores desktop e overrides mobile de 20 px. Novo `bun run build`, detector geral e `git diff --check` aprovados; sem repetir tentativas de preview/Chromium já bloqueadas. Conferência visual não realizada nessa entrega; workflows completos não declarados.
-- Limites: `bun run dev --host 127.0.0.1 --port 5173` bloqueado por `EPERM` ao abrir porta; tentativa direta de iniciar Chromium pelo Playwright também bloqueada pelo sandbox (`sandbox_host_linux.cc`, `shutdown: Operation not permitted`). Sem nova captura ou validação renderizada, interação, zoom, contraste computado ou suíte Playwright nesta sessão. Evidências anteriores são históricas. Por isso, os fluxos completos de `layout`, `typeset` e `polish` não são declarados concluídos; a entrega não incluiu inspeção visual desktop/mobile, incluindo telas desktop baixas.
-
-Sem avanço de outros blocos do hero ou commit/push nesta entrega. A manutenção de tooling abaixo precedeu esta solicitação visual.
-
-### Registro das implementações pendentes — 2026-10-09
-
-Solicitado registrar os commits atrasados antes de migrar o tooling para Bun e limpar arquivos obsoletos. A implementação existente foi preservada: EXPLORE removido, triângulos com cores alternadas, título dimensionado pela coluna (Hanken 620), divisão 44/56, temas e faixa mobile. Nenhuma nova direção visual ou avanço de bloco.
-
-Validação atual antes do commit: `bun --bun run build` aprovado; `git diff --check` aprovado. A tentativa de iniciar Vite com `bun --bun run dev --port 5173` falhou por restrição de abertura de porta no sandbox desta sessão (`EPERM`), inclusive em `127.0.0.1`; o usuário confirmou que `bun run dev` abre normalmente essa porta no seu terminal. A suíte completa em Chromium ainda não foi revalidada nesta sessão; resultados anteriores abaixo são históricos. Os registros Impeccable foram preservados, sem novo comando/playbook ou declaração de fluxo concluído.
-
-Implementação registrada em `7f5f33c` (`feat(hero): replace Explore with animated triangle cue`). A regra pendente do guia pessoal foi registrada em `30a2dec` (`chore(git): ignore local personal guide`); guia mantido local e fora do versionamento.
-
-#### Tooling exclusivo com Bun
-
-- `packageManager` definido como `bun@1.4.0`; `bun.lock` versionado e lockfile npm retirado. `bunfig.toml` com `[run] bun = true` força o runtime nos scripts e executáveis chamados. Playwright inicia o servidor com `bun run dev --port 5173`. README e instruções operacionais atualizados; comandos históricos de validação preservados.
-- Vite, TypeScript, Playwright, tipos `@types/node` e import `node:url` preservados. São necessários à ferramenta/configuração existente e compatíveis com Bun; não foi adicionada dependência de runtime Node.js.
-- `bun install --frozen-lockfile`, `bun run build`, descoberta de **24 testes** por `bun run test --list` e `git diff --check` aprovados. `bun run which node` resolve o shim `/tmp/bun-node-34cbb9a40/node`, apontando para `/home/luca/.bun/bin/bun`.
-- `bun run test --global-timeout 15000` não iniciou a suíte por `EPERM` ao abrir o servidor na porta 5173. Preview também bloqueado pelo sandbox ao abrir 4173. Esses resultados não contradizem a execução normal no terminal do usuário.
-- Tentativa isolada dos dois testes de lógica pelo runner Playwright, com configuração temporária sem servidor, excedeu o timeout do worker; reprodução mínima de IPC Bun também não recebeu a mensagem. Causa não determinada nesta sessão. Os mesmos dois testes existentes passaram via adaptador temporário para `bun:test`: **2 aprovados, 10 filtrados, 1.634 assertions**. Isso valida a lógica, não a suíte Playwright inteira.
-- Artefatos diagnósticos em `/tmp/augeo-bun-logic.config.ts`, `/tmp/augeo-bun-motion.test.ts` e `/tmp/augeo-bun-ipc*` são temporários e não versionados. Nenhum fluxo Impeccable reexecutado ou bloco visual encerrado nesta manutenção.
-
-Migração registrada em `d856668` (`chore(runtime): standardize project tooling on Bun`). A verificação adicional `bun run node -e` confirmou `process.versions.bun = "1.4.0"` e `process.execPath = "/home/luca/.bun/bin/bun"`, inclusive ao chamar o nome compatível `node` pelo runner do projeto.
-
-#### Limpeza conservadora e conferência final
-
-- Protótipo anterior `legacy.html` e `augeo-field.js` removidos: não são entradas da aplicação atual nem dependências dos módulos ativos. `lucide-react`, sem importações após a retirada de EXPLORE, removido do manifesto e lockfile; as demais resoluções do lockfile foram preservadas.
-- ZIP movido para `docs/references/segments.zip` e captura para `docs/references/bugs/2026-10-06-14:37:39-screenshot.png`. Ambos mantêm SHA-256 idêntico e renome de 100% no Git. Moodboard, estudos da marca, fontes/licenças, demonstração `?demo=matrix`, componentes e utilitários ativos preservados. README atualizado com a organização.
-- `.codex/` ignorado por conter configuração local e caminhos específicos desta máquina; arquivo local preservado. Guia pessoal segue ignorado. Nenhuma alteração visual adicional ou novo workflow Impeccable nesta limpeza.
-- Após a limpeza: `bun install --frozen-lockfile` e `bun run build` aprovados; os dois testes existentes de lógica passaram novamente pelo adaptador temporário `bun:test` (2 aprovados, 10 filtrados, 1.634 assertions). `bun run test --list` confirmou os mesmos 24 testes. Todos os 22 links Markdown relativos dos documentos compartilhados têm destinos existentes; diff sem erros.
-- Nova tentativa integrada `bun run test --global-timeout 15000` continuou bloqueada ao iniciar Vite (`EPERM` no sandbox). Diagnóstico IPC com serialização avançada também não recebeu mensagem em cinco segundos; nenhuma correção especulativa ou fallback Node.js foi introduzido. Suíte completa, preview no navegador e comunicação dos workers Bun/Playwright continuam sem validação nesta sessão.
-
-Manutenção implementada e separada em quatro commits locais. Push solicitado posteriormente pelo usuário: `git push origin main` falhou por permissões inválidas em `/etc/ssh/ssh_config.d/20-systemd-ssh-proxy.conf`; tentativa com override temporário `core.sshCommand='ssh -F /dev/null -o BatchMode=yes'` falhou na resolução de `github.com`. Nenhuma configuração SSH/remote foi alterada permanentemente; commits permanecem locais. Este impedimento foi registrado em commit documental adicional.
-
-### Ajuste — cores alternadas a cada passagem
-
-Solicitação mais recente implementada: onde o pulso começou claro, a passagem seguinte começa escura e vice-versa, continuamente. Primeira passagem: superior branco suave `#e2e2df`, inferior carvão `#20201f`; segunda: superior carvão, inferior branco suave; terceira repete a primeira. Mesma sequência nos dois temas, preservando seus cinzas de repouso.
-
-- Geometria aprovada preservada: dois triângulos de 36×27 px, segundo 18 px abaixo do primeiro, sobreposição de 9 px; composição 36×45 centralizada em contêiner 36×63. Dois SVGs sobrepostos com o mesmo viewBox; o SVG ativo fica acima do outro, incluindo a ponta inteira na área compartilhada. Eixo lateral, limite inferior, hero e mobile oculto preservados. Indicador decorativo sem ação/foco.
-- Ritmo aprovado preservado: uma passagem a cada 2,8 s, defasagem superior/inferior de 980 ms, atrasos iniciais 300/1280 ms. Keyframes de 5,6 s contêm duas passagens, uma por cor; isso permite alternância infinita sem acelerar/desacelerar os pulsos. Apenas fill e ordem de pintura local, sem deslocamento/layout/dependências. Pausa fora da tela/aba oculta retoma tempo e fase de cor; reduced motion estático cinza.
-- Histórico imediato: tamanho ampliado em 50%; ciclo reduzido em frequência de 1,6 para 2,8 s; ponta superior antes encoberta corrigida com SVGs separados; inferior anteriormente fixo em preto e extremos depois suavizados. A introdução finita de dois ciclos e cores fixas por triângulo estão superadas. Não retomar 38/62 ou outros blocos do hero.
-- Fluxos Impeccable `animate` → `polish` reaplicados ao indicador, usando contexto CLI e playbooks já lidos na sessão; implementação, testes, handoff e capturas anteriores consultados. `craft-floor` relido imediatamente antes de editar. Tese: contraste descendente com cores trocadas em cada passagem, pausa entre pulsos; orçamento continua limitado a dois caminhos pequenos. Estados de formulário/erro/carregamento e feedback de controle não se aplicam. Geometria, tema, ponta, interrupção e diff conferidos, sem conclusão dos blocos do hero inteiro.
-- Build aprovado (`npm run build`). Testes atualizados para primeira passagem, inversão e retorno às cores iniciais nos dois temas, além de pausa/retomada, reduced motion, dimensões e ponta. Primeira execução encontrou troca prematura de camada na pausa anterior à segunda passagem; corrigida mantendo `z-index: 1` até 49,999% do ciclo. Execução final `npx playwright test tests/scroll-cue-preview.spec.ts`: **12/12 aprovados**. Sem nova execução da suíte da matriz; 24/24 anteriores são evidência histórica.
-- Uma rodada visual agrupada após a correção: claro/escuro em 1440×900, 900×600, 768×600 e 844×390, mobile 390×844, 320×740 e 320×600. Capturas temporárias não versionadas em `test-results/scroll-cue/`; detalhes em `/tmp/cue-alternating-colors.png` e panorama `/tmp/cue-alternating-layout.png`. Ponta integral e troca de cor confirmadas. Detector manual executado uma vez sobre `src/styles.css`, sem achados, antes da correção pontual de camada; não repetido. Diff final sem erros.
-
-Limites: Chromium/emulação, sem aparelhos físicos/outros motores ou medição de frames em hardware. Aba oculta testada via estado sintético. Branco suave tem pouco contraste sobre a coluna lateral clara existente, em ambos os temas; preservado por solicitação de alternância sem ampliar a tarefa ao fundo do hero. Alterações locais anteriores preservadas; sem commit/push.
-
-### Histórico — retirada de EXPLORE
-
-
-Após confirmar a restauração, o usuário pediu retirar apenas EXPLORE. Removidos palavra, markup acessível, seta antiga, estilos e keyframes exclusivos. Triângulos preservados na posição lateral; divisão 44/56, margens, tipografia, símbolo, lettering, temas e faixa mobile de 64 px permanecem como restaurados. Não retomar a rodada 38/62. Sem commit/push. As seções abaixo documentam o histórico, não uma instrução para recolocar EXPLORE. O lettering conserva as decisões presentes no início da rodada (SVG, listras, proporções, interação e largura min(88%, 680px)); não foi recuperada uma versão antiga da marca. Validação deste ajuste: build e 14/14 testes aprovados, detector geral sem achados e diff sem erros.
-
-### Reversão da rodada 38/62 — histórico
-
-O usuário rejeitou a rodada e determinou: reverter tudo com exceção dos triângulos. A divisão 44/56, margens, copy, tamanho/alinhamento do lettering, temas anteriores da matriz, EXPLORE e faixa mobile de 64 px foram restaurados ao estado local encontrado no início desta sessão. API de KineticMatrix restaurada, sem a nova prop de tema. Mantidos apenas dois triângulos sólidos de 24×18 px com intervalo de 6 px no componente ScrollCue, no posicionamento anterior do indicativo lateral. Movimento de contraste finito (3,58 s), pausa fora da tela/aba oculta e reduced motion estático. Nenhuma reformulação da matriz ou polish; sem commit/push.
-
-Validação restaurada: build aprovado, 16 testes aprovados em execuções separadas (15 + confirmação de desktop curto), detector geral sem achados e diff sem erros. Lettering presente na captura restaurada inspecionada; detalhes no registro da reiteração.
-
-A rodada 38/62 e suas capturas estão superadas. Não retomá-la sem novo pedido. Preservadas as alterações locais anteriores.
-
-### Histórico — intenção de EXPLORE (superada)
-
-Esta seção descreve uma direção anterior, substituída pela retirada de EXPLORE e pelos triângulos registrados no início do documento. Não orienta a implementação atual.
-
-É um **indicativo vertical de continuidade para Processo**, abaixo do hero. Deve conduzir o olhar para baixo: coluna alongada na borda esquerda, letras em sequência descendente e seta inferior. O alongamento faz parte da evolução visual; a centralização vertical desktop era preservada. Naquela etapa, a hero mobile era uma frente independente, sem conceito definido e com apresentação provisória.
-
-Naquela rodada, o estado temporário como texto vinha do plano, achado A01 e Parte II §4, item 5: sem Processo, não havia clique nem semântica de botão/link ativo. Isso preservava o indicativo visual e sua função de continuidade.
-
-Evolução anterior: coluna ampliada para fonte de 24 px e avanço de 1,3em; esses valores são históricos e foram substituídos na reiteração abaixo. O estado desktop daquela rodada era a prévia descrita abaixo: EXPLORE em Hanken Grotesk 450/16 px, percurso de 78dvh e componente independente de três células quadradas. Mobile conserva fonte mono de 14 px, seta de 40 px e faixa provisória de 64 px; apenas o texto compartilhado foi atualizado.
-
-### Estado implementado e validação
-
-- Mensagem aplicada: “Presença digital com direção.” O apoio parte do contexto do negócio para conectar marca, website, aquisição e operação digital.
-- Base preservada: símbolo original, Hanken Grotesk local, lettering AUGEO listrado, divisão desktop 44/56, temas da matriz, deformação localizada, retorno exato ao repouso e versão estática com movimento reduzido.
-- Bloco 1: build aprovado, 12/12 testes Playwright em Chromium e detector CLI sem achados. O teste de EXPLORE verifica leitura acessível, ausência de ação/foco e ausência de navegação; substituiu o teste com seção injetada.
-- Correção antecipada de EXPLORE: build aprovado, 12/12 testes passando, detector sem achados e capturas inspecionadas com movimento reduzido em desktop, desktop curto e mobile. Em 1440×900, a coluna passou de aproximadamente 288 px para 405 px, incluindo a seta. Links locais da documentação verificados.
-
-#### Overview explicativo local — 2026-10-08
-
-- Criado, a pedido do usuário, um guia pessoal informal em docs, excluído do versionamento por regra específica no `.gitignore`. Guia complementado com explicação individual dos blocos 1–6, seus objetivos, trabalhos, condições de conclusão e estados; isso encerra a solicitação documental, sem fechar blocos de implementação. Conteúdo privado não incorporado aos documentos compartilhados. Exclusão confirmada com `git check-ignore -v`, ausência confirmada em `git ls-files` e links locais do guia verificados.
-- Fluxo aplicado: orientação de metodologia pelo caminho **Workflow questions** do routing da Impeccable. `impeccable context` realmente executado; resolveu `docs/PRODUCT.md`, sem DESIGN.md ou briefing formal de superfície. Documentos de produto, estratégia, arquitetura, operação e estágio cruzados com o código e referências dos playbooks. Nenhum fluxo de refinamento declarado concluído por essa leitura.
-- Entrega apenas documental: sem alteração de UI, nova suíte, detector, auditoria, critique ou polish. O estado metodológico do bloco 2 foi preservado. Push anterior confirmado pelo usuário; sem novo commit/push nesta entrega.
-
-#### Organização do documento de produto — 2026-10-08
-
-- `PRODUCT.md` (singular) movido para `docs/PRODUCT.md`, sem alterar o conteúdo. Links de entrada no AGENTS e neste handoff atualizados; a orientação de retomada no plano agora explicita o caminho a partir da raiz. Para consultar o contexto de produto da skill, usar esse documento como fonte existente, sem criar uma cópia concorrente na raiz.
-- Links locais de todos os documentos Markdown do projeto e caminhos citados no documento de produto verificados após a movimentação; diff sem erros de whitespace. Nenhuma alteração de código nesta etapa; build e 13 testes da reorganização dos assets permanecem a validação técnica pertinente.
-- Commit de assets: `f862438` (`refactor(assets): centralize logo and moodboard assets`). A movimentação deste documento foi registrada separadamente em `docs(product): move product context into docs`; push realizado pelo usuário, conforme confirmação posterior nesta conversa. As tentativas anteriores do agente falharam por configuração SSH e DNS; o branch local agora está alinhado ao `origin/main` conhecido localmente. Não houve verificação remota adicional ou ensaio de produção nesta atualização. Nenhuma configuração SSH ou remote foi alterado.
-
-#### Organização dos assets — 2026-10-08
-
-- Moodboard centralizado em `src/assets/moodboard-modular/` e marca/estudo tipográfico em `src/assets/logo/`. Import do símbolo, resumo do produto e referências do plano atualizados, inclusive os seis caminhos absolutos e o índice CSV. Lettering e fontes atuais preservados.
-- Integridade: 38 arquivos comparados por SHA-256 antes/depois, sem alteração de conteúdo; Git reconheceu 38 renomes com 100% de identidade em index temporário, sem modificar o index real. Verificadas 33 referências locais da documentação e as 33 entradas do CSV; nenhum caminho operacional antigo encontrado na busca do projeto.
-- Validação desta reorganização: `npm run build` aprovado; `npx playwright test` com 13/13 testes aprovados em Chromium; verificação adicional temporária no navegador confirmou o símbolo no novo caminho, com dimensões naturais positivas e sem falhas de requisição. `git diff --check` aprovado. Ensaio adicional e manifesto de hashes estão em `/tmp/augeo-assets-runtime-check/` e `/tmp/augeo-assets-move-manifest.json`, são temporários e não constituem a única evidência.
-- Tentativa inicial por `npm test` não iniciou o servidor por restrição de porta (`EPERM`); execução pelo comando Playwright autorizado passou. Nenhuma mudança visual ou avanço dos blocos do hero; pendências Impeccable e avaliação do bloco 2 preservadas. Sem commit/push; `.codex/` e `bun.lock` preexistentes preservados.
-- Limites: `legacy.html` já referencia `./augeo-logo.png`, ausente antes da movimentação; não corrigido nesta tarefa. A busca cobre arquivos acessíveis do projeto, sem garantir atalhos externos desconhecidos.
-
-#### Bloco 2 — evolução visual implementada
-
-- Lettering em 88% da área interna, com limite de 680 px: aproximadamente 639 px em 1440×900, ante 527 px. SVG, proporção, listras e abertura do “A” preservados.
-- Título em Hanken 750, 86 px no desktop amplo, entrelinha 0,98 e três linhas editoriais. Apoio limitado a 36ch, com intervalo de 30 px e entrelinha 1,5. Copy do bloco 1 preservada.
-- Centro do lettering acompanha o centro do título desktop por medição com `ResizeObserver`; o componente acompanha mudanças no quadro de posicionamento para manter a origem do campo de interação correta. No mobile, lettering centralizado na matriz.
-- Grade do hero com espaçamento máximo de 72 px e scanlines um terço mais discretas nos dois temas. Nova prop opcional `gridSpacing` preserva o padrão de 58 px da demonstração compartilhada.
-- Removidas reservas compensatórias de 263/283 px. Hero em 900×600 e 768×600 agora mede 600 px de altura, com conteúdo normal inteiro e sem sobreposição.
-- Mobile: copy seguida, após 24 px, por EXPLORE + matriz. Matriz de 288–340 px; o mínimo de 288 px acomoda a coluna de aproximadamente 286 px, inclusive em 320×600. AUGEO inteiro na primeira tela em 390×844 e 320×740; nesta última, o artwork termina em aproximadamente y=535 px, ante y=849 px na captura anterior.
-- Validação: build aprovado, 13/13 testes Playwright em Chromium e detector CLI sem achados. Inspeção visual nos cinco viewports previstos e confirmação adicional em 320×600, nos temas claro/escuro. Fonte raiz a 200% sem overflow horizontal nos cinco viewports previstos; esse ensaio não equivale a zoom real do navegador.
-- Testes preservam leitura/foco do indicativo, temas, toque emulado, deformação limitada, retorno ao repouso e abertura do “A”. Capturas de comparação antes/depois disponíveis localmente em `test-results/hero-block2/`; são artefatos temporários não versionados.
-- Limites: validação em Chromium, sem ensaio em aparelhos físicos ou outros motores. Introdução finita e otimização de desempenho não foram antecipadas; os loops automáticos não foram alterados naquela entrega.
-
-### Estudos anteriores do bloco 2 — histórico
-
-#### Pivot em planejamento — retirada de EXPLORE
-
-O usuário abandonou EXPLORE e pediu planejar a redistribuição/realinhamento do espaço liberado, considerando somente setas com linguagem retro/analógica no lado esquerdo. As três células também deixam de constituir direção aprovada. Naquela etapa, o código conservava a prévia anterior; ainda não havia implementação deste pivot.
-
-Referências ampliadas nesta avaliação: R03 (campo de vetores), imagem 20 (`20_07acc8112263277-6011554ed4087-png.png`, geometria angular gráfica) e imagem 28 (`28_933varivln4-jpg.jpg`, seta de orientação em diagrama analógico). Hipótese recomendada: devolver parte da margem à copy e alinhar marca/título/apoio e um indicativo inferior pelo mesmo eixo; alternativa em discussão: faixa lateral estreita para setas. Pergunta estruturada enviada sobre essa decisão espacial, sem forma, quantidade ou movimento definidos naquela etapa.
-
-Fluxo naquela etapa: descoberta/briefing de shape, com inspeção de implementação e referências; nenhuma direção confirmada, novo fluxo de layout ou typeset concluído, teste executado ou UI alterada nesta etapa. Mobile independente, sem avanço ao bloco 3; sem commit/push.
-
-#### Prévia superada — células do grid, após correção visual
-
-O usuário rejeitou as cinco curvas: a geometria do grid à direita é quadrada, e curvas adicionais não combinam com a composição. O moodboard não se sobrepõe à geometria já estabelecida no hero. Substituído o desenho do componente por três células quadradas de 4×4 px, empilhadas com avanço de 9 px. Movimento descendente discreto transmitido entre células, duas passagens encerradas em 3,5 s; reduced motion estático. Sem curvas, ponta de seta ou trilho. Três células permitem reconhecer a direção sequencial com menos massa; era hipótese visual daquela prévia, sem aprovação do usuário.
-
-EXPLORE permanece em 78dvh/Hanken 450/16 px; título, marca, matriz e mobile preservados. Geometria reduzida a SVG rects no mesmo componente. CLI realmente executada: build e detector geral (`[]`). Testes ajustados para três células e término finito. Execução: 15 passaram (14 permanentes + captura temporária); o teste mobile ampliado foi interrompido por destruição do contexto durante navegação e passou na confirmação isolada, sem edição de UI. Assim, os 15 testes permanentes têm resultado aprovado, em execuções separadas. Captura temporária removida da suíte. Tentativas de servidor com EPERM seguidas de execução normal disponível; sem alteração de configuração. Capturas/GIF atuais em `/tmp/augeo-grid-cue-preview/`, substituindo os artefatos curvos anteriores. Fluxo é correção localizada da prévia para avaliação, sem novo comando completo Impeccable, polish ou avanço de bloco. Sem commit/push.
-
-#### Prévia anterior — EXPLORE e onda descendente (rejeitada)
-
-O usuário autorizou mostrar a ideia e depois substituir a versão atual. Implementação desktop ativa na rota normal, sem flag ou variante de URL: EXPLORE em Hanken 450/16 px ocupa 78dvh (702 px em 1440×900), com sete letras distribuídas. Novo componente `src/components/ScrollCue.tsx`, independente das letras: cinco traços curvos em SVG de 24×40 px, passagem descendente duas vezes, encerrada em 3,7 s. Em janelas de até 500 px de altura, componente com 32 px para evitar sobreposição à última letra. Letras recebem uma passagem de contraste descendente, encerrada em 2,53 s; sem hover. Ambos estáticos em movimento reduzido. Indicativo permanece sem ação/foco até Processo existir.
-
-Referências R13/R22/R32 orientam módulos, curvas e repetição; geometria própria em SVG, sem nova imagem ou dependência. Título, assinatura e matriz preservados. Mobile mantém apresentação anterior e seta provisória; hero mobile independente. Esta é uma prévia para avaliação, não aprovação visual nem encerramento do bloco 2/3.
-
-Metodologia: playbook animate aplicado à prévia — função de continuidade definida pelo usuário, tese de passagem descendente finita, implementação CSS/SVG, inspeção e teste de repouso/reduced motion. Orientações de layout/typeset preservam hierarquia e ritmo; avaliação visual das referências separada do detector. Não declarar fluxos completos layout/typeset/animate encerrados: sem novos scans iniciais por escopo, sem perfil de performance/hardware, ensaio de suspensão por aba/offscreen ou refinamento integrado do bloco 3. Nenhum polish executado.
-
-Evidências: build aprovado e detector geral `[]`; suíte ampliada para 15 testes, incluindo término finito, mudança de reduced motion e geometria independente. Primeira rodada identificou sobreposição de 5 px em 844×390, corrigida pela altura compacta do componente. Capturas em `/tmp/augeo-explore-desktop/`; hero estático e GIF ampliado do componente em `/tmp/augeo-scroll-preview/hero.png` e `movimento.gif`. GIF gerado de 40 frames do navegador com tempos de animação controlados (100 ms), ampliado 3×; replay do arquivo não representa loop infinito no site. Capturas temporárias, decisões/medidas persistidas aqui. Limitações: Chromium/emulação; sem teste de navegação real para Processo, que ainda não existe.
-
-Sem commit/push. Alterações anteriores preservadas.
-
-#### Correção do usuário e direção em estudo — continuidade por scroll
-
-A entrega desktop abaixo não foi aprovada visualmente. O usuário considera a seta literal inadequada e EXPLORE sem vividez; esclareceu que o indicativo deve sugerir continuidade por scroll para a próxima seção. EXPLORE deve percorrer quase 80% da tela verticalmente. Letras e novo indicativo precisam funcionar independentemente. Limites de 320–400 px e tese baseada em hover deixaram de representar a intenção daquela etapa; o código ainda conservava esses valores.
-
-Moodboard local inspecionado por panorama das imagens e leitura ampliada de R13 (`13_untitled.jpg`), R14 (`14_pharmacy-books.png`), R22 (`22_image-png.png`) e R32 (`32_764862903_17908699779452504_1618777655514147151....jpg`). Proposta em estudo: substituir trilho/ponta por sequência pequena de lâminas curvas com deslocamento descendente transmitido entre módulos; EXPLORE longo e sólido, com uma passagem breve de contraste de cima para baixo. Movimento deve comunicar scroll, sem dependência de hover. Referências orientam forma/ritmo; não são copiadas como assets.
-
-Nesta etapa houve inspeção visual e leitura dos playbooks `shape`/`animate`; nenhum fluxo completo de animate ou shape foi declarado concluído, nenhuma UI ou teste alterado. Naquela etapa, direção ainda proposta, sem timing, geometria final ou estados definidos. Mobile continua frente independente; não avançar à reformulação da matriz do bloco 3. Panorama temporário em `/tmp/augeo-moodboard-review.jpg`.
-
-#### Rodada anterior — EXPLORE desktop, 2026-10-08
-
-- Direção autorizada: uma palavra, Hanken Grotesk 620, letras sólidas de 20 px; percurso de 320–400 px em `40dvh`, seta de 48 px e intervalo terminal de 24 px. Divisão EXPLORE/AQUI e intervalo entre palavras removidos. Nome acessível “Explore”, sem clique, destino ou foco. Tratamento desktop a partir de 768 px; título, assinatura, matriz, interação e API pública preservados.
-- Mobile: somente texto compartilhado alterado. Fonte/altura/seta/estrutura provisórias preservadas. Naquela rodada, hero mobile independente e sem conceito definido. Testes mobile desta rodada são regressão, não conclusão de `adapt`.
-- `layout` e `typeset`: avaliações visuais/source antes dos scans, tese, implementação e verificação disponíveis executadas. Registro detalhado em [HERO_BLOCK2_REITERATION.md](HERO_BLOCK2_REITERATION.md), seção da rodada atual. CLI realmente executada: `context --target src`, `detect` inicial/final com escopos layout/type e geral final (todos `[]`); nenhum verbo CLI homônimo, `polish`, novo audit ou critique.
-- Validação: `npm run build` aprovado; `npx playwright test` com 14/14 testes permanentes aprovados em Chromium. Novo teste cobre cinco viewports desktop, dois temas e duas preferências de movimento: sete letras equidistantes, contenção, fonte Hanken, leitura acessível e ausência de overflow horizontal. Capturas reduzidas em `/tmp/augeo-explore-desktop/`; inspeção também da captura mobile da suíte. Alturas: 400 px em 1920×1080, 360 px em 1440×900 e 320 px nos desktops curtos. `git diff --check` aprovado.
-- Limites: Chromium/emulação; sem aparelhos físicos, outros motores, zoom real ou nova medição de CLS/rede. Primeira execução não iniciou o servidor; tentativa separada de Vite explicitou `EPERM` de porta. Nova execução normal de Playwright iniciou o servidor e passou. Artefatos de captura são temporários; decisões e medidas ficam neste registro.
-- Sem commit/push naquela entrega; alterações locais anteriores preservadas.
-
-#### Reiteração anterior do bloco 2 — histórico de 2026-10-08
-
-- **Correção e autorização:** o usuário apontou falta de coesão/sutileza entre EXPLORE e seta e uso insuficiente do espaço pela tipografia; depois autorizou implementar o plano. A aprovação visual daquela reiteração não foi registrada.
-- **Mudanças:** título Hanken 620/1,02, escala pela largura útil com container (aproximadamente 94,9 px em 1440×900), mantendo copy e três linhas. Coluna desktop centralizada na margem lateral, envelope de 320–440 px, letras de 16 px, intervalos de 24 px e seta longa de 48 px. Mobile mantém faixa de 64 px, letras de 14 px e seta de 40 px, altura vinculada à matriz e margens de 24 px. Varredura duplicada removida para estabilidade visual; sem antecipar o movimento da matriz do bloco 3.
-- **Fluxos:** `shape` confirmado pela autorização. `layout`/`typeset`: avaliação visual independente, scans iniciais, tese, implementação e verificação por evidências; `bolder`: teste de estrutura e preservação de identidade/escopo; `adapt`: contextos, estratégia, implementação e verificação disponível, com lacunas de hardware/motores explicitadas. Passos e evidências estão em [HERO_BLOCK2_REITERATION.md](HERO_BLOCK2_REITERATION.md). Não confundir esses fluxos com execução CLI de verbos homônimos: as ferramentas executadas foram `context`, `detect`, build e Playwright.
-- **Validação:** build aprovado e execução final com 14/14 testes aprovados (13 permanentes + ensaio temporário de estresse). Nove viewports com fonte raiz a 200%, expansão sintética e fallback sem overflow; rede simulada e bloqueio de fontes mantiveram leitura disponível. Scans de layout/type antes/depois e scan geral final retornaram `[]`. Inspeção agrupada em nove viewports, claro/escuro e movimento reduzido, com revisão independente dos tamanhos principais sem falha material. Contraste de apoio/indicativo aproximadamente 5,8:1. Capturas e métricas temporárias em `/tmp/augeo-block2-reiteration/`; medidas essenciais transcritas no registro.
-- **Limites:** Chromium/emulação; sem dispositivos físicos, outros motores, zoom real ou medição de CLS. Em 4K, os limites de escala deixam a composição muito esparsa. Nenhum novo audit, critique ou polish foi declarado concluído. Preservadas alterações locais preexistentes em `.gitignore`, handoff, `.codex/` e `bun.lock`; sem commit/push.
-
-#### Histórico da pendência metodológica e continuidade
-
-No bloco 2 foram lidos os playbooks `shape`, `bolder`, `layout`, `typeset` e `adapt`, e suas orientações foram utilizadas na implementação. Isso não constituiu a conclusão dos fluxos completos de cada comando. Foram executados o launcher `context`, o detector `detect`, build, testes e inspeções visuais. Não existe uma nova execução completa de `audit` ou `polish`; a auditoria registrada continua histórica.
-
-O usuário pediu que esta distinção fosse persistida. A preferência está em `/home/luca/.codex/AGENTS.md`: seguir os fluxos completos aplicáveis, informar qual está sendo aplicado e registrar etapas, evidências, artefatos, omissões e pendências. Nunca declarar um comando concluído apenas porque seu playbook foi lido.
-
-A reiteração acima executou as etapas disponíveis e documentou as lacunas de `adapt`; a leitura anterior não constitui conclusão. Preservar a implementação e as decisões confirmadas, sem fabricar evidências ou repetir verificações sem necessidade. A pontuação histórica da auditoria não é resultado pós-implementação.
-
-Naquela etapa, a intenção de EXPLORE era levar a Processo; a entrada comercial tinha destino distinto. A palavra EXPLORE foi retirada posteriormente.
-
-## Leitura por necessidade
-
-- **Rotina de trabalho e continuidade:** [AGENTS.md](../AGENTS.md), com encaminhamento para o backlog e orientação de skill/verificação para a nomenclatura.
-- **Retomada e progresso:** este arquivo.
-- **Trabalhos futuros e avaliações:** [BACKLOG.md](BACKLOG.md). Para requisitos, consultar as Partes II/III do [plano](HERO_AUDIT_AND_IMPROVEMENT_PLAN.md); Parte I e anexos são consulta histórica, técnica e visual.
-- **Resumo do produto para a skill:** [PRODUCT.md](PRODUCT.md).
-- **Posicionamento aprofundado:** [CONTEXT.md](CONTEXT.md), quando a tarefa envolver estratégia ou copy além do briefing.
-- **Arquitetura da landing:** [02-WEBSITE_SPEC.md](02-WEBSITE_SPEC.md), quando a tarefa envolver outras seções ou entrada comercial.
-- **Operação interna:** [03-INTERNAL.md](03-INTERNAL.md); dispensável para refinar o hero.
-
-Preservar alterações locais anteriores à sessão. A auditoria do plano é um baseline histórico; o código e as verificações atuais determinam o estado implementado.
+- [src/App.tsx](../src/App.tsx): estrutura, copy, CTA, props e alinhamento.
+- [src/styles.css](../src/styles.css): composição, temas, tipografia e animação do indicativo.
+- [src/components/ScrollCue.tsx](../src/components/ScrollCue.tsx): triângulos e pausa/retomada.
+- [components/ui/kinetic-matrix.tsx](../components/ui/kinetic-matrix.tsx) e [lib/matrix-motion.ts](../lib/matrix-motion.ts): grade, campo de interação e warp.
+- [src/assets/augeo-lettering.svg](../src/assets/augeo-lettering.svg): marca listrada e contra-formas.

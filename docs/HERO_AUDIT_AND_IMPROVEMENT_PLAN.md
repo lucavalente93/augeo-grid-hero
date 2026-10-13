@@ -4,7 +4,7 @@ Data da auditoria: 2026-10-07
 Projeto: `/home/luca/augeo/modular-bw-landing`  
 Alvo estável: `src/App.tsx` — hero da página inicial  
 Modo da superfície: **Persuade**  
-Estado da execução e validações: [HERO_HANDOFF.md](HERO_HANDOFF.md). A Parte I e os anexos registram a auditoria histórica; as Partes II–III especificam o refinamento.
+Implementação e direção atuais: [HERO_HANDOFF.md](HERO_HANDOFF.md). Execução e validações: [BACKLOG.md](BACKLOG.md). Antecedentes, propostas e avaliações: [HERO_DECISIONS_AND_IDEAS.md](HERO_DECISIONS_AND_IDEAS.md). A Parte I e os anexos registram a auditoria histórica; as Partes II–III preservam o briefing/plano original, sujeito às decisões posteriores. EXPLORE, faixa lateral mobile, cores antigas do painel e introdução finita não devem ser tratados como implementação atual.
 
 ## Protocolo de retomada para o próximo agente
 
@@ -15,7 +15,7 @@ O usuário pediu uma auditoria, um plano alinhado ao moodboard e este registro p
 ### Fontes de verdade e ordem de leitura
 
 1. Ler `/home/luca/.agents/skills/impeccable/SKILL.md` e instruções locais aplicáveis. Executar `/home/luca/.agents/skills/impeccable/scripts/impeccable context --target src/App.tsx` **uma vez na nova sessão**, com cwd na raiz deste projeto. Seguir o resultado e o fallback documentado se o launcher falhar.
-2. Começar por [HERO_HANDOFF.md](HERO_HANDOFF.md), fonte única de progresso e próxima ação, e por `docs/PRODUCT.md` (a partir da raiz do projeto), resumo do produto para a skill. Ler a Parte II e o trecho da Parte III correspondente ao bloco atual. Consultar `CONTEXT.md` para aprofundamento estratégico e `02-WEBSITE_SPEC.md` para arquitetura ou outras seções; não exigir releitura integral desses arquivos em toda retomada. Conferir código, Git e visual renderizado; as medidas da auditoria são históricas.
+2. Começar por [HERO_HANDOFF.md](HERO_HANDOFF.md) para a implementação/direção atual e [BACKLOG.md](BACKLOG.md) para execução e próxima ação. Consultar [HERO_DECISIONS_AND_IDEAS.md](HERO_DECISIONS_AND_IDEAS.md) para propostas, antecedentes e avaliações antes de retomar uma hipótese do plano. Usar `docs/PRODUCT.md` (a partir da raiz do projeto) como resumo do produto para a skill. Ler a Parte II e o trecho da Parte III correspondente ao bloco atual. Consultar `CONTEXT.md` para aprofundamento estratégico e `02-WEBSITE_SPEC.md` para arquitetura ou outras seções; não exigir releitura integral desses arquivos em toda retomada. Conferir código, Git e visual renderizado; as medidas da auditoria são históricas.
 3. Consultar a Parte I para evidências técnicas e os anexos para baseline/referências, quando necessários ao bloco. Para cada comando usado, carregar seu playbook antes de executá-lo. O diretório dos playbooks é `/home/luca/.agents/skills/impeccable/reference/`.
 4. Preservar o mundo visual já estabelecido no código. A ausência de `DESIGN.md` não transforma o projeto em greenfield e não exige reiniciar `init`. Trata-se de refinamento local: não iniciar sorteio de conceitos, torneio de identidades ou redesign completo sem mudança explícita de escopo.
 5. Para planejamento, usar `shape.md`; para amplificação, `bolder.md`; para ajustes, os playbooks indicados na Parte III. Ler `craft-floor.md` imediatamente antes de editar UI, depois de resolvida a direção; não carregá-lo apenas para planejamento.
@@ -23,7 +23,7 @@ O usuário pediu uma auditoria, um plano alinhado ao moodboard e este registro p
 
 **Artefatos:** este arquivo não é `DESIGN.md` nem um snapshot formal de `critique`. Não copiá-lo para esses formatos, nem fabricar uma execução anterior de comandos. O eventual `DESIGN.md` segue `document.md`; uma futura execução de `critique` segue integralmente `critique.md`, incluindo seu próprio fluxo de avaliação e persistência.
 
-Preferência do usuário: assuntos e corpos de commits Git em inglês. Em Plan Mode, identificar referências usadas por rótulo e caminho local exato. Caminhos de referências pertencem ao handoff, não à interface ou à documentação do sistema visual, salvo solicitação.
+Preferência do usuário: assuntos e corpos de commits Git em inglês. Em Plan Mode, identificar referências usadas por rótulo e caminho local exato. Caminhos de referências pertencem ao anexo de referências ou ao registro técnico pertinente, não à interface ou à documentação do sistema visual, salvo solicitação.
 
 ## Parte I — Audit: relatório técnico
 
@@ -314,7 +314,7 @@ O futuro `DESIGN.md` deve descrever o sistema extraído da implementação, não
 
 O formato tem frontmatter YAML opcional com tokens reais e até oito seções canônicas nesta ordem: `Overview`, `Colors`, `Typography`, `Layout`, `Elevation & Depth`, `Shapes`, `Components`, `Do's and Don'ts`. Omitir seções irrelevantes. Não transformar hipóteses de medidas em tokens normativos antes de verificar o resultado.
 
-Registrar o modo Persuade e a estratégia específica do hero no briefing da superfície, seguindo os mecanismos da skill; atualizar `docs/HERO_HANDOFF.md` com o estado implementado e a dependência de Processo. Os caminhos absolutos do moodboard permanecem neste handoff, não no produto ou no sistema visual.
+Registrar o modo Persuade e a estratégia específica do hero no briefing da superfície, seguindo os mecanismos da skill; atualizar `docs/HERO_HANDOFF.md` somente com a implementação persistente e a direção atual. Registrar execução/verificações no backlog e dependências/avaliações no registro de decisões. Os caminhos absolutos do moodboard permanecem neste plano, não no produto ou no sistema visual.
 
 ### Critérios de aceitação e verificação
 

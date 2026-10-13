@@ -62,7 +62,7 @@ O lado direito da hero contém um componente visual próprio de interação por 
 
 ### Continuidade para Processo
 
-EXPLORE AQUI é o indicativo vertical do hero para a seção Processo, abaixo: uma coluna alongada na lateral com direção descendente. Na página completa, será um link nativo para `#processo`. Enquanto essa seção não existir no protótipo, mantém a indicação visual como texto acessível sem ação ou foco. O estado atual e o ponto de retomada estão em [HERO_HANDOFF.md](HERO_HANDOFF.md).
+O indicativo de continuidade do hero aponta conceitualmente para a seção Processo, abaixo. Na página completa, deverá ter integração por link nativo para `#processo`. O protótipo atual usa dois triângulos decorativos no desktop, sem ação ou foco, enquanto Processo não existe. A proposta anterior de EXPLORE AQUI foi superada; antecedentes e decisões de integração estão em [HERO_DECISIONS_AND_IDEAS.md](HERO_DECISIONS_AND_IDEAS.md). A composição persistente está em [HERO_HANDOFF.md](HERO_HANDOFF.md), e a continuidade técnica em [BACKLOG.md](BACKLOG.md).
 
 ### CTA
 
