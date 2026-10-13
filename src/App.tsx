@@ -21,6 +21,8 @@ export default function App() {
     observer.observe(hero);
     observer.observe(heading);
     observer.observe(hero.querySelector('.intro')!);
+    const cta = hero.querySelector('.hero-cta');
+    if (cta) observer.observe(cta);
     window.addEventListener('resize', alignArtwork);
     alignArtwork();
     return () => {
@@ -41,6 +43,12 @@ export default function App() {
           <div className="hero-copy">
             <h1 ref={headingRef} id="hero-title"><span>Presença</span>{' '}<span>digital com</span>{' '}<span>direção.</span></h1>
             <p className="intro">O contexto do seu negócio define como conectamos marca, website, aquisição e operação digital.</p>
+            <a className="hero-cta" href="#entrada" aria-label="Apresentar negócio">
+              <span>Apresentar negócio</span>
+              <svg aria-hidden="true" width="14" height="14" viewBox="0 0 14 14" fill="none">
+                <path d="M1 7H13M13 7L7.5 1.5M13 7L7.5 12.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </a>
           </div>
           <ScrollCue />
           <div className="matrix-deck">

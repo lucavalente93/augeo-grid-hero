@@ -53,9 +53,11 @@ test('symbol and copy align with the triangles at their existing lateral positio
     expect(cue.y + cue.height).toBeLessThanOrEqual(height);
     const brand = (await page.locator('.brand').boundingBox())!;
     const intro = (await page.locator('.intro').boundingBox())!;
+    const cta = (await page.locator('.hero-cta').boundingBox())!;
     expect(heading.x).toBeCloseTo(cue.x, 1);
     expect(intro.x).toBeCloseTo(cue.x, 1);
     expect(brand.x).toBeCloseTo(cue.x, 1);
+    expect(cta.x).toBeCloseTo(cue.x, 1);
     await expect(page.locator('.scroll-cue path')).toHaveCount(2);
     await expect(page.locator('.explore')).toHaveCount(0);
   }

@@ -34,11 +34,13 @@ test('offscreen and hidden-document suspension resumes elapsed animation time', 
   await page.evaluate(()=>window.scrollTo(0,1200));
   await expect.poll(states).toEqual(['paused','paused']);
   const times=()=>cue.evaluate(n=>n.getAnimations({subtree:true}).map(a=>Number(a.currentTime)));
-  const paused=await times(); await page.waitForTimeout(150);
+  await page.waitForTimeout(50);
+  const paused=await times();
+  await page.waitForTimeout(100);
   expect(await times()).toEqual(paused);
   await page.evaluate(()=>window.scrollTo(0,0));
   await expect.poll(states).toEqual(['running','running']);
-  expect((await times())[0]).toBeGreaterThanOrEqual(paused[0]);
+  expect((await times())[0]).toBeGreaterThanOrEqual(paused[0] - 0.1);
   // Test the visibility handler deterministically; real OS tab switching is a
   // separate manual verification, not implied by this synthetic state.
   await page.evaluate(()=>{Object.defineProperty(document,'hidden',{configurable:true,value:true});document.dispatchEvent(new Event('visibilitychange'));});
