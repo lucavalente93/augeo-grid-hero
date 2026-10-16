@@ -135,11 +135,13 @@ a:focus-visible, button:focus-visible { outline: 2px solid #ff482c; outline-offs
   flex-direction: column;
   justify-content: center;
   min-width: 0;
-  padding: 140px clamp(24px, 3.2vw, 64px) 100px var(--hero-copy-inset);
+  padding: 140px clamp(24px, 3.2vw, 64px) 28px var(--hero-copy-inset);
   --hero-panel-background: radial-gradient(100% 80% at 0% 0%, rgba(255, 255, 255, 0.02) 0%, transparent 70%), var(--background);
   background: var(--hero-panel-background);
 }
+.hero-content { display: flex; flex-direction: column; min-width: 0; flex-shrink: 0; }
 @media (min-width: 768px) {
+  .hero-content { margin-block: auto; }
   .hero-copy { border-right: 1px solid var(--border); }
 }
 .hero-copy h1 { max-width: 11ch; margin: 0; font-size: clamp(2rem, 19.5cqw, 6rem); font-weight: 620; letter-spacing: -.035em; line-height: 1.02; overflow-wrap: anywhere; text-wrap: balance; padding-bottom: 2px; }
@@ -194,11 +196,11 @@ a:focus-visible, button:focus-visible { outline: 2px solid #ff482c; outline-offs
   }
 }
 @media (min-width: 768px) and (max-height: 700px) {
-  .hero-copy { padding-top: 112px; padding-bottom: 56px; }
+  .hero-copy { padding-top: 112px; }
   .hero-cta { margin-top: 24px; height: 40px; padding: 0 18px; font-size: 0.875rem; }
 }
 @media (min-width: 768px) and (max-height: 500px) {
-  .hero-copy { padding-top: 80px; padding-bottom: 32px; }
+  .hero-copy { padding-top: 80px; }
   .hero-description { margin-top: 16px; font-size: 1rem; }
   .hero-cta { margin-top: 16px; height: 36px; padding: 0 16px; font-size: 0.8125rem; }
 }
@@ -232,10 +234,6 @@ a:focus-visible, button:focus-visible { outline: 2px solid #ff482c; outline-offs
 }
 .dark .matrix-artwork, .dark .matrix-artwork-reactive { filter: invert(1); opacity: .88; }
 .light .matrix-artwork, .light .matrix-artwork-reactive { filter: none; opacity: 1; }
-@media (min-width: 768px) and (max-height: 700px) {
-  .hero-copy { padding-top: 112px; padding-bottom: 56px; }
-
-}
 @media (max-width: 767px) {
   .site-header { position: relative; height: 70px; padding: 0 20px; }
   .brand { width: 58px; height: 58px; }
@@ -295,13 +293,11 @@ a:focus-visible, button:focus-visible { outline: 2px solid #ff482c; outline-offs
 }
 .dark .scroll-cue { --cue-rest-color: #9e9ea2; }
 @media (min-width: 768px) {
-  .hero-page .scroll-cue { display: block; position: absolute; left: var(--hero-copy-inset); top: min(calc(89dvh + 8px), calc(100dvh - 69px)); width: 36px; height: 63px; overflow: hidden; }
+  /* Reserve the cue’s own size so replacement artwork cannot overlap the CTA. */
+  .hero-page .scroll-cue { display: block; position: relative; flex-shrink: 0; align-self: flex-start; margin-top: 32px; max-width: 100%; width: 36px; height: 63px; overflow: hidden; }
   .scroll-cue svg { display: block; position: absolute; inset: 0; width: 100%; height: 100%; fill: var(--cue-rest-color); z-index: 1; }
   .scroll-cue-triangle { animation: cue-contrast 5.6s ease-in-out .3s infinite; animation-play-state: inherit; }
   .scroll-cue-triangle:nth-child(2) { --cue-first-peak-color: #20201f; --cue-second-peak-color: #e2e2df; animation-delay: 1.28s; }
-}
-@media (min-width: 768px) and (max-height: 500px) {
-  .hero-page .scroll-cue { top: min(calc(89dvh + 4px), calc(100dvh - 63px)); }
 }
 @keyframes cue-contrast {
   0%, 50% { fill: var(--cue-rest-color); z-index: 2; }

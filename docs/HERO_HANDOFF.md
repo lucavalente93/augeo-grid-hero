@@ -1,6 +1,6 @@
 # Hero — implementação e direção
 
-Base conferida no código em 2026-10-13. Este documento descreve a composição persistente e a direção visual/conceitual do hero. [BACKLOG.md](BACKLOG.md) reúne execução, verificações e trabalho técnico; [HERO_DECISIONS_AND_IDEAS.md](HERO_DECISIONS_AND_IDEAS.md) reúne decisões anteriores, propostas e avaliações pendentes. A arquitetura da landing pertence à [especificação](02-WEBSITE_SPEC.md).
+Base conferida no código em 2026-10-16. Este documento descreve a composição persistente e a direção visual/conceitual do hero. [BACKLOG.md](BACKLOG.md) reúne execução, verificações e trabalho técnico; [HERO_DECISIONS_AND_IDEAS.md](HERO_DECISIONS_AND_IDEAS.md) reúne decisões anteriores, propostas e avaliações pendentes. A arquitetura da landing pertence à [especificação](02-WEBSITE_SPEC.md).
 
 ## Conceito e hierarquia
 
@@ -59,6 +59,8 @@ O ciclo atual da matriz mantém pulsos automáticos contínuos, além das respos
 Dois triângulos sólidos transmitem direção descendente no desktop: cada um mede 36×27 px, com o segundo 18 px abaixo do primeiro e sobreposição de 9 px. O conjunto de 36×45 px fica centralizado no contêiner de 36×63 px. SVGs separados garantem que a ponta ativa seja pintada integralmente na interseção.
 
 Uma passagem ocorre a cada **2,8 s**, com defasagem de **980 ms** entre os triângulos. O ciclo CSS de 5,6 s contém duas passagens: superior claro/inferior escuro, depois superior escuro/inferior claro, usando `#e2e2df` e `#20201f`. Os atrasos iniciais são 300/1280 ms. A mudança afeta fill e ordem de pintura, mantendo a geometria imóvel. Pausa fora da tela/aba oculta conserva tempo e fase; movimento reduzido usa cinza estático.
+
+No desktop, o indicativo participa do fluxo da `.hero-copy`, depois do grupo `.hero-content` (título, apoio e CTA). Margens verticais automáticas centralizam esse grupo no espaço disponível; o indicativo fica junto à base do painel, com margem superior mínima de 32 px e recuo inferior de 28 px. Sua dimensão não encolhe no flex: variantes maiores ou com conteúdo intrínseco reservam o próprio espaço. Quando o conteúdo não cabe na altura da janela, o hero cresce e a página permite rolagem; não há coordenada vertical baseada no viewport nem altura do indicativo duplicada no cálculo de afastamento. A matriz acompanha a altura do hero.
 
 O indicativo atual é decorativo, `aria-hidden`, sem clique ou foco. Seu sentido é continuidade por scroll; o CTA comercial tem outra função. EXPLORE e a seta anterior não fazem parte do hero implementado. O CTA aponta para `#entrada`; essa seção ainda não existe na aplicação atual.
 

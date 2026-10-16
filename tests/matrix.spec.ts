@@ -50,7 +50,8 @@ test('symbol and copy align with the triangles at their existing lateral positio
     const heading = (await page.locator('#hero-title').boundingBox())!;
     expect(cue.width).toBe(36);
     expect(cue.height).toBe(63);
-    expect(cue.y + cue.height).toBeLessThanOrEqual(height);
+    const hero = (await page.locator('.hero').boundingBox())!;
+    expect(cue.y + cue.height).toBeLessThanOrEqual(hero.y + hero.height);
     const brand = (await page.locator('.brand').boundingBox())!;
     const descriptionBounds = (await page.locator('.hero-description').boundingBox())!;
     const cta = (await page.locator('.hero-cta').boundingBox())!;

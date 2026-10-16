@@ -70,6 +70,7 @@ for (const colorScheme of ['light', 'dark'] as const) {
       await expect(cue).toHaveAttribute('aria-hidden', 'true');
       expect(await cue.evaluate(node => node.tabIndex)).toBe(-1);
       await expect(cue.locator('a, button, [tabindex]')).toHaveCount(0);
+      await cue.scrollIntoViewIfNeeded();
       const bounds = (await cue.boundingBox())!;
       const triangles = await cue.locator('path').evaluateAll(nodes => nodes.map(node => {
         const box = (node as SVGGraphicsElement).getBBox();
