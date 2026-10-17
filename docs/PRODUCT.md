@@ -34,7 +34,7 @@ A contratação começa pelo entendimento do cenário do negócio. A AUGEO combi
 
 ## Evidence on Hand
 
-- Contexto estratégico e operação interna: [AUGEO.md](AUGEO.md).
+- Contexto estratégico, marca e operação interna: fontes privadas resolvidas por `augeo-orchestrator context augeo-website`. Aplicação local: [AUGEO.md](AUGEO.md).
 - Arquitetura e requisitos do site: `docs/02-WEBSITE_SPEC.md`.
 - Marca e exploração tipográfica existentes: `src/assets/logo/`.
 - Ainda não há cases, clientes, métricas ou depoimentos publicados; não inventar prova social.

@@ -75,7 +75,7 @@ O processo é a principal peça comercial da landing. Sua função é mostrar qu
 
 ### Limite de exposição
 
-O site comunica o modelo de trabalho, não o procedimento interno completo. Call inicial, estruturação de briefing, handoffs, validação e segunda call pertencem à operação e estão documentados em [operação interna](AUGEO.md#operação-interna); só devem aparecer publicamente se contribuírem para a decisão do lead.
+O site comunica o modelo de trabalho, não o procedimento interno completo. Call inicial, estruturação de briefing, handoffs, validação e segunda call pertencem à operação e estão documentados na fonte global `business/augeo.md`, resolvida por `augeo-orchestrator context augeo-website`; só devem aparecer publicamente se contribuírem para a decisão do lead.
 
 ## 6. Entrada Comercial e Formulário
 
@@ -109,7 +109,7 @@ Essas opções qualificam o contato; não constituem catálogo, pacote fechado o
 
 ### Pós-envio previsto
 
-Após o envio, a interface confirma o recebimento e informa que a AUGEO fará a leitura inicial antes do retorno. A mensagem deve seguir a [política de triagem e retorno](AUGEO.md#política-de-triagem-e-retorno), sem assumir prazo, orçamento automático ou reunião garantida.
+Após o envio, a interface confirma o recebimento e informa que a AUGEO fará a leitura inicial antes do retorno. A mensagem deve seguir a política de triagem e retorno da mesma fonte global `business/augeo.md`, sem assumir prazo, orçamento automático ou reunião garantida.
 
 ## 7. Direção Visual
 
