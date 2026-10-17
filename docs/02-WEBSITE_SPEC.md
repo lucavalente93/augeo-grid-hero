@@ -1,6 +1,6 @@
 # AUGEO Website: Especificação
 
-Atualizada em 2026-10-13 a partir da implementação e das decisões vigentes. Esta especificação define a landing completa e distingue seus requisitos do estado publicado. Composição detalhada do hero: [HERO_HANDOFF.md](HERO_HANDOFF.md). Execução e validações: [BACKLOG.md](BACKLOG.md). Propostas e avaliações pendentes: [HERO_DECISIONS_AND_IDEAS.md](HERO_DECISIONS_AND_IDEAS.md).
+Revisão de requisitos e implementação em 2026-10-13; referências de publicação reconciliadas em 2026-10-17 com os registros locais e o endereço informado pelo usuário, sem nova consulta remota. Esta especificação define a landing completa e distingue seus requisitos do estado publicado. Composição, decisões e propostas do hero: [HERO.md](HERO.md). Fila e última entrega: [BACKLOG.md](BACKLOG.md). Procedimentos: [WORKFLOW.md](WORKFLOW.md). Evidências datadas: [histórico](archive/EXECUTION_HISTORY.md).
 
 ## 1. Papel do Site
 
@@ -57,7 +57,7 @@ A composição reativa já está implementada: grade em canvas e lettering SVG l
 
 No desktop, a matriz ocupa a coluna direita do split 44/56. No mobile, o mesmo componente inteiro forma o footer retangular de largura integral, com lettering centralizado e rolagem vertical permitida pela área interativa. Essa mudança é uma escolha de composição e ergonomia, não a criação de outro componente.
 
-Os temas claro/escuro abrangem texto e matriz. A interação pausa fora da tela e com aba oculta; `prefers-reduced-motion` mantém a composição estática. Os pulsos automáticos atuais continuam; introdução finita e otimização do warp são refinamentos registrados nos documentos do hero.
+Os temas claro/escuro abrangem texto e matriz. A interação pausa fora da tela e com aba oculta; `prefers-reduced-motion` mantém a composição estática. Os pulsos automáticos atuais continuam; introdução finita e otimização do warp são refinamentos registrados em HERO.md.
 
 ### Continuidade e conversão
 
@@ -75,7 +75,7 @@ O processo é a principal peça comercial da landing. Sua função é mostrar qu
 
 ### Limite de exposição
 
-O site comunica o modelo de trabalho, não o procedimento interno completo. Call inicial, estruturação de briefing, handoffs, validação e segunda call pertencem à operação e estão documentados em [operação interna](PRODUCT.md#operação-interna); só devem aparecer publicamente se contribuírem para a decisão do lead.
+O site comunica o modelo de trabalho, não o procedimento interno completo. Call inicial, estruturação de briefing, handoffs, validação e segunda call pertencem à operação e estão documentados em [operação interna](AUGEO.md#operação-interna); só devem aparecer publicamente se contribuírem para a decisão do lead.
 
 ## 6. Entrada Comercial e Formulário
 
@@ -109,7 +109,7 @@ Essas opções qualificam o contato; não constituem catálogo, pacote fechado o
 
 ### Pós-envio previsto
 
-Após o envio, a interface confirma o recebimento e informa que a AUGEO fará a leitura inicial antes do retorno. Não deve prometer prazo, orçamento automático ou reunião garantida enquanto esses parâmetros não estiverem definidos pela operação.
+Após o envio, a interface confirma o recebimento e informa que a AUGEO fará a leitura inicial antes do retorno. A mensagem deve seguir a [política de triagem e retorno](AUGEO.md#política-de-triagem-e-retorno), sem assumir prazo, orçamento automático ou reunião garantida.
 
 ## 7. Direção Visual
 
@@ -146,7 +146,7 @@ Grades e sistemas gráficos devem funcionar como linguagem de estrutura, respost
 - Estruturar e avaliar a composição dessas seções, sem repetir mecanicamente o hero.
 - Registrar o sistema em `DESIGN.md`, conforme a frente prevista do hero.
 - Definir motion fora do hero e necessidade de assets complementares quando houver função concreta.
-- Concluir as avaliações e refinamentos do hero registrados nos documentos pertinentes.
+- Concluir as avaliações e refinamentos do hero registrados em HERO.md.
 
 Fontes, cores e composição atuais são a base existente, não escolhas iniciais em aberto. Isso não equivale a aprovação visual global nem à conclusão do sistema para toda a landing.
 
@@ -198,8 +198,8 @@ Evitar promessas de resultado, retorno rápido, fórmula, solução total sem co
 - Estilos: Tailwind CSS 4 integrado ao Vite e CSS próprio em `src/styles.css`, com fontes locais, tokens e temas.
 - Hero: `KineticMatrix` compartilhado entre landing e demo `?demo=matrix`, com física/warp em `lib/matrix-motion.ts`; indicador em `ScrollCue`.
 - Tooling: Bun para instalação e execução, com `bun.lock` e `bunfig.toml`. Build por `bun run build`; regressões por `bun run test` com Playwright/Chromium; inspeção visual/interativa por `dev-browser`.
-- Hospedagem: projeto `augeo-grid-hero` na equipe `augeocreative` da Vercel, conectado ao repositório GitHub `lucavalente93/augeo-grid-hero`, com produção na `main` e integração de deploy por push.
-- Domínio próprio: `augeocreative.com` e `www.augeocreative.com` vinculados ao projeto. O usuário confirmou o site online no domínio, e HTTPS respondeu 200 nos dois endereços; evidências de DNS/HTTPS e publicação pertencem ao backlog. O alias `augeo-grid-hero.vercel.app` permanece disponível.
+- Hospedagem: Vercel, equipe `augeocreative`, com produção na `main` e integração de deploy por push. O registro de 16/10 identifica o repositório GitHub como `lucavalente93/augeo-v1-landing`; o remoto local ainda usa o nome anterior `lucavalente93/augeo-grid-hero`. O projeto Vercel era identificado como `augeo-grid-hero` nos registros de 13/10; o nome atual do projeto não foi reconfirmado nesta revisão. Nenhuma configuração ou remoto foi alterado.
+- Domínio próprio: endereço atual informado pelo usuário em 17/10, `https://www.augeocreative.com`. Os registros históricos confirmam HTTPS nos endereços raiz e `www`; evidências de DNS/HTTPS e publicação pertencem ao [histórico](archive/EXECUTION_HISTORY.md). O alias antigo `augeo-grid-hero.vercel.app` é uma referência histórica, sem disponibilidade reconfirmada nesta revisão.
 - DNS gerenciado na Hostinger; e-mail comercial existente `hello@augeocreative.com`, independente do deploy. Preservar os registros de e-mail ao alterar o apontamento do site.
 - Plano Vercel atual mantido por decisão do usuário; contratação do Pro e configuração do WhatsApp Business adiadas até concluir o site. Não são bloqueios para o desenvolvimento nem tarefas autorizadas nesta revisão.
 
@@ -210,6 +210,7 @@ Evitar promessas de resultado, retorno rápido, fórmula, solução total sem co
 - CMS somente se surgir necessidade real de edição de conteúdo; não há adoção decidida.
 - Analytics e rastreamento, quando houver objetivo de medição definido, respeitando privacidade e consentimento aplicáveis.
 - Endereço canônico e redirecionamento entre domínio raiz e `www`, ainda sem configuração confirmada.
+- Responsável técnico por manutenção/publicação, ainda não definido pela operação.
 
 A stack, a hospedagem, o domínio e a interação inicial da matriz já foram definidos e implementados. Integrações comerciais futuras devem ser escolhidas conforme o fluxo de entrada e a operação, sem reabrir essas bases por padrão.
 
@@ -223,7 +224,7 @@ A stack, a hospedagem, o domínio e a interação inicial da matriz já foram de
 - Stack React/TypeScript/Vite/Tailwind, tooling Bun e testes Playwright existentes.
 - Deploy de produção na Vercel e domínio próprio conectado; primeira publicação já realizada.
 
-Publicação não equivale a conclusão da landing, aprovação visual global ou fechamento dos fluxos metodológicos do hero. Resultados de testes e limitações de cobertura ficam no backlog, sem tratar evidências históricas como validação automática de versões futuras.
+Publicação não equivale a conclusão da landing, aprovação visual global ou fechamento dos fluxos metodológicos do hero. Resultados de testes e limitações de cobertura ficam no histórico, com síntese no backlog, sem tratar evidências históricas como validação automática de versões futuras.
 
 ### Para concluir a landing completa
 
@@ -235,7 +236,7 @@ Publicação não equivale a conclusão da landing, aprovação visual global ou
 - Validar a experiência completa: responsividade, teclado/foco, contraste, movimento reduzido, carregamento, envio, falhas e recebimento real para triagem.
 - Definir a política de redirecionamento/canonical dos domínios e metadados de publicação/indexação; manter HTTPS válido nos dois endereços antes de encerrar a entrega completa.
 
-Essas pendências não autorizam avanço automático de bloco nem contratação de serviços. A sequência operacional e as autorizações ficam no backlog; propostas e avaliações do hero ficam no registro de decisões.
+Essas pendências não autorizam avanço automático de bloco nem contratação de serviços. A sequência operacional e as autorizações ficam no backlog; propostas e avaliações do hero ficam em [HERO.md](HERO.md#avaliações-e-decisões-ainda-abertas).
 
 ### Futuro, após a primeira versão completa
 

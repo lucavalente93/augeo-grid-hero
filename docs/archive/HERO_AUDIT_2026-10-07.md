@@ -1,12 +1,16 @@
 # AUGEO — auditoria, briefing e continuidade pela metodologia Impeccable
 
+> **Arquivo histórico:** auditoria de 07/10 e briefing/plano original, preservados para rastreabilidade. Instruções e critérios abaixo descrevem aquele trabalho e não são a rotina atual. Fonte vigente dos fluxos: [WORKFLOW.md](../WORKFLOW.md); estado, decisões e plano reconciliado: [HERO.md](../HERO.md). Não restaurar escolhas superadas nem avançar blocos a partir deste arquivo.
+
 Data da auditoria: 2026-10-07  
 Projeto: `/home/luca/augeo/modular-bw-landing`  
 Alvo estável: `src/App.tsx` — hero da página inicial  
 Modo da superfície: **Persuade**  
-Implementação e direção atuais: [HERO_HANDOFF.md](HERO_HANDOFF.md). Execução e validações: [BACKLOG.md](BACKLOG.md). Antecedentes, propostas e avaliações: [HERO_DECISIONS_AND_IDEAS.md](HERO_DECISIONS_AND_IDEAS.md). A Parte I e os anexos registram a auditoria histórica; as Partes II–III preservam o briefing/plano original, sujeito às decisões posteriores. EXPLORE, faixa lateral mobile, cores antigas do painel e introdução finita não devem ser tratados como implementação atual.
+Implementação e direção atuais: [HERO_HANDOFF.md](../HERO.md). Execução e validações: [BACKLOG.md](../BACKLOG.md). Antecedentes, propostas e avaliações: [HERO_DECISIONS_AND_IDEAS.md](../HERO.md). A Parte I e os anexos registram a auditoria histórica; as Partes II–III preservam o briefing/plano original, sujeito às decisões posteriores. EXPLORE, faixa lateral mobile, cores antigas do painel e introdução finita não devem ser tratados como implementação atual.
 
 ## Protocolo de retomada para o próximo agente
+
+**Aplicação atual do protocolo:** as instruções abaixo se destinam à retomada do refinamento visual do hero. Revisar a documentação não inicia esses fluxos nem autoriza avançar os blocos. Caminhos absolutos de skills/CLI identificam o ambiente original; sua disponibilidade deve ser conferida no executor da tarefa.
 
 Este documento contém três entregas distintas: **Parte I — relatório no formato de `audit`; Parte II — briefing organizado pelos campos de `shape`; Parte III — encaminhamento aos comandos de implementação**. Os anexos preservam contexto, evidências e referências. A combinação em um único arquivo é um handoff do projeto; não existe uma alegação de que este arquivo seja um template universal da Impeccable.
 
@@ -15,7 +19,7 @@ O usuário pediu uma auditoria, um plano alinhado ao moodboard e este registro p
 ### Fontes de verdade e ordem de leitura
 
 1. Ler `/home/luca/.agents/skills/impeccable/SKILL.md` e instruções locais aplicáveis. Executar `/home/luca/.agents/skills/impeccable/scripts/impeccable context --target src/App.tsx` **uma vez na nova sessão**, com cwd na raiz deste projeto. Seguir o resultado e o fallback documentado se o launcher falhar.
-2. Começar por [HERO_HANDOFF.md](HERO_HANDOFF.md) para a implementação/direção atual e [BACKLOG.md](BACKLOG.md) para execução e próxima ação. Consultar [HERO_DECISIONS_AND_IDEAS.md](HERO_DECISIONS_AND_IDEAS.md) para propostas, antecedentes e avaliações antes de retomar uma hipótese do plano. Usar `docs/PRODUCT.md` (a partir da raiz do projeto) como resumo do produto para a skill. Ler a Parte II e o trecho da Parte III correspondente ao bloco atual. Consultar a seção “Contexto estratégico” de `PRODUCT.md` para aprofundamento estratégico e `02-WEBSITE_SPEC.md` para arquitetura ou outras seções; não exigir releitura integral desses arquivos em toda retomada. Conferir código, Git e visual renderizado; as medidas da auditoria são históricas.
+2. Começar por [HERO_HANDOFF.md](../HERO.md) para a implementação/direção atual e [BACKLOG.md](../BACKLOG.md) para execução e próxima ação. Consultar [HERO_DECISIONS_AND_IDEAS.md](../HERO.md) para propostas, antecedentes e avaliações antes de retomar uma hipótese do plano. Usar `docs/PRODUCT.md` (a partir da raiz do projeto) como resumo do produto para a skill. Ler a Parte II e o trecho da Parte III correspondente ao bloco atual. Consultar a seção “Contexto estratégico” de `PRODUCT.md` para aprofundamento estratégico e `02-WEBSITE_SPEC.md` para arquitetura ou outras seções; não exigir releitura integral desses arquivos em toda retomada. Conferir código, Git e visual renderizado; as medidas da auditoria são históricas.
 3. Consultar a Parte I para evidências técnicas e os anexos para baseline/referências, quando necessários ao bloco. Para cada comando usado, carregar seu playbook antes de executá-lo. O diretório dos playbooks é `/home/luca/.agents/skills/impeccable/reference/`.
 4. Preservar o mundo visual já estabelecido no código. A ausência de `DESIGN.md` não transforma o projeto em greenfield e não exige reiniciar `init`. Trata-se de refinamento local: não iniciar sorteio de conceitos, torneio de identidades ou redesign completo sem mudança explícita de escopo.
 5. Para planejamento, usar `shape.md`; para amplificação, `bolder.md`; para ajustes, os playbooks indicados na Parte III. Ler `craft-floor.md` imediatamente antes de editar UI, depois de resolvida a direção; não carregá-lo apenas para planejamento.
@@ -149,6 +153,8 @@ Os comandos podem ser solicitados individualmente, em conjunto ou em outra ordem
 
 ## Parte II — Shape: briefing visual e funcional
 
+**Estado do briefing:** preservado como registro original. EXPLORE, faixa mobile lateral, painel sempre claro e medidas antigas foram superados pelas decisões posteriores. O limite de quatro segundos permanece proposta para a introdução da matriz; não abrange automaticamente os triângulos atuais. Consultar o registro de decisões antes de reutilizar qualquer item apresentado abaixo como confirmado.
+
 Playbook: `/home/luca/.agents/skills/impeccable/reference/shape.md`. A estrutura abaixo usa seus sete campos. O briefing reaproveita a entrevista já realizada; as propostas de composição e copy não são apresentadas como valores literalmente aprovados pelo usuário.
 
 ### 1. Job and audience — papel e público
@@ -218,6 +224,8 @@ Estas escolhas já foram respondidas; não reabrir a mesma entrevista sem uma no
 **Fechamento de `shape`:** numa sessão de planejamento, apresentar este briefing para confirmação ou correção e encerrar sem código. Numa sessão em que o usuário já pede implementar este documento, aproveitar essa autorização; não criar uma aprovação duplicada para escolhas contidas no pedido. Se uma mudança material extrapolar o escopo, esclarecer apenas essa mudança.
 
 ## Parte III — Plano de execução com os playbooks
+
+**Aplicação atual do plano:** preservar os fluxos metodológicos, reconciliando cada alvo com o handoff e as decisões vigentes. Os critérios originais de EXPLORE, mobile lateral, tema dividido e encaixe obrigatório na altura desktop não são critérios atuais: o hero pode crescer e permitir rolagem para manter conteúdo e indicativo separados. `motionMode` continua uma proposta de API, não uma interface implementada. A documentação desta ressalva não conclui nenhum fluxo Impeccable.
 
 A sequência abaixo é uma recomendação do projeto, construída com os comandos da skill. Não é uma cadeia obrigatória universal da Impeccable. Ler cada playbook aplicável; os nomes não servem apenas como etiquetas para um plano de CSS.
 

@@ -2,6 +2,8 @@
 
 Protótipo da landing em React, TypeScript e Vite. Use **Bun 1.4.0** para instalar dependências e executar as ferramentas do projeto.
 
+Website atual informado pelo usuário: [www.augeocreative.com](https://www.augeocreative.com). A publicação existente ainda não inclui Processo e formulário de entrada.
+
 ## Instalação e desenvolvimento
 
 ```sh
@@ -31,12 +33,12 @@ O `bunfig.toml` força o runtime Bun nos scripts e nos executáveis chamados por
 
 ## Organização e continuidade
 
-- `src/`: aplicação, estilos e assets.
-- `components/` e `lib/`: matriz compartilhada, demonstração e utilitários.
-- `tests/`: regressões da matriz e do indicador de triângulos.
-- `docs/`: seis documentos — produto/contexto/operação, especificação/copy, implementação do hero, backlog técnico, decisões e plano/auditoria.
-- `docs/references/`: referências históricas em ZIP e captura de bug; moodboard e estudos da marca permanecem em `src/assets/`.
+- `src/`: aplicação, estilos e assets; `components/` e `lib/`: matriz compartilhada, demo e utilitários.
+- `tests/`: regressões da matriz, layout do hero e triângulos.
+- `docs/`: fontes por responsabilidade — agência, resumo do produto, requisitos do website, hero, procedimentos e fila.
+- `docs/archive/`: evidências históricas e auditoria original, consultadas por necessidade.
+- `docs/refs/`: ZIP e captura histórica; PNGs Figma locais ainda não rastreados. Moodboard e estudos da marca ficam em `src/assets/`.
 
-O protótipo anterior em HTML/JavaScript foi retirado; a aplicação e a demonstração da matriz são os pontos de entrada atuais. O guia pessoal e a configuração `.codex/` permanecem locais, ignorados pelo Git.
+Comece por [AGENTS.md](AGENTS.md) para o mapa de fontes, ou pelo [backlog](docs/BACKLOG.md) para a fila. O resumo da skill permanece em `docs/PRODUCT.md`. O protótipo anterior HTML/JavaScript foi retirado; aplicação e demo são as entradas atuais. Guia pessoal e `.codex/` continuam locais e ignorados pelo Git.
 
-Consulte [AGENTS.md](AGENTS.md) para a rotina de trabalho. O [handoff do hero](docs/HERO_HANDOFF.md) descreve a implementação persistente e a direção visual; o [backlog](docs/BACKLOG.md) reúne continuidade e registros técnicos; [decisões e ideias](docs/HERO_DECISIONS_AND_IDEAS.md) guarda antecedentes, propostas e avaliações pendentes.
+A organização documental prepara a futura orquestração Antigravity/Codex. As duas referências arquiteturais são contexto conceitual; nenhum armazenamento global ou mecanismo de orquestração foi instalado.
